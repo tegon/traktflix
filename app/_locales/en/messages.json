@@ -1,0 +1,10 @@
+{
+  "appName": {
+    "message": "traktflix",
+    "description": "The name of the application"
+  },
+  "appDescription": {
+    "message": "Trakt.tv and Netflix integration",
+    "description": "The description of the application"
+  }
+}
