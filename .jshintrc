@@ -20,7 +20,6 @@
   "smarttabs": true,
   "globals" : {
     "chrome": true,
-    "crypto": true,
-    "ChromeExOAuth": true
+    "crypto": true
   }
 }

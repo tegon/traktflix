@@ -1,10 +1,10 @@
 {
   "appName": {
     "message": "traktflix",
-    "description": "The name of the application"
+    "description": "Trakt.tv and Netflix integration"
   },
   "appDescription": {
     "message": "Trakt.tv and Netflix integration",
-    "description": "The description of the application"
+    "description": "Automatically sync watched movies and series on Netflix to Trakt.tv"
   }
 }

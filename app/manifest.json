@@ -1,30 +1,36 @@
 {
-  "name": "__MSG_appName__",
-  "version": "0.0.1",
-  "manifest_version": 2,
-  "description": "__MSG_appDescription__",
-  "icons": {
-    "16": "images/icon-16.png",
-    "128": "images/icon-128.png"
-  },
-  "default_locale": "en",
-  "background": {
-    "scripts": [
-      "scripts/chromereload.js",
-      "scripts/background.js"
-    ]
-  },
-  "browser_action": {
-    "default_icon": {
-      "19": "images/icon-19.png",
-      "38": "images/icon-38.png"
+    "name": "__MSG_appName__",
+    "version": "0.0.1",
+    "manifest_version": 2,
+    "description": "__MSG_appDescription__",
+    "icons": {
+        "16": "images/traktflix-icon-16.png",
+        "128": "images/traktflix-icon-128.png"
     },
-    "default_title": "traktflix",
-    "default_popup": "popup.html"
-  },
-  "permissions": [
-    "identity",
-    "tabs",
-    "http://trakt.tv/*"
-  ]
+    "default_locale": "en",
+    "content_scripts": [
+        {
+            "matches": [
+                "http://*.netflix.com/*"
+            ],
+            "js": [
+                "scripts/build/content.js"
+            ]
+        }
+    ],
+    "browser_action": {
+        "default_icon": {
+            "19": "images/traktflix-icon-19.png",
+            "38": "images/traktflix-icon-38.png"
+        },
+        "default_title": "traktflix",
+        "default_popup": "popup.html"
+    },
+    "permissions": [
+        "cookies",
+        "http://trakt.tv/"
+    ],
+    "web_accessible_resources": [
+        "images/svg/*.svg"
+    ]
 }
