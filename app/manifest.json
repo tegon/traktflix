@@ -14,7 +14,7 @@
                 "http://*.netflix.com/*"
             ],
             "js": [
-                "scripts/build/content.js"
+                "scripts/src/content.js"
             ]
         }
     ],
@@ -27,8 +27,10 @@
         "default_popup": "popup.html"
     },
     "permissions": [
+        "identity",
         "cookies",
-        "http://trakt.tv/"
+        "storage",
+        "http://trakt.tv/*"
     ],
     "web_accessible_resources": [
         "images/svg/*.svg"

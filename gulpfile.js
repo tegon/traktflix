@@ -7,7 +7,7 @@ var concat = require('gulp-concat');
 
 gulp.task('browserify', function() {
     var bundler = browserify({
-        entries: ['./app/scripts/src/content.js'], // Only need initial file, browserify finds the deps
+        require: 'react',
         transform: [reactify], // We want to convert JSX to normal javascript
         debug: true, // Gives us sourcemapping
         cache: {}, packageCache: {}, fullPaths: true // Requirement of watchify
@@ -19,13 +19,37 @@ gulp.task('browserify', function() {
         var updateStart = Date.now();
         console.log('Updating!');
         watcher.bundle() // Create new bundle that uses the cache for high performance
-        .pipe(source('content.js'))
+        .pipe(source('bundle.js'))
     // This is where you add uglifying etc.
         .pipe(gulp.dest('./app/scripts/build/'));
         console.log('Updated!', (Date.now() - updateStart) + 'ms');
     })
     .bundle() // Create the initial bundle when starting the task
-    .pipe(source('content.js'))
+    .pipe(source('bundle.js'))
+    .pipe(gulp.dest('./app/scripts/build/'));
+});
+
+gulp.task('jsx', function() {
+    var bundler = browserify({
+        entries: ['app/scripts/src/popup.jsx'],
+        transform: [reactify], // We want to convert JSX to normal javascript
+        debug: true, // Gives us sourcemapping
+        cache: {}, packageCache: {}, fullPaths: true // Requirement of watchify
+    });
+    var watcher  = watchify(bundler);
+
+    return watcher
+    .on('update', function () { // When any files update
+        var updateStart = Date.now();
+        console.log('Updating!');
+        watcher.bundle() // Create new bundle that uses the cache for high performance
+        .pipe(source('popup.js'))
+    // This is where you add uglifying etc.
+        .pipe(gulp.dest('./app/scripts/build/'));
+        console.log('Updated!', (Date.now() - updateStart) + 'ms');
+    })
+    .bundle() // Create the initial bundle when starting the task
+    .pipe(source('popup.js'))
     .pipe(gulp.dest('./app/scripts/build/'));
 });
 
@@ -39,4 +63,4 @@ gulp.task('css', function () {
 });
 
 // Just running the two tasks
-gulp.task('default', ['browserify', 'css']);
+gulp.task('default', ['browserify', 'jsx', 'css']);
