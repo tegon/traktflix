@@ -19,5 +19,9 @@
   },
   "engines": {
     "node": ">=0.11.13"
+  },
+  "scripts": {
+    "gulp-debug": "./node_modules/gulp/bin/gulp.js --env development",
+    "gulp-build": "./node_modules/gulp/bin/gulp.js --env production"
   }
 }

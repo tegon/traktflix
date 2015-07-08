@@ -5,8 +5,8 @@ function Item(options) {
   this.title = options.title;
   this.type = options.type;
 
-  if (this.type === 'episode') {
-    this.serie = options.serie;
+  if (this.type === 'show') {
+    this.epTitle = options.epTitle;
     this.season = options.season;
     this.episode = options.episode;
   }

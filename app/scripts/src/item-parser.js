@@ -3,6 +3,7 @@
 var Item = require('./item.js');
 
 function ItemParser() {}
+
 ItemParser.isReady = function checkPage() {
   var scrubber = document.querySelector('.player-scrubber-progress-completed');
   return scrubber !== null;
@@ -12,19 +13,19 @@ ItemParser.parse = function parse(callback) {
   var item;
   var scrubber = document.querySelector('.player-scrubber-progress-completed');
   var playerStatus = document.querySelectorAll('.player-status span');
-  var type = playerStatus.length > 1 ? 'episode' : 'movie';
+  var type = playerStatus.length > 1 ? 'show' : 'movie';
   var mainTitle = playerStatus[0].textContent;
 
-  if (type === 'episode') {
+  if (type === 'show') {
     var episode = playerStatus[1].textContent.match(/\d+/g);
     var number = episode[0];
     var season = episode[1];
     var title = playerStatus[2].textContent;
 
     item = new Item({
-      serie: mainTitle,
+      epTitle: title,
       scrubber: scrubber,
-      title: title,
+      title: mainTitle,
       season: season,
       episode: number,
       type: type
