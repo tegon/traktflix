@@ -4,32 +4,19 @@ var browserify = require('browserify');
 var watchify = require('watchify');
 var reactify = require('reactify');
 var concat = require('gulp-concat');
+var uglify = require('gulp-uglify');
+var buffer = require('vinyl-buffer');
+var gulpif = require('gulp-if');
+var minimist = require('minimist');
+
+var defaultOptions = {
+  string: 'env',
+  default: { env: process.env.NODE_ENV || 'development' }
+};
+
+var options = minimist(process.argv.slice(2), defaultOptions);
 
 gulp.task('browserify', function() {
-    var bundler = browserify({
-        require: 'react',
-        transform: [reactify], // We want to convert JSX to normal javascript
-        debug: true, // Gives us sourcemapping
-        cache: {}, packageCache: {}, fullPaths: true // Requirement of watchify
-    });
-    var watcher  = watchify(bundler);
-
-    return watcher
-    .on('update', function () { // When any files update
-        var updateStart = Date.now();
-        console.log('Updating!');
-        watcher.bundle() // Create new bundle that uses the cache for high performance
-        .pipe(source('bundle.js'))
-    // This is where you add uglifying etc.
-        .pipe(gulp.dest('./app/scripts/build/'));
-        console.log('Updated!', (Date.now() - updateStart) + 'ms');
-    })
-    .bundle() // Create the initial bundle when starting the task
-    .pipe(source('bundle.js'))
-    .pipe(gulp.dest('./app/scripts/build/'));
-});
-
-gulp.task('jsx', function() {
     var bundler = browserify({
         entries: ['app/scripts/src/popup.jsx'],
         transform: [reactify], // We want to convert JSX to normal javascript
@@ -44,12 +31,15 @@ gulp.task('jsx', function() {
         console.log('Updating!');
         watcher.bundle() // Create new bundle that uses the cache for high performance
         .pipe(source('popup.js'))
-    // This is where you add uglifying etc.
+        .pipe(buffer())
+        .pipe(gulpif(options.env === 'production', uglify()))
         .pipe(gulp.dest('./app/scripts/build/'));
         console.log('Updated!', (Date.now() - updateStart) + 'ms');
     })
     .bundle() // Create the initial bundle when starting the task
     .pipe(source('popup.js'))
+    .pipe(buffer())
+    .pipe(gulpif(options.env === 'production', uglify()))
     .pipe(gulp.dest('./app/scripts/build/'));
 });
 
@@ -63,4 +53,4 @@ gulp.task('css', function () {
 });
 
 // Just running the two tasks
-gulp.task('default', ['browserify', 'jsx', 'css']);
+gulp.task('default', ['browserify', 'css']);

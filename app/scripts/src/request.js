@@ -9,6 +9,12 @@ module.exports = {
     xhr.setRequestHeader('trakt-api-key', Settings.clientId);
     xhr.setRequestHeader('trakt-api-version', Settings.apiVersion);
 
+    chrome.storage.sync.get(function(data) {
+      if (data.access_token) {
+        xhr.setRequestHeader('Authorization', 'Bearer ' + data.access_token);
+      }
+    });
+
     xhr.onload = function() {
       if (this.status >= 200 && this.status < 400) {
         options.success.call(this, this.response);

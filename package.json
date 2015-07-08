@@ -7,11 +7,15 @@
   },
   "devDependencies": {
     "browserify": "10.2.4",
-    "gulp": "*",
-    "vinyl-source-stream": "*",
-    "reactify": "*",
-    "gulp-concat": "*",
-    "watchify": "*"
+    "gulp": "3.9.0",
+    "vinyl-source-stream": "1.1.0",
+    "reactify": "1.1.1",
+    "gulp-concat": "2.6.0",
+    "watchify": "3.2.3",
+    "gulp-uglify": "1.2.0",
+    "vinyl-buffer": "1.0.0",
+    "gulp-if": "1.2.5",
+    "minimist": "1.1.1"
   },
   "engines": {
     "node": ">=0.11.13"
