@@ -1,5 +1,5 @@
 var gulp = require('gulp');
-var source = require('vinyl-source-stream'); // Used to stream bundle for further handling
+var source = require('vinyl-source-stream');
 var browserify = require('browserify');
 var watchify = require('watchify');
 var reactify = require('reactify');
@@ -16,34 +16,59 @@ var defaultOptions = {
 
 var options = minimist(process.argv.slice(2), defaultOptions);
 
-gulp.task('browserify', function() {
+gulp.task('browserify-popup', function() {
     var bundler = browserify({
-        entries: ['app/scripts/src/popup.jsx'],
-        transform: [reactify], // We want to convert JSX to normal javascript
-        debug: true, // Gives us sourcemapping
-        cache: {}, packageCache: {}, fullPaths: true // Requirement of watchify
+        entries: 'app/scripts/src/popup.jsx',
+        transform: [reactify],
+        debug: options.env !== 'production',
+        cache: {}, packageCache: {}, fullPaths: true
     });
     var watcher  = watchify(bundler);
 
     return watcher
-    .on('update', function () { // When any files update
+    .on('update', function () {
         var updateStart = Date.now();
         console.log('Updating!');
-        watcher.bundle() // Create new bundle that uses the cache for high performance
+        watcher.bundle()
         .pipe(source('popup.js'))
         .pipe(buffer())
         .pipe(gulpif(options.env === 'production', uglify()))
         .pipe(gulp.dest('./app/scripts/build/'));
         console.log('Updated!', (Date.now() - updateStart) + 'ms');
     })
-    .bundle() // Create the initial bundle when starting the task
+    .bundle()
     .pipe(source('popup.js'))
     .pipe(buffer())
     .pipe(gulpif(options.env === 'production', uglify()))
     .pipe(gulp.dest('./app/scripts/build/'));
 });
 
-// I added this so that you see how to run two watch tasks
+gulp.task('browserify-content', function() {
+    var bundler = browserify({
+        entries: 'app/scripts/src/content.js',
+        debug: options.env !== 'production',
+        cache: {}, packageCache: {}, fullPaths: true
+    });
+    var watcher  = watchify(bundler);
+
+    return watcher
+    .on('update', function () {
+        var updateStart = Date.now();
+        console.log('Updating!');
+        watcher.bundle()
+        .pipe(source('content.js'))
+        .pipe(buffer())
+        .pipe(gulpif(options.env === 'production', uglify()))
+        .pipe(gulp.dest('./app/scripts/build/'));
+        console.log('Updated!', (Date.now() - updateStart) + 'ms');
+    })
+    .bundle()
+    .pipe(source('content.js'))
+    .pipe(buffer())
+    .pipe(gulpif(options.env === 'production', uglify()))
+    .pipe(gulp.dest('./app/scripts/build/'));
+});
+
 gulp.task('css', function () {
     gulp.watch('styles/**/*.css', function () {
         return gulp.src('styles/**/*.css')
@@ -52,5 +77,4 @@ gulp.task('css', function () {
     });
 });
 
-// Just running the two tasks
-gulp.task('default', ['browserify', 'css']);
+gulp.task('default', ['browserify-popup', 'browserify-content', 'css']);

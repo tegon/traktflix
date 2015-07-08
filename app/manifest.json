@@ -14,7 +14,7 @@
                 "http://*.netflix.com/*"
             ],
             "js": [
-                "scripts/src/content.js"
+                "scripts/build/content.js"
             ]
         }
     ],
