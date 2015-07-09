@@ -43,7 +43,7 @@ Search.prototype = {
           method: 'GET',
           url: this.getEpisodeUrl(data['show']['ids']['slug']),
           success: function(resp) {
-            options.success.call(this, resp);
+            options.success.call(this, JSON.parse(resp));
           },
           error: function(st, resp) {
             options.error.call(this, st, resp);

@@ -5,6 +5,6 @@
   },
   "appDescription": {
     "message": "Trakt.tv and Netflix integration",
-    "description": "Automatically sync watched movies and series on Netflix to Trakt.tv"
+    "description": "Automatically sync watched movies and shows on Netflix to Trakt.tv"
   }
 }
