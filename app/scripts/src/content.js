@@ -67,7 +67,9 @@ var events = new WatchEvents({
 
   onPause: function(e) {
     console.log('onPause', e);
-    scrobble.pause({ success: onScrobbleSuccess, error: onScrobbleError });
+    if (scrobble != undefined) {
+      scrobble.pause({ success: onScrobbleSuccess, error: onScrobbleError });
+    }
   },
 
   onStop: function(e) {

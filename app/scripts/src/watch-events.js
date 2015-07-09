@@ -35,6 +35,17 @@ WatchEvents.prototype = {
       this.onPlay(e);
     } else if (e.target.classList.contains('pause')) {
       this.onPause(e);
+    } else if (e.target.classList.contains('player-next-episode')) {
+      this.onStop(e);
+      this.onPlay(e);
+    } else if (e.target.className === 'player-scrubber-target' ||
+        e.target.className === 'player-scrubber-progress-completed' ||
+        e.target.className === 'player-scrubber-progress-buffered' ||
+        e.target.className === 'player-scrubber-progress') {
+      this.onPlay(e);
+    } else if (e.target.className === 'play-icon') {
+      this.onStop(e);
+      this.onPlay(e);
     }
   },
 

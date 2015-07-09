@@ -18,8 +18,8 @@ ItemParser.parse = function parse(callback) {
 
   if (type === 'show') {
     var episode = playerStatus[1].textContent.match(/\d+/g);
-    var number = episode[0];
-    var season = episode[1];
+    var season = episode[0];
+    var number = episode[1];
     var title = playerStatus[2].textContent;
 
     item = new Item({
