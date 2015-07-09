@@ -13,9 +13,9 @@ Search.prototype = {
     return this.url + '?type=' + this.item.type + '&query=' + this.item.title;
   },
 
-  getEpisodeUrl: function(item, slug) {
-    return this.episodeUrl + '/' + slug + '/seasons/' + item.season
-      + '/episodes/' + item.episode + '?extended=images';
+  getEpisodeUrl: function(slug) {
+    return this.episodeUrl + '/' + slug + '/seasons/' + this.item.season
+      + '/episodes/' + this.item.episode + '?extended=images';
   },
 
   findMovie: function(options) {
@@ -23,7 +23,8 @@ Search.prototype = {
       method: 'GET',
       url: this.getUrl(),
       success: function(response) {
-        options.success.call(this, response[0]);
+        var data = JSON.parse(response)[0];
+        options.success.call(this, data);
       },
       error: function(status, response) {
         options.error.call(this, status, response);
@@ -40,7 +41,7 @@ Search.prototype = {
 
         Request.send({
           method: 'GET',
-          url: this.getEpisodeUrl(item, data['show']['ids']['slug']),
+          url: this.getEpisodeUrl(data['show']['ids']['slug']),
           success: function(resp) {
             options.success.call(this, resp);
           },
@@ -48,7 +49,7 @@ Search.prototype = {
             options.error.call(this, st, resp);
           }
         });
-      },
+      }.bind(this),
       error: function(status, response) {
         options.error.call(this, status, response);
       }
