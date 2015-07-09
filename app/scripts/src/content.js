@@ -5,7 +5,7 @@ var ItemParser = require('./item-parser.js');
 var Search = require('./search.js');
 var Scrobble = require('./scrobble.js');
 
-var currentItem;
+var currentItem = null;
 var scrobble;
 
 function onSearchSuccess(response) {
@@ -87,6 +87,6 @@ if (location.href.match(/watch/)) {
 
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
   if (request.getCurrentItem) {
-    return sendResponse({ item: currentItem });
+    return sendResponse({ item: currentItem, scrobble: scrobble });
   }
 });

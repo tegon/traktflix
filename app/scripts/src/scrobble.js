@@ -31,7 +31,6 @@ Scrobble.prototype = {
   },
 
   stop: function(options) {
-    // stop is returning 500
     this._sendScrobble({ path: '/stop', success: options.success, error: options.error });
   }
 };

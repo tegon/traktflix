@@ -13,7 +13,7 @@ function Item(options) {
 }
 
 Item.prototype.getScrubber = function() {
-  return parseFloat(this.scrubber.style.width).toFixed(2);
+  return parseFloat(parseFloat(this.scrubber.style.width).toFixed(2));
 };
 
 module.exports = Item;
