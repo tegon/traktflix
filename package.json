@@ -3,7 +3,8 @@
   "version": "0.0.0",
   "description": "Trakt.tv and Netflix integration",
   "dependencies": {
-    "react": "0.13.3"
+    "react": "0.13.3",
+    "material-design-lite": "1.0.0-3"
   },
   "devDependencies": {
     "browserify": "10.2.4",

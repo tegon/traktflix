@@ -14,7 +14,7 @@ function onSearchSuccess(response) {
   var scrobbleItem;
 
   if (currentItem.type === 'show') {
-    scrobbleItem = { episode: { ids: response.ids } };
+    scrobbleItem = { episode: response };
   } else {
     scrobbleItem = { movie: response.movie };
   }

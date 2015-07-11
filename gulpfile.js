@@ -28,13 +28,13 @@ gulp.task('browserify-popup', function() {
     return watcher
     .on('update', function () {
         var updateStart = Date.now();
-        console.log('Updating!');
+        console.log('Updating popup!');
         watcher.bundle()
         .pipe(source('popup.js'))
         .pipe(buffer())
         .pipe(gulpif(options.env === 'production', uglify()))
         .pipe(gulp.dest('./app/scripts/build/'));
-        console.log('Updated!', (Date.now() - updateStart) + 'ms');
+        console.log('popup updated!', (Date.now() - updateStart) + 'ms');
     })
     .bundle()
     .pipe(source('popup.js'))
@@ -54,13 +54,13 @@ gulp.task('browserify-content', function() {
     return watcher
     .on('update', function () {
         var updateStart = Date.now();
-        console.log('Updating!');
+        console.log('Updating content!');
         watcher.bundle()
         .pipe(source('content.js'))
         .pipe(buffer())
         .pipe(gulpif(options.env === 'production', uglify()))
         .pipe(gulp.dest('./app/scripts/build/'));
-        console.log('Updated!', (Date.now() - updateStart) + 'ms');
+        console.log('content updated!', (Date.now() - updateStart) + 'ms');
     })
     .bundle()
     .pipe(source('content.js'))
