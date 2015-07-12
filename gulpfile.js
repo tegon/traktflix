@@ -70,11 +70,25 @@ gulp.task('browserify-content', function() {
 });
 
 gulp.task('css', function () {
-    gulp.watch('styles/**/*.css', function () {
-        return gulp.src('styles/**/*.css')
-        .pipe(concat('content.css'))
-        .pipe(gulp.dest('app/styles/build/'));
+    gulp.watch('app/styles/src/*.css', function () {
+        return gulp.src('app/styles/src/*.css')
+          .pipe(concat('popup.css'))
+          .pipe(gulp.dest('app/styles/build'))
     });
+
+    return gulp.src('app/styles/src/*.css')
+      .pipe(concat('popup.css'))
+      .pipe(gulp.dest('app/styles/build'))
 });
 
-gulp.task('default', ['browserify-popup', 'browserify-content', 'css']);
+gulp.task('vendor', function() {
+    gulp.src('node_modules/material-design-lite/material.min.css')
+    .pipe(concat('vendor.css'))
+    .pipe(gulp.dest('app/styles/build'));
+
+    return gulp.src('node_modules/material-design-lite/material.min.js')
+    .pipe(concat('vendor.js'))
+    .pipe(gulp.dest('app/scripts/build'))
+});
+
+gulp.task('default', ['browserify-popup', 'browserify-content', 'css', 'vendor']);
