@@ -8,3 +8,4 @@ test/bower_components
 package
 build
 *.log
+.DS_Store

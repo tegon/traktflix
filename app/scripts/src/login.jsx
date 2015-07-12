@@ -38,6 +38,9 @@ module.exports = React.createClass({
   onTokenSuccess: function(response) {
     this.saveToken(JSON.parse(response), function() {
       console.log('saved===========');
+      var html = document.querySelector('html');
+      html.classList.remove('is-unlogged');
+      html.classList.add('is-logged');
     });
   },
   onTokenFailed: function(status, response) {
@@ -53,6 +56,10 @@ module.exports = React.createClass({
     });
   },
   render: function() {
-    return <button onClick={this.handleClick}>Login with Trakt.tv</button>;
+    return(
+      <button onClick={this.handleClick} className="mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect login">
+        Login with Trakt.tv
+      </button>
+    );
   }
 });

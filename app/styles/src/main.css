@@ -1,3 +1,68 @@
-html{
+html {
+  width: 300px;
+  height: 300px;
+}
 
+html.is-unlogged .logout {
+  display: none;
+}
+
+html.is-logged .logout {
+  display: block;
+}
+
+.login {
+  margin: 100px 60px;
+}
+
+.mdl-layout__header-row {
+  padding-left: 20px;
+}
+
+.mdl-layout__content {
+  position: relative;
+}
+
+.mdl-layout__content .overlay {
+  background-image: url('../../images/background.jpg');
+  background-size: cover;
+  background-position: center center;
+  position: absolute;
+  height: 240px;
+  width: 300px;
+  -webkit-filter: blur(3px) grayscale(0.5);
+  -moz-filter: blur(3px) grayscale(0.5);
+  -o-filter: blur(3px) grayscale(0.5);
+  -ms-filter: blur(3px) grayscale(0.5);
+  filter: blur(3px) grayscale(0.5);
+}
+
+.watch-card-thumb.mdl-card {
+  width: 298px;
+  height: 241px;
+}
+
+.watch-card-thumb > .mdl-card__actions {
+  height: 52px;
+  padding: 16px;
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.watch-card-thumb__title {
+  color: #fff;
+}
+
+.watch-empty-card.mdl-card {
+  width: 298px;
+  height: 241px;
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.watch-empty-card > .mdl-card__actions {
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.watch-empty-card > .mdl-card__title,
+.watch-empty-card > .mdl-card__actions > .mdl-button {
+  color: #fff;
 }

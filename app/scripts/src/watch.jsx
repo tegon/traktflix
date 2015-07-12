@@ -27,21 +27,38 @@ module.exports = React.createClass({
       return this.state.scrobble.item.movie.images.poster.thumb;
     }
   },
+  getText: function() {
+    if (this.state.item.type === 'show') {
+      return this.state.item.title + ' - ' + this.state.item.epTitle;
+    } else {
+      return this.state.item.title;
+    }
+  },
+  thumbStyle: function() {
+    return {
+      backgroundImage: 'url(' + this.thumbUrl() + ')',
+      backgroundRepeat: 'no-repeat',
+      backgroundPosition: 'center center',
+      backgroundSize: 'cover'
+    };
+  },
   render: function() {
     if (this.isWatching()) {
       return (
-          <div className="watching">
-            <img src={this.thumbUrl()} />
-            <h3>{this.state.item.title}</h3>
-            <h4>{this.state.item.epTitle}</h4>
-            <h5>{this.state.scrobble.item.progress}%</h5>
+        <div className="mdl-card mdl-shadow--2dp watch-card-thumb" style={this.thumbStyle()}>
+          <div className="mdl-card__title mdl-card--expand"></div>
+          <div className="mdl-card__actions">
+            <span className="watch-card-thumb__title">{this.getText()}</span>
           </div>
+        </div>
       );
     } else {
       return (
-          <div className="watching-empty">
-            You aren't watching anything right now :/
+        <div className="mdl-card mdl-shadow--2dp watch-empty-card">
+          <div className="mdl-card__title mdl-card--expand">
+            <h4>You're not watching anything right now :/</h4>
           </div>
+        </div>
       );
     }
   }
