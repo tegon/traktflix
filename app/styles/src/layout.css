@@ -1,0 +1,26 @@
+html {
+  width: 300px;
+  height: 300px;
+}
+
+.mdl-layout__header-row {
+  padding-left: 20px;
+}
+
+.mdl-layout__content {
+  position: relative;
+}
+
+.mdl-layout__content .overlay {
+  background-image: url('../../images/background.jpg');
+  background-size: cover;
+  background-position: center center;
+  position: absolute;
+  height: 240px;
+  width: 300px;
+  filter: blur(3px) grayscale(0.5);
+}
+
+.login {
+  margin: 100px 60px;
+}

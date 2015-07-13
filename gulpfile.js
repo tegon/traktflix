@@ -8,6 +8,8 @@ var uglify = require('gulp-uglify');
 var buffer = require('vinyl-buffer');
 var gulpif = require('gulp-if');
 var minimist = require('minimist');
+var autoprefixer = require('gulp-autoprefixer');
+var minifyCss = require('gulp-minify-css');
 
 var defaultOptions = {
   string: 'env',
@@ -72,13 +74,17 @@ gulp.task('browserify-content', function() {
 gulp.task('css', function () {
     gulp.watch('app/styles/src/*.css', function () {
         return gulp.src('app/styles/src/*.css')
-          .pipe(concat('popup.css'))
-          .pipe(gulp.dest('app/styles/build'))
+            .pipe(autoprefixer())
+            .pipe(gulpif(options.env === 'production', minifyCss()))
+            .pipe(concat('popup.css'))
+            .pipe(gulp.dest('app/styles/build'))
     });
 
     return gulp.src('app/styles/src/*.css')
-      .pipe(concat('popup.css'))
-      .pipe(gulp.dest('app/styles/build'))
+        .pipe(autoprefixer())
+        .pipe(gulpif(options.env === 'production', minifyCss()))
+        .pipe(concat('popup.css'))
+        .pipe(gulp.dest('app/styles/build'))
 });
 
 gulp.task('vendor', function() {
