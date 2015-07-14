@@ -1,8 +1,10 @@
 'use strict';
 
 var React = require('react');
-var Login = require('./login.jsx');
-var Watch = require('./watch.jsx');
+var LoginButton = require('./login-button.jsx');
+var Header = require('./header.jsx');
+var Watching = require('./watching.jsx');
+var Info = require('./info.jsx');
 
 module.exports = React.createClass({
   getInitialState: function() {
@@ -11,6 +13,15 @@ module.exports = React.createClass({
   getAccessToken: function() {
     chrome.storage.sync.get(function(data) {
       this.setState({ logged: !!data.access_token });
+      this.getCurrentItem();
+    }.bind(this));
+  },
+  getCurrentItem: function() {
+    chrome.tabs.query({ url: 'http://*.netflix.com/*' }, function(tabs) {
+      chrome.tabs.sendMessage(tabs[0].id, { getCurrentItem: true }, function(response) {
+        console.log(response);
+        this.setState({ item: response.item, scrobble: response.scrobble });
+      }.bind(this));
     }.bind(this));
   },
   componentDidMount: function() {
@@ -21,35 +32,51 @@ module.exports = React.createClass({
   },
   logoutClicked: function(e) {
     chrome.storage.sync.clear(function() {
-      this.setState({ logged: false });
+      this.setState({ logged: false, currentPage: 'watch' });
+    }.bind(this));
+  },
+  onItemClicked: function(e) {
+    if (e.target.classList.contains('item-About')) {
+      this.aboutClicked(e);
+    } else {
+      this.logoutClicked(e);
+    }
+  },
+  onTokenSuccess: function(response) {
+    this.saveToken(JSON.parse(response));
+  },
+  onTokenFailed: function(status, response) {
+    console.error('Token failed', status, response);
+  },
+  saveToken: function(options, callback) {
+    chrome.storage.sync.set(options, function() {
+      this.setState({ logged: !!options.access_token });
     }.bind(this));
   },
   render: function() {
     var content;
 
     if (this.state.currentPage === 'about') {
-      content =
-        <div className="mdl-card mdl-shadow--2dp watch-empty-card">
-          <div className="mdl-card__title mdl-card--expand">
-            <h4>traktflix is a extension bla bla bla</h4>
-          </div>
-        </div>;
+      content = <Info messages={this.props.aboutMessages} />
     } else {
-      content = this.state.logged ? <Watch /> : <Login />;
+      if (this.state.logged) {
+        if (this.state.item && this.state.scrobble) {
+          content = <Watching item={this.state.item} scrobble={this.state.scrobble} />
+        } else {
+          content = <Info messages={this.props.notWatchingMessages} />
+        }
+      } else {
+        content =
+          <LoginButton
+            onTokenSuccess={this.onTokenSuccess} onTokenFailed={this.onTokenFailed} />
+      }
     }
 
     return(
-      <div className="mdl-layout mdl-js-layout mdl-layout--fixed-header">
-        <header className="mdl-layout__header mdl-shadow--7dp">
-          <div className="mdl-layout__header-row">
-            <span className="mdl-layout-title">traktflix</span>
-            <div className="mdl-layout-spacer"></div>
-            <nav className="mdl-navigation">
-              <a className="mdl-navigation__link about" href="#" onClick={this.aboutClicked} >About</a>
-              <a className="mdl-navigation__link logout" href="#" onClick={this.logoutClicked}>Logout</a>
-            </nav>
-          </div>
-        </header>
+      <div className="mdl-layout mdl-layout--fixed-header">
+        <Header
+          items={[{ name: 'About', show: true }, { name: 'Logout', show: this.state.logged }]}
+          onItemClicked={this.onItemClicked} />
         <main className="mdl-layout__content">
           <div className="overlay"></div>
           <div className="content">

@@ -11,6 +11,10 @@ body {
   padding-left: 20px;
 }
 
+.mdl-navigation__link {
+  cursor: pointer;
+}
+
 .mdl-layout__content {
   margin: 10px;
   position: relative;
@@ -26,6 +30,6 @@ body {
   filter: blur(3px) grayscale(0.5);
 }
 
-.login {
+.mdl-button.login {
   margin: 100px 58px;
 }

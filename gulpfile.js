@@ -9,7 +9,7 @@ var buffer = require('vinyl-buffer');
 var gulpif = require('gulp-if');
 var minimist = require('minimist');
 var autoprefixer = require('gulp-autoprefixer');
-var minifyCss = require('gulp-minify-css');
+var minifycss = require('gulp-minify-css');
 
 var defaultOptions = {
   string: 'env',
@@ -75,24 +75,24 @@ gulp.task('css', function () {
     gulp.watch('app/styles/src/*.css', function () {
         return gulp.src('app/styles/src/*.css')
             .pipe(autoprefixer())
-            .pipe(gulpif(options.env === 'production', minifyCss()))
+            .pipe(gulpif(options.env === 'production', minifycss()))
             .pipe(concat('popup.css'))
             .pipe(gulp.dest('app/styles/build'))
     });
 
     return gulp.src('app/styles/src/*.css')
         .pipe(autoprefixer())
-        .pipe(gulpif(options.env === 'production', minifyCss()))
+        .pipe(gulpif(options.env === 'production', minifycss()))
         .pipe(concat('popup.css'))
         .pipe(gulp.dest('app/styles/build'))
 });
 
 gulp.task('vendor', function() {
-    gulp.src('node_modules/material-design-lite/material.min.css')
+    gulp.src('app/styles/vendor/*.css')
     .pipe(concat('vendor.css'))
     .pipe(gulp.dest('app/styles/build'));
 
-    return gulp.src('node_modules/material-design-lite/material.min.js')
+    return gulp.src('app/scripts/vendor/*.js')
     .pipe(concat('vendor.js'))
     .pipe(gulp.dest('app/scripts/build'))
 });
