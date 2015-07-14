@@ -1,4 +1,8 @@
-html {
+*:focus {
+  outline: none;
+}
+
+body {
   width: 300px;
   height: 300px;
 }
@@ -8,6 +12,7 @@ html {
 }
 
 .mdl-layout__content {
+  margin: 10px;
   position: relative;
 }
 
@@ -16,11 +21,11 @@ html {
   background-size: cover;
   background-position: center center;
   position: absolute;
-  height: 240px;
-  width: 300px;
+  height: 230px;
+  width: 280px;
   filter: blur(3px) grayscale(0.5);
 }
 
 .login {
-  margin: 100px 60px;
+  margin: 100px 58px;
 }
