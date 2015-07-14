@@ -39,6 +39,17 @@ Search.prototype = {
       success: function(response) {
         var data = JSON.parse(response)[0];
 
+        /* House of Cards has an 1990 version, with same title
+        I need to priorize the 2013 version
+        Unfortunately, i couldn't figure out a better way to this by now */
+        if (this.item.title === 'House of Cards') {
+          JSON.parse(response).map(function(item) {
+            if (item.show.year === 2013) {
+              data = item;
+            }
+          });
+        }
+
         Request.send({
           method: 'GET',
           url: this.getEpisodeUrl(data['show']['ids']['slug']),

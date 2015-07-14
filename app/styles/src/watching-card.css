@@ -1,9 +1,9 @@
 .watching-card-thumb.mdl-card {
   width: 280px;
   height: 230px;
-  background-repeat: 'no-repeat';
-  background-position: 'center center';
-  background-size: 'cover'
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: cover
 }
 
 .watching-card-thumb > .mdl-card__actions {
