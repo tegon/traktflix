@@ -1,10 +1,14 @@
 {
   "appName": {
-    "message": "traktflix",
+    "message": "traktflix - Sync Netflix history to Trakt.tv",
     "description": "Trakt.tv and Netflix integration"
   },
   "appDescription": {
     "message": "Sync Netflix history to Trakt.tv",
     "description": "Automatically sync watched movies and shows on Netflix to Trakt.tv"
+  },
+  "appShortName": {
+    "message": "traktflix",
+    "description": "Trakt.tv and Netflix integration"
   }
 }
