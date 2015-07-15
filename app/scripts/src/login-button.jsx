@@ -1,6 +1,7 @@
 var React = require('react');
 var Settings = require('./settings.js');
 var Request = require('./request.js');
+var Utils = require('./utils.js');
 
 module.exports = React.createClass({
   getAuthorizeUrl: function() {
@@ -12,8 +13,7 @@ module.exports = React.createClass({
     return code.split('=')[1];
   },
   handleClick: function(e) {
-    chrome.identity.launchWebAuthFlow(
-      { 'url': this.getAuthorizeUrl(), 'interactive': true },
+    Utils.Oauth.launch({ 'url': this.getAuthorizeUrl(), 'interactive': true },
       function(redirectUrl) {
         var params = {
           code: this.getCode(redirectUrl),

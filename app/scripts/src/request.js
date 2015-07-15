@@ -1,10 +1,11 @@
 'use strict';
 
 var Settings = require('./settings.js');
+var Utils = require('./utils.js');
 
 module.exports = {
   send: function(options) {
-    chrome.storage.sync.get(function(data) {
+    Utils.Storage.get(function(data) {
       var xhr = new XMLHttpRequest();
 
       xhr.open(options.method, options.url, true);

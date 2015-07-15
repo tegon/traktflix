@@ -5,23 +5,21 @@ var LoginButton = require('./login-button.jsx');
 var Header = require('./header.jsx');
 var Watching = require('./watching.jsx');
 var Info = require('./info.jsx');
+var Utils = require('./utils.js');
 
 module.exports = React.createClass({
   getInitialState: function() {
     return { logged: false, currentPage: 'watch' };
   },
   getAccessToken: function() {
-    chrome.storage.sync.get(function(data) {
+    Utils.Storage.get(function(data) {
       this.setState({ logged: !!data.access_token });
       this.getCurrentItem();
     }.bind(this));
   },
   getCurrentItem: function() {
-    chrome.tabs.query({ url: 'http://*.netflix.com/*' }, function(tabs) {
-      chrome.tabs.sendMessage(tabs[0].id, { getCurrentItem: true }, function(response) {
-        console.log(response);
-        this.setState({ item: response.item, scrobble: response.scrobble });
-      }.bind(this));
+    Utils.Messages.send('getCurrentItem', function(response) {
+      this.setState({ item: response.item, scrobble: response.scrobble });
     }.bind(this));
   },
   componentDidMount: function() {
@@ -31,7 +29,7 @@ module.exports = React.createClass({
     this.setState({ currentPage: 'about' });
   },
   logoutClicked: function(e) {
-    chrome.storage.sync.clear(function() {
+    Utils.Storage.clear(function() {
       this.setState({ logged: false, currentPage: 'watch' });
     }.bind(this));
   },
@@ -49,7 +47,7 @@ module.exports = React.createClass({
     console.error('Token failed', status, response);
   },
   saveToken: function(options, callback) {
-    chrome.storage.sync.set(options, function() {
+    Utils.Storage.set({ access_token: options.access_token }, function() {
       this.setState({ logged: !!options.access_token });
     }.bind(this));
   },

@@ -4,6 +4,7 @@ var WatchEvents = require('./watch-events.js');
 var ItemParser = require('./item-parser.js');
 var Search = require('./search.js');
 var Scrobble = require('./scrobble.js');
+var Utils = require('./utils.js');
 
 var currentItem = null;
 var scrobble;
@@ -40,7 +41,6 @@ function onScrobbleError() {
 
 function storeItem(item) {
   currentItem = item;
-  chrome.storage.sync.set({ item: JSON.stringify(currentItem) }, function() {});
 
   if (currentItem !== null) {
     var search = new Search({ item: currentItem });
@@ -87,8 +87,6 @@ if (location.href.match(/watch/)) {
   ItemParser.start(storeItem);
 }
 
-chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
-  if (request.getCurrentItem) {
-    return sendResponse({ item: currentItem, scrobble: scrobble });
-  }
+Utils.Messages.addListener('getCurrentItem', function(){
+  return { item: currentItem, scrobble: scrobble };
 });
