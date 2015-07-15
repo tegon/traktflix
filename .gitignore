@@ -9,3 +9,4 @@ package
 build
 *.log
 .DS_Store
+app/scripts/src/settings.js
