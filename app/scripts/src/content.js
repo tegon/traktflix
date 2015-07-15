@@ -10,8 +10,6 @@ var currentItem = null;
 var scrobble;
 
 function onSearchSuccess(response) {
-  console.log('success', response);
-
   var scrobbleItem;
 
   if (currentItem.type === 'show') {
@@ -28,15 +26,14 @@ function onSearchSuccess(response) {
 }
 
 function onSearchError(status, response) {
-  console.log('error', status, response);
+  console.error('traktflix: Search error', status, response);
 }
 
 function onScrobbleSuccess() {
-  console.log('onScrobbleSuccess');
 }
 
 function onScrobbleError() {
-  console.log('onScrobbleError');
+  console.error('traktflix: Scrobble error');
 }
 
 function storeItem(item) {
@@ -57,7 +54,6 @@ function storeItem(item) {
 
 var events = new WatchEvents({
   onPlay: function(e) {
-    console.log('onPlay', e);
     if (currentItem === null && scrobble === undefined) {
       ItemParser.start(storeItem);
     } else {
@@ -66,14 +62,12 @@ var events = new WatchEvents({
   },
 
   onPause: function(e) {
-    console.log('onPause', e);
     if (scrobble != undefined) {
       scrobble.pause({ success: onScrobbleSuccess, error: onScrobbleError });
     }
   },
 
   onStop: function(e) {
-    console.log('onStop', e);
     if (scrobble !== undefined) {
       scrobble.stop({ success: onScrobbleSuccess, error: onScrobbleError });
     }

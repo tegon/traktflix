@@ -44,7 +44,7 @@ module.exports = React.createClass({
     this.saveToken(JSON.parse(response));
   },
   onTokenFailed: function(status, response) {
-    console.error('Token failed', status, response);
+    console.error('traktflix: Get Token failed', status, response);
   },
   saveToken: function(options, callback) {
     Utils.Storage.set({ access_token: options.access_token }, function() {
