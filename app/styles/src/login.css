@@ -1,0 +1,13 @@
+.login-wrapper .mdl-button {
+  margin: 100px 58px;
+}
+
+.login-wrapper .spinner-wrapper {
+  position: absolute;
+  padding: 104px 118px;
+  background: rgba(0, 0, 0, 0.5);
+  height: 25px;
+  width: 280px;
+  z-index: 2;
+  border-radius: 2px;
+}
