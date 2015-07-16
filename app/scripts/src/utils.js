@@ -5,6 +5,8 @@ function Utils() {}
 Utils.Storage = Utils.Storage || {};
 Utils.Messages = Utils.Messages || {};
 Utils.Oauth = Utils.Oauth || {};
+Utils.Analytics = Utils.Analytics || {};
+Utils.Analytics.tracker = undefined;
 
 Utils.Storage.set = function set(options, callback) {
   chrome.storage.local.set(options, callback);
@@ -34,6 +36,22 @@ Utils.Messages.addListener = function addListener(type, callback) {
 
 Utils.Oauth.launch = function launch(options, callback) {
   chrome.identity.launchWebAuthFlow(options, callback);
+};
+
+Utils.Analytics.setTracker = function setTracker(tracker) {
+  Utils.Analytics.tracker = tracker;
+};
+
+Utils.Analytics.sendView = function sendView(view) {
+  if (Utils.Analytics.tracker !== undefined) {
+    Utils.Analytics.tracker.sendAppView(view);
+  }
+};
+
+Utils.Analytics.sendEvent = function sendEvent(name, value) {
+  if (Utils.Analytics.tracker !== undefined) {
+    Utils.Analytics.tracker.sendEvent(name, value);
+  }
 };
 
 module.exports = Utils;

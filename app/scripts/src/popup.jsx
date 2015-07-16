@@ -2,6 +2,11 @@
 
 var React = require('react');
 var App = require('./app.jsx');
+var Settings = require('./settings.js');
+var Utils = require('./utils.js');
+var service = analytics.getService('traktflix');
+var tracker = service.getTracker(Settings.analyticsId);
+Utils.Analytics.setTracker(tracker);
 
 var notWatchingMessages = [
   'You\'re not watching anything right now :/',

@@ -31,7 +31,8 @@
         "identity",
         "cookies",
         "storage",
-        "http://trakt.tv/*"
+        "http://trakt.tv/*",
+        "https://www.google-analytics.com/"
     ],
     "web_accessible_resources": [
         "images/svg/*.svg"

@@ -42,6 +42,8 @@ module.exports = React.createClass({
     this.props.onTokenFailed(status, response);
   },
   render: function() {
+    Utils.Analytics.sendView('Login');
+
     var className = 'mdl-button mdl-js-button mdl-button--raised' +
       ' mdl-button--colored mdl-js-ripple-effect login';
     return(

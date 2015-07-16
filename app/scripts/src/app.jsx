@@ -29,6 +29,7 @@ module.exports = React.createClass({
     this.setState({ currentPage: 'about' });
   },
   logoutClicked: function(e) {
+    Utils.Analytics.sendEvent('Logout', false);
     Utils.Storage.clear(function() {
       this.setState({ logged: false, currentPage: 'watch' });
     }.bind(this));
@@ -41,9 +42,11 @@ module.exports = React.createClass({
     }
   },
   onTokenSuccess: function(response) {
+    Utils.Analytics.sendEvent('TokenSuccess', true);
     this.saveToken(JSON.parse(response));
   },
   onTokenFailed: function(status, response) {
+    Utils.Analytics.sendEvent('TokenFailed', false);
     console.error('traktflix: Get Token failed', status, response);
   },
   saveToken: function(options, callback) {
@@ -53,7 +56,6 @@ module.exports = React.createClass({
   },
   render: function() {
     var content;
-
     if (this.state.currentPage === 'about') {
       content = <Info messages={this.props.aboutMessages} />
     } else {
