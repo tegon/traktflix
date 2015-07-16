@@ -6,16 +6,56 @@ var Header = require('./header.jsx');
 var Watching = require('./watching.jsx');
 var Info = require('./info.jsx');
 var Utils = require('./utils.js');
+var Settings = require('./settings.js');
+var Request = require('./request.js');
 
 module.exports = React.createClass({
   getInitialState: function() {
     return { logged: false, currentPage: 'watch' };
   },
-  getAccessToken: function() {
+  checkUserLogin: function() {
+    Request.send({
+      method: 'GET',
+      url: Settings.apiUri + '/users/requests',
+      success: this.userIsLogged,
+      error: this.userIsNotLogged
+    });
+  },
+  userIsLogged: function(response) {
     Utils.Storage.get(function(data) {
       this.setState({ logged: !!data.access_token });
       this.getCurrentItem();
     }.bind(this));
+  },
+  userIsNotLogged: function(status, response) {
+    if (status === 401) {
+      Utils.Storage.get(function(data) {
+        if (data.refresh_token) {
+          var params = {
+            refresh_token: data.refresh_token,
+            client_id: Settings.clientId,
+            client_secret: Settings.clientSecret,
+            redirect_uri: Settings.redirectUri,
+            grant_type: 'refresh_token'
+          };
+
+          this.requestRefreshToken(params);
+        } else {
+          this.onTokenFailed(status, response);
+        }
+      }.bind(this));
+    } else {
+      this.onTokenFailed(status, response);
+    }
+  },
+  requestRefreshToken: function(params) {
+    Request.send({
+      method: 'POST',
+      url: Settings.apiUri + '/oauth/token',
+      params: params,
+      success: this.onTokenSuccess,
+      error: this.onTokenFailed
+    });
   },
   getCurrentItem: function() {
     Utils.Messages.send('getCurrentItem', function(response) {
@@ -23,7 +63,7 @@ module.exports = React.createClass({
     }.bind(this));
   },
   componentDidMount: function() {
-    this.getAccessToken();
+    this.checkUserLogin();
   },
   aboutClicked: function(e) {
     this.setState({ currentPage: 'about' });
@@ -47,10 +87,11 @@ module.exports = React.createClass({
   },
   onTokenFailed: function(status, response) {
     Utils.Analytics.sendEvent('TokenFailed', false);
+    Utils.Storage.clear(function() {});
     console.error('traktflix: Get Token failed', status, response);
   },
   saveToken: function(options, callback) {
-    Utils.Storage.set({ access_token: options.access_token }, function() {
+    Utils.Storage.set(options, function() {
       this.setState({ logged: !!options.access_token });
     }.bind(this));
   },
