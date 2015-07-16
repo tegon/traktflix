@@ -29,7 +29,7 @@ module.exports = React.createClass({
   requestToken: function(params) {
     Request.send({
       method: 'POST',
-      url: Settings.tokenUri,
+      url: Settings.apiUri + '/oauth/token',
       params: params,
       success: this.onTokenSuccess,
       error: this.onTokenFailed

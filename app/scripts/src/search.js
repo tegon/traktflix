@@ -1,11 +1,12 @@
 'use strict';
 
 var Request = require('./request.js');
+var Settings = require('./settings.js');
 
 function Search(options) {
   this.item = options.item;
-  this.url = 'https://api-v2launch.trakt.tv/search';
-  this.episodeUrl = 'https://api-v2launch.trakt.tv/shows';
+  this.url = Settings.apiUri + '/search';
+  this.episodeUrl = Settings.apiUri + '/shows';
 };
 
 Search.prototype = {

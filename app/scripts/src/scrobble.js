@@ -1,11 +1,12 @@
 'use strict';
 
 var Request = require('./request.js');
+var Settings = require('./settings.js');
 
 function Scrobble(options) {
   this.item = options.item;
   this.scrubber = options.scrubber;
-  this.url = 'https://api-v2launch.trakt.tv/scrobble';
+  this.url = Settings.apiUri + '/scrobble';
 };
 
 Scrobble.prototype = {
