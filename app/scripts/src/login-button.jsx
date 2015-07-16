@@ -4,8 +4,10 @@ var Request = require('./request.js');
 var Utils = require('./utils.js');
 
 module.exports = React.createClass({
-  getInitialState: function() {
-    return { loading: false }
+  componentDidUpdate: function() {
+    if (this.props.refreshToken) {
+      this.requestRefreshToken();
+    }
   },
   getAuthorizeUrl: function() {
     return Settings.authorizeUri + '?client_id=' + Settings.clientId +
@@ -16,7 +18,7 @@ module.exports = React.createClass({
     return code.split('=')[1];
   },
   handleClick: function(e) {
-    this.setState({ loading: true });
+    this.props.onClick(e);
 
     Utils.Oauth.launch({ 'url': this.getAuthorizeUrl(), 'interactive': true },
       function(redirectUrl) {
@@ -40,27 +42,36 @@ module.exports = React.createClass({
       error: this.onTokenFailed
     });
   },
+  requestRefreshToken: function() {
+    var params = {
+      refresh_token: this.props.refreshToken,
+      client_id: Settings.clientId,
+      client_secret: Settings.clientSecret,
+      redirect_uri: Settings.redirectUri,
+      grant_type: 'refresh_token'
+    };
+
+    this.requestToken(params);
+  },
   onTokenSuccess: function(response) {
-    this.setState({ loading: false });
     this.props.onTokenSuccess(response);
   },
   onTokenFailed: function(status, response) {
-    this.setState({ loading: false });
     this.props.onTokenFailed(status, response);
+  },
+  getSpinnerStyle: function() {
+    if (this.props.loading) {
+      return { display: 'block' };
+    } else {
+      return { display: 'none' };
+    }
   },
   render: function() {
     Utils.Analytics.sendView('Login');
-    var spinnerStyle;
-
-    if (this.state.loading) {
-      spinnerStyle = { display: 'block' };
-    } else {
-      spinnerStyle = { display: 'none' };
-    }
 
     return(
       <div className="login-wrapper">
-        <div className="spinner-wrapper" style={spinnerStyle}>
+        <div className="spinner-wrapper" style={this.getSpinnerStyle()}>
           <div className="mdl-spinner mdl-spinner--single-color mdl-js-spinner is-active" />
         </div>
         <button onClick={this.handleClick} className="mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect">

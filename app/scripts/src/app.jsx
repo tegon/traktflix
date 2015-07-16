@@ -11,7 +11,7 @@ var Request = require('./request.js');
 
 module.exports = React.createClass({
   getInitialState: function() {
-    return { logged: false, currentPage: 'watch' };
+    return { logged: false, currentPage: 'watch', loading: false, refreshToken: false };
   },
   checkUserLogin: function() {
     Request.send({
@@ -31,15 +31,7 @@ module.exports = React.createClass({
     if (status === 401) {
       Utils.Storage.get(function(data) {
         if (data.refresh_token) {
-          var params = {
-            refresh_token: data.refresh_token,
-            client_id: Settings.clientId,
-            client_secret: Settings.clientSecret,
-            redirect_uri: Settings.redirectUri,
-            grant_type: 'refresh_token'
-          };
-
-          this.requestRefreshToken(params);
+          this.setState({ refreshToken: data.refresh_token, loading: true });
         } else {
           this.onTokenFailed(status, response);
         }
@@ -47,15 +39,6 @@ module.exports = React.createClass({
     } else {
       this.onTokenFailed(status, response);
     }
-  },
-  requestRefreshToken: function(params) {
-    Request.send({
-      method: 'POST',
-      url: Settings.apiUri + '/oauth/token',
-      params: params,
-      success: this.onTokenSuccess,
-      error: this.onTokenFailed
-    });
   },
   getCurrentItem: function() {
     Utils.Messages.send('getCurrentItem', function(response) {
@@ -74,6 +57,9 @@ module.exports = React.createClass({
       this.setState({ logged: false, currentPage: 'watch' });
     }.bind(this));
   },
+  onLoginClicked: function(e) {
+    this.setState({ loading: true });
+  },
   onItemClicked: function(e) {
     if (e.target.classList.contains('item-About')) {
       this.aboutClicked(e);
@@ -82,10 +68,12 @@ module.exports = React.createClass({
     }
   },
   onTokenSuccess: function(response) {
+    this.setState({ loading: false, refreshToken: false });
     Utils.Analytics.sendEvent('TokenSuccess', true);
     this.saveToken(JSON.parse(response));
   },
   onTokenFailed: function(status, response) {
+    this.setState({ loading: false, refreshToken: false });
     Utils.Analytics.sendEvent('TokenFailed', false);
     Utils.Storage.clear(function() {});
     console.error('traktflix: Get Token failed', status, response);
@@ -108,7 +96,8 @@ module.exports = React.createClass({
         }
       } else {
         content =
-          <LoginButton
+          <LoginButton refreshToken={this.state.refreshToken}
+            loading={this.state.loading} onClick={this.onLoginClicked}
             onTokenSuccess={this.onTokenSuccess} onTokenFailed={this.onTokenFailed} />
       }
     }
