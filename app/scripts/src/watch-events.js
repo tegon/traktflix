@@ -1,7 +1,14 @@
 'use strict';
 
+var KEY_SPACE = 32;
+var KEY_ENTER = 13;
+var KEY_PAGE_UP = 33;
+var KEY_PAGE_DOWN = 34;
+var KEY_LEFT_ARROW = 37;
+var KEY_RIGHT_ARROW = 39;
+
 function WatchEvents(options) {
-  this.mainView = document.querySelector('#appMountPoint');
+  this.document = document;
   this.onPlay = options.onPlay;
   this.onPause = options.onPause;
   this.onStop = options.onStop;
@@ -9,17 +16,19 @@ function WatchEvents(options) {
 
 WatchEvents.prototype = {
   startListeners: function() {
-    this.addPlayPauseListener();
+    this.addClickListener();
     this.addStopListener();
+    this.addKeyUpListener();
   },
 
   stopListeners: function() {
-    this.removePlayPauseListener();
+    this.removeClickListener();
     this.removeStopListener();
+    this.removeKeyUpListener();
   },
 
-  addPlayPauseListener: function() {
-    this.mainView.addEventListener('click', this.onPlayPause.bind(this), false);
+  addClickListener: function() {
+    this.document.addEventListener('click', this.onClick.bind(this), false);
   },
 
   addStopListener: function() {
@@ -30,7 +39,11 @@ WatchEvents.prototype = {
     }.bind(this)
   },
 
-  onPlayPause: function(e) {
+  addKeyUpListener: function() {
+    this.document.addEventListener('keyup', this.onKeyUp.bind(this), false);
+  },
+
+  onClick: function(e) {
     if (e.target.classList.contains('play')) {
       this.onPlay(e);
     } else if (e.target.classList.contains('pause')) {
@@ -42,20 +55,52 @@ WatchEvents.prototype = {
         e.target.className === 'player-scrubber-progress-completed' ||
         e.target.className === 'player-scrubber-progress-buffered' ||
         e.target.className === 'player-scrubber-progress') {
-      this.onPlay(e);
+      this.isPlaying() ? this.onPause(e) : this.onPlay(e);
     } else if (e.target.className === 'play-icon') {
       this.onStop(e);
       this.onPlay(e);
     }
   },
 
-  removePlayPauseListener: function() {
-    this.mainView.removeEventListener('click', this.onPlayPause.bind(this), false);
+  onKeyUp: function(e) {
+    switch (e.which) {
+      case KEY_SPACE:
+        this.isPlaying() ? this.onPause(e) : this.onPlay(e);
+        break;
+      case KEY_ENTER:
+        this.isPlaying() ? this.onPause(e) : this.onPlay(e);
+        break;
+      case KEY_PAGE_UP:
+        this.onPlay(e);
+        break;
+      case KEY_PAGE_DOWN:
+        this.onPause(e);
+        break;
+      case KEY_LEFT_ARROW:
+        this.onPause(e);
+        break;
+      case KEY_RIGHT_ARROW:
+        this.onPause(e);
+        break;
+    }
+  },
+
+  removeClickListener: function() {
+    this.document.removeEventListener('click', this.onClick.bind(this), false);
   },
 
   removeStopListener: function() {
     window.onpopstate = null;
     window.onbeforeunload = null;
+  },
+
+  removeKeyUpListener: function() {
+    this.document.removeEventListener('keyup', this.onKeyUp.bind(this), false);
+  },
+
+  isPlaying: function() {
+    var playPause = this.document.querySelector('.player-play-pause');
+    return playPause && playPause.classList.contains('play');
   }
 };
 
