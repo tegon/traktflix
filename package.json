@@ -27,7 +27,7 @@
     "jest-cli": "0.4.15"
   },
   "engines": {
-    "node": ">=0.11.13"
+    "node": "0.10.40"
   },
   "scripts": {
     "serve": "./node_modules/gulp/bin/gulp.js --env development",
