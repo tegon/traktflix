@@ -55,15 +55,19 @@ Utils.Analytics.setTracker = function setTracker(tracker) {
 };
 
 Utils.Analytics.sendView = function sendView(view) {
-  if (Utils.Analytics.tracker !== undefined) {
-    Utils.Analytics.tracker.sendAppView(view);
-  }
+  chrome.runtime.sendMessage({ type: 'sendView', view: view });
 };
 
 Utils.Analytics.sendEvent = function sendEvent(name, value) {
-  if (Utils.Analytics.tracker !== undefined) {
-    Utils.Analytics.tracker.sendEvent(name, value);
-  }
+  chrome.runtime.sendMessage({ type: 'sendEvent', name: name, value: value });
+};
+
+Utils.Analytics.addListener = function addListener(type, callback) {
+  chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
+    if (request.type == type) {
+      callback.call(this, request);
+    }
+  });
 };
 
 module.exports = Utils;

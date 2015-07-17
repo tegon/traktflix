@@ -10,6 +10,7 @@ var currentItem = null;
 var scrobble;
 
 function onSearchSuccess(response) {
+  Utils.Analytics.sendEvent('onSearchSuccess', currentItem.title);
   var scrobbleItem;
 
   if (currentItem.type === 'show') {
@@ -23,17 +24,21 @@ function onSearchSuccess(response) {
     scrubber: currentItem.getScrubber.bind(currentItem)
   });
   setActiveIcon();
+  Utils.Analytics.sendEvent('Scrobble', 'onPlay');
   scrobble.start({ success: onScrobbleSuccess, error: onScrobbleError });
 }
 
 function onSearchError(status, response) {
+  Utils.Analytics.sendEvent('onSearchError', status);
   console.error('traktflix: Search error', status, response);
 }
 
 function onScrobbleSuccess() {
+  Utils.Analytics.sendEvent('Scrobble', 'onSuccess');
 }
 
 function onScrobbleError() {
+  Utils.Analytics.sendEvent('Scrobble', 'onError');
   console.error('traktflix: Scrobble error');
 }
 
@@ -59,6 +64,7 @@ var events = new WatchEvents({
       ItemParser.start(storeItem);
     } else {
       setActiveIcon();
+      Utils.Analytics.sendEvent('Scrobble', 'onPlay');
       scrobble.start({ success: onScrobbleSuccess, error: onScrobbleError });
     }
   },
@@ -66,6 +72,7 @@ var events = new WatchEvents({
   onPause: function(e) {
     if (scrobble != undefined) {
       setInactiveIcon();
+      Utils.Analytics.sendEvent('Scrobble', 'onPause');
       scrobble.pause({ success: onScrobbleSuccess, error: onScrobbleError });
     }
   },
@@ -73,6 +80,7 @@ var events = new WatchEvents({
   onStop: function(e) {
     if (scrobble !== undefined) {
       setInactiveIcon();
+      Utils.Analytics.sendEvent('Scrobble', 'onStop');
       scrobble.stop({ success: onScrobbleSuccess, error: onScrobbleError });
     }
     storeItem(null);

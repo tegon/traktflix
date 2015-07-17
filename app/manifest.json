@@ -11,8 +11,10 @@
     "default_locale": "en",
     "background": {
         "scripts": [
+            "scripts/build/vendor.js",
             "scripts/build/background.js"
-        ]
+        ],
+        "persistent": false
     },
     "content_scripts": [
         {
