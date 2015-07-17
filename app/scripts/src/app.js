@@ -1,10 +1,10 @@
 'use strict';
 
 var React = require('react');
-var LoginButton = require('./login-button.jsx');
-var Header = require('./header.jsx');
-var Watching = require('./watching.jsx');
-var Info = require('./info.jsx');
+var LoginButton = require('./login-button.js');
+var Header = require('./header.js');
+var Watching = require('./watching.js');
+var Info = require('./info.js');
 var Utils = require('./utils.js');
 var Settings = require('./settings.js');
 var Request = require('./request.js');

@@ -1,7 +1,7 @@
 'use strict';
 
 var React = require('react');
-var App = require('./app.jsx');
+var App = require('./app.js');
 
 var notWatchingMessages = [
   'You\'re not watching anything right now :/',

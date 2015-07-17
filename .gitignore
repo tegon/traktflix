@@ -12,3 +12,4 @@ build
 app/scripts/src/settings.js
 *.crx
 *.pem
+coverage

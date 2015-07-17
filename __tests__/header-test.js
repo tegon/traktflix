@@ -1,25 +1,21 @@
-jest.dontMock('../app/scripts/src/header.jsx');
+jest.dontMock('../app/scripts/src/header');
 
 var React = require('react/addons');
-var Header = require('../app/scripts/src/header.jsx');
+var Header = require('../app/scripts/src/header');
 var TestUtils = React.addons.TestUtils;
+var items = [{ name: 'Foo', show: true }, { name: 'Bar', show: false }];
+var clickMock = jest.genMockFunction();
+var header = TestUtils.renderIntoDocument(<Header items={items} onItemClicked={clickMock} />);
+var nav = TestUtils.findRenderedDOMComponentWithTag(header, 'nav');
 
 describe('Header', function() {
   it('Renders the items', function() {
-    var items = [{ name: 'Foo', show: true }, { name: 'Bar', show: true }];
-    var clickMock = jest.genMockFunction();
-    var header = TestUtils.renderIntoDocument(<Header items={items} onItemClicked={clickMock} />);
-    var nav = TestUtils.findRenderedDOMComponentWithTag(header, 'nav');
     items.map(function(item, index) {
       expect(item.name).toBe(nav.getDOMNode().children[index].textContent)
     });
   });
 
   it('Does not render items with show: false', function() {
-    var items = [{ name: 'Foo', show: true }, { name: 'Bar', show: false }];
-    var clickMock = jest.genMockFunction();
-    var header = TestUtils.renderIntoDocument(<Header items={items} onItemClicked={clickMock} />);
-    var nav = TestUtils.findRenderedDOMComponentWithTag(header, 'nav');
     items.map(function(item, index) {
       if (item.show) {
         expect(nav.getDOMNode().children[index].style.display).toBe('block');
@@ -29,15 +25,16 @@ describe('Header', function() {
     });
   });
 
+  it('Calls on click function', function() {
+    React.addons.TestUtils.Simulate.click(nav.getDOMNode().children[0]);
+    expect(clickMock.mock.calls.length).toEqual(1);
+  });
+
   it('has the correct html classes', function() {
-    var items = [{ name: 'Foo', show: true }, { name: 'Bar', show: false }];
-    var clickMock = jest.genMockFunction();
-    var header = TestUtils.renderIntoDocument(<Header items={items} onItemClicked={clickMock} />);
     var headerTag = TestUtils.findRenderedDOMComponentWithTag(header, 'header');
     var headerRow = TestUtils.findRenderedDOMComponentWithClass(header, 'mdl-layout__header-row');
     var title = TestUtils.findRenderedDOMComponentWithTag(header, 'span');
     var spacer = TestUtils.findRenderedDOMComponentWithClass(header, 'mdl-layout-spacer');
-    var nav = TestUtils.findRenderedDOMComponentWithTag(header, 'nav');
     expect(headerTag.getDOMNode().className).toBe('mdl-layout__header mdl-shadow--7dp');
     expect(headerRow.getDOMNode().className).toBe('mdl-layout__header-row');
     expect(title.getDOMNode().className).toBe('mdl-layout-title');
