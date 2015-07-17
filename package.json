@@ -2,6 +2,11 @@
   "name": "traktflix",
   "version": "1.0.0",
   "description": "Trakt.tv and Netflix integration",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/tegon/traktflix.git"
+  },
+  "private": true,
   "dependencies": {
     "react": "0.13.3"
   },
