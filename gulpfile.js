@@ -18,9 +18,9 @@ var defaultOptions = {
 
 var options = minimist(process.argv.slice(2), defaultOptions);
 
-gulp.task('browserify-popup', function() {
+function buildJS(src) {
     var bundler = browserify({
-        entries: 'app/scripts/src/popup.jsx',
+        entries: 'app/scripts/src/' + src.name + src.extension,
         transform: [reactify],
         debug: options.env !== 'production',
         cache: {}, packageCache: {}, fullPaths: true
@@ -30,61 +30,44 @@ gulp.task('browserify-popup', function() {
     return watcher
     .on('update', function () {
         var updateStart = Date.now();
-        console.log('Updating popup!');
+        console.log('Updating ' + src.name);
         watcher.bundle()
-        .pipe(source('popup.js'))
+        .pipe(source(src.name + '.js'))
         .pipe(buffer())
         .pipe(gulpif(options.env === 'production', uglify()))
         .pipe(gulp.dest('./app/scripts/build/'));
-        console.log('popup updated!', (Date.now() - updateStart) + 'ms');
+        console.log(src.name + ' updated!', (Date.now() - updateStart) + 'ms');
     })
     .bundle()
-    .pipe(source('popup.js'))
+    .pipe(source(src.name + '.js'))
     .pipe(buffer())
     .pipe(gulpif(options.env === 'production', uglify()))
     .pipe(gulp.dest('./app/scripts/build/'));
-});
+}
 
-gulp.task('browserify-content', function() {
-    var bundler = browserify({
-        entries: 'app/scripts/src/content.js',
-        debug: options.env !== 'production',
-        cache: {}, packageCache: {}, fullPaths: true
-    });
-    var watcher  = watchify(bundler);
-
-    return watcher
-    .on('update', function () {
-        var updateStart = Date.now();
-        console.log('Updating content!');
-        watcher.bundle()
-        .pipe(source('content.js'))
-        .pipe(buffer())
-        .pipe(gulpif(options.env === 'production', uglify()))
-        .pipe(gulp.dest('./app/scripts/build/'));
-        console.log('content updated!', (Date.now() - updateStart) + 'ms');
-    })
-    .bundle()
-    .pipe(source('content.js'))
-    .pipe(buffer())
-    .pipe(gulpif(options.env === 'production', uglify()))
-    .pipe(gulp.dest('./app/scripts/build/'));
-});
-
-gulp.task('css', function () {
-    gulp.watch('app/styles/src/*.css', function () {
-        return gulp.src('app/styles/src/*.css')
-            .pipe(autoprefixer())
-            .pipe(gulpif(options.env === 'production', minifycss()))
-            .pipe(concat('popup.css'))
-            .pipe(gulp.dest('app/styles/build'))
-    });
-
+function buildCss() {
     return gulp.src('app/styles/src/*.css')
         .pipe(autoprefixer())
         .pipe(gulpif(options.env === 'production', minifycss()))
         .pipe(concat('popup.css'))
-        .pipe(gulp.dest('app/styles/build'))
+        .pipe(gulp.dest('app/styles/build'));
+}
+
+gulp.task('browserify-popup', function() {
+    buildJS({ name: 'popup', extension: '.jsx' });
+});
+
+gulp.task('browserify-content', function() {
+    buildJS({ name: 'content', extension: '.js' });
+});
+
+gulp.task('browserify-background', function() {
+    buildJS({ name: 'background', extension: '.js' });
+});
+
+gulp.task('css', function () {
+    gulp.watch('app/styles/src/*.css', buildCss);
+    buildCss();
 });
 
 gulp.task('vendor', function() {
@@ -97,4 +80,10 @@ gulp.task('vendor', function() {
     .pipe(gulp.dest('app/scripts/build'))
 });
 
-gulp.task('default', ['browserify-popup', 'browserify-content', 'css', 'vendor']);
+gulp.task('default', [
+    'browserify-popup',
+    'browserify-content',
+    'browserify-background',
+    'css',
+    'vendor'
+]);

@@ -20,10 +20,22 @@ Utils.Storage.clear = function clear(callback) {
   chrome.storage.local.clear(callback);
 };
 
-Utils.Messages.send = function send(type, callback) {
+Utils.Messages._sendTabsMessage = function _sendTabsMessage(type, callback) {
   chrome.tabs.query({ url: 'http://*.netflix.com/*' }, function(tabs) {
     chrome.tabs.sendMessage(tabs[0].id, { type: type }, callback);
   });
+};
+
+Utils.Messages._sendRuntimeMessage = function _sendRuntimeMessage(type, callback) {
+  chrome.runtime.sendMessage({ type: type }, callback);
+};
+
+Utils.Messages.send = function send(type, callback) {
+  if (chrome.tabs) {
+    Utils.Messages._sendTabsMessage(type, callback);
+  } else {
+    Utils.Messages._sendRuntimeMessage(type, callback);
+  }
 };
 
 Utils.Messages.addListener = function addListener(type, callback) {

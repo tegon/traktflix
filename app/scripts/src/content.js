@@ -22,6 +22,7 @@ function onSearchSuccess(response) {
     item: scrobbleItem,
     scrubber: currentItem.getScrubber.bind(currentItem)
   });
+  setActiveIcon();
   scrobble.start({ success: onScrobbleSuccess, error: onScrobbleError });
 }
 
@@ -57,18 +58,21 @@ var events = new WatchEvents({
     if (currentItem === null && scrobble === undefined) {
       ItemParser.start(storeItem);
     } else {
+      setActiveIcon();
       scrobble.start({ success: onScrobbleSuccess, error: onScrobbleError });
     }
   },
 
   onPause: function(e) {
     if (scrobble != undefined) {
+      setInactiveIcon();
       scrobble.pause({ success: onScrobbleSuccess, error: onScrobbleError });
     }
   },
 
   onStop: function(e) {
     if (scrobble !== undefined) {
+      setInactiveIcon();
       scrobble.stop({ success: onScrobbleSuccess, error: onScrobbleError });
     }
     storeItem(null);
@@ -84,3 +88,11 @@ if (location.href.match(/watch/)) {
 Utils.Messages.addListener('getCurrentItem', function(){
   return { item: currentItem, scrobble: scrobble };
 });
+
+function setInactiveIcon() {
+  Utils.Messages.send('setInactiveIcon', function() {});
+}
+
+function setActiveIcon() {
+  Utils.Messages.send('setActiveIcon', function() {});
+}

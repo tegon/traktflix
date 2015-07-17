@@ -9,6 +9,11 @@
         "128": "images/traktflix-icon-128.png"
     },
     "default_locale": "en",
+    "background": {
+        "scripts": [
+            "scripts/build/background.js"
+        ]
+    },
     "content_scripts": [
         {
             "matches": [
