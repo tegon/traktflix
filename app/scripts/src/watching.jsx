@@ -23,6 +23,8 @@ module.exports = React.createClass({
     }
   },
   render: function() {
+    Utils.Analytics.sendView('Watching ' + this.getText());
+
     return(
       <div className="mdl-card mdl-shadow--2dp watching-card-thumb" style={this.thumbStyle()}>
         <div className="mdl-card__title mdl-card--expand"></div>
