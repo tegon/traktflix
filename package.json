@@ -30,7 +30,7 @@
     "node": "0.10.40"
   },
   "scripts": {
-    "serve": "./node_modules/gulp/bin/gulp.js --env development",
+    "start": "./node_modules/gulp/bin/gulp.js --env development",
     "build": "./node_modules/gulp/bin/gulp.js --env production",
     "test": "jest"
   },

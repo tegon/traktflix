@@ -8,6 +8,7 @@ var Info = require('./info.js');
 var Utils = require('./utils.js');
 var Settings = require('./settings.js');
 var Request = require('./request.js');
+var Button = require('./button.js');
 
 module.exports = React.createClass({
   getInitialState: function() {
@@ -86,7 +87,10 @@ module.exports = React.createClass({
   render: function() {
     var content;
     if (this.state.currentPage === 'about') {
-      content = <Info messages={this.props.aboutMessages} />
+      content =
+        <Info messages={this.props.aboutMessages}>
+          <Button url={'https://github.com/tegon/traktflix'} text={'Read more'} />
+        </Info>
     } else {
       if (this.state.logged) {
         if (this.state.item && this.state.scrobble) {

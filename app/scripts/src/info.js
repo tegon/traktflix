@@ -16,6 +16,7 @@ module.exports = React.createClass({
         <div className="mdl-card__title mdl-card--expand">
           <h4>{message}</h4>
         </div>
+        {this.props.children}
       </div>
     );
   }
