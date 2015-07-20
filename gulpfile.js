@@ -10,6 +10,8 @@ var gulpif = require('gulp-if');
 var minimist = require('minimist');
 var autoprefixer = require('gulp-autoprefixer');
 var minifycss = require('gulp-minify-css');
+var zip = require('gulp-zip');
+var exit = require('gulp-exit');
 
 var defaultOptions = {
   string: 'env',
@@ -80,6 +82,19 @@ gulp.task('vendor', function() {
     .pipe(gulp.dest('app/scripts/build'))
 });
 
+gulp.task('zip', function() {
+    gulp.src([
+        'app/**',
+        '!app/scripts/src/**',
+        '!app/scripts/vendor/**',
+        '!app/styles/src/**',
+        '!app/styles/vendor/**'
+    ])
+    .pipe(zip('app.zip'))
+    .pipe(gulp.dest('./'))
+    .pipe(exit())
+});
+
 gulp.task('default', [
     'browserify-popup',
     'browserify-content',
@@ -87,3 +102,5 @@ gulp.task('default', [
     'css',
     'vendor'
 ]);
+
+gulp.task('build', ['default', 'zip']);

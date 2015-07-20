@@ -13,29 +13,33 @@
   "devDependencies": {
     "browserify": "10.2.4",
     "gulp": "3.9.0",
-    "vinyl-source-stream": "1.1.0",
-    "reactify": "1.1.1",
-    "gulp-concat": "2.6.0",
-    "watchify": "3.2.3",
-    "gulp-uglify": "1.2.0",
-    "vinyl-buffer": "1.0.0",
-    "gulp-if": "1.2.5",
-    "minimist": "1.1.1",
     "gulp-autoprefixer": "2.3.1",
+    "gulp-concat": "2.6.0",
+    "gulp-exit": "0.0.2",
+    "gulp-if": "1.2.5",
     "gulp-minify-css": "1.2.0",
+    "gulp-uglify": "1.2.0",
+    "gulp-zip": "^3.0.2",
+    "jest-cli": "0.4.15",
+    "minimist": "1.1.1",
     "react-tools": "0.13.3",
-    "jest-cli": "0.4.15"
+    "reactify": "1.1.1",
+    "vinyl-buffer": "1.0.0",
+    "vinyl-source-stream": "1.1.0",
+    "watchify": "3.2.3"
   },
   "engines": {
     "node": "0.10.40"
   },
   "scripts": {
     "start": "./node_modules/gulp/bin/gulp.js --env development",
-    "build": "./node_modules/gulp/bin/gulp.js --env production",
+    "build": "./node_modules/gulp/bin/gulp.js build --env production",
     "test": "jest"
   },
   "jest": {
     "scriptPreprocessor": "<rootDir>/preprocessor.js",
-    "unmockedModulePathPatterns": ["<rootDir>/node_modules/react"]
+    "unmockedModulePathPatterns": [
+      "<rootDir>/node_modules/react"
+    ]
   }
 }
