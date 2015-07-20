@@ -12,7 +12,7 @@ var notWatchingMessages = [
 ];
 
 var aboutMessages = [
-  'Netflix rocks,\n Trakt.tv rocks,\n So... trakflix ROCKS WITH LASERS!'
+  'Bringing your Netflix history to Trakt.tv'
 ];
 
 React.render(

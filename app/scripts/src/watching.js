@@ -1,6 +1,7 @@
 'use strict';
 
 var React = require('react');
+var Utils = require('./utils.js');
 
 module.exports = React.createClass({
   thumbUrl: function() {
