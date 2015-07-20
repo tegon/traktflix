@@ -46,10 +46,6 @@ Utils.Messages.addListener = function addListener(type, callback) {
   });
 };
 
-Utils.Oauth.launch = function launch(options, callback) {
-  chrome.identity.launchWebAuthFlow(options, callback);
-};
-
 Utils.Analytics.setTracker = function setTracker(tracker) {
   Utils.Analytics.tracker = tracker;
 };

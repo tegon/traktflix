@@ -13,8 +13,7 @@
         "scripts": [
             "scripts/build/vendor.js",
             "scripts/build/background.js"
-        ],
-        "persistent": false
+        ]
     },
     "content_scripts": [
         {
@@ -38,6 +37,7 @@
         "identity",
         "cookies",
         "storage",
+        "unlimitedStorage",
         "http://trakt.tv/*",
         "https://www.google-analytics.com/"
     ],

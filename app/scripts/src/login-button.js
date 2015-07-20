@@ -2,56 +2,28 @@ var React = require('react');
 var Settings = require('./settings.js');
 var Request = require('./request.js');
 var Utils = require('./utils.js');
+var Oauth = require('./oauth.js');
 
 module.exports = React.createClass({
   componentDidUpdate: function() {
     if (this.props.refreshToken) {
-      this.requestRefreshToken();
+      Oauth.requestRefreshToken(this.props.refreshToken, this.oauthCallback);
     }
   },
   getAuthorizeUrl: function() {
     return Settings.authorizeUri + '?client_id=' + Settings.clientId +
       '&redirect_uri=' + Settings.redirectUri + '&response_type=code';
   },
-  getCode: function(redirectUrl) {
-    var code = redirectUrl.split('?')[1];
-    return code.split('=')[1];
-  },
   handleClick: function(e) {
     this.props.onClick(e);
-
-    Utils.Oauth.launch({ 'url': this.getAuthorizeUrl(), 'interactive': true },
-      function(redirectUrl) {
-        var params = {
-          code: this.getCode(redirectUrl),
-          client_id: Settings.clientId,
-          client_secret: Settings.clientSecret,
-          redirect_uri: Settings.redirectUri,
-          grant_type: 'authorization_code'
-        };
-
-        this.requestToken(params);
-    }.bind(this));
+    Oauth.authorize(this.getAuthorizeUrl(), this.oauthCallback);
   },
-  requestToken: function(params) {
-    Request.send({
-      method: 'POST',
-      url: Settings.apiUri + '/oauth/token',
-      params: params,
-      success: this.onTokenSuccess,
-      error: this.onTokenFailed
-    });
-  },
-  requestRefreshToken: function() {
-    var params = {
-      refresh_token: this.props.refreshToken,
-      client_id: Settings.clientId,
-      client_secret: Settings.clientSecret,
-      redirect_uri: Settings.redirectUri,
-      grant_type: 'refresh_token'
-    };
-
-    this.requestToken(params);
+  oauthCallback: function(err, response, status) {
+    if (err) {
+      this.onTokenFailed(status, response);
+    } else {
+      this.onTokenSuccess(response);
+    }
   },
   onTokenSuccess: function(response) {
     this.props.onTokenSuccess(response);
