@@ -5,11 +5,6 @@ var Utils = require('./utils.js');
 var Oauth = require('./oauth.js');
 
 module.exports = React.createClass({
-  componentDidUpdate: function() {
-    if (this.props.refreshToken) {
-      Oauth.requestRefreshToken(this.props.refreshToken, this.oauthCallback);
-    }
-  },
   getAuthorizeUrl: function() {
     return Settings.authorizeUri + '?client_id=' + Settings.clientId +
       '&redirect_uri=' + Settings.redirectUri + '&response_type=code';
@@ -20,16 +15,10 @@ module.exports = React.createClass({
   },
   oauthCallback: function(err, response, status) {
     if (err) {
-      this.onTokenFailed(status, response);
+      this.props.onTokenSuccess(response);
     } else {
-      this.onTokenSuccess(response);
+      this.props.onTokenFailed(status, response);
     }
-  },
-  onTokenSuccess: function(response) {
-    this.props.onTokenSuccess(response);
-  },
-  onTokenFailed: function(status, response) {
-    this.props.onTokenFailed(status, response);
   },
   getSpinnerStyle: function() {
     if (this.props.loading) {

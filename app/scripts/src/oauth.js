@@ -36,7 +36,9 @@ Oauth.requestToken = function requestToken(params, sendResponse) {
       });
     },
     error: function(status, response) {
-      sendResponse.call(this, true, response, status);
+      Utils.Storage.clear(function() {
+        sendResponse.call(this, true, response, status);
+      });
     }
   });
 };
@@ -50,7 +52,34 @@ Oauth.requestRefreshToken = function requestRefreshToken(refreshToken, sendRespo
     grant_type: 'refresh_token'
   };
 
-  Oauth.requestToken(params);
-}
+  Oauth.requestToken(params, sendResponse);
+};
+
+Oauth.getUserInfo = function getUserInfo(success, error) {
+  Request.send({
+    method: 'GET',
+    url: Settings.apiUri + '/users/me',
+    success: success,
+    error: function(status, response) {
+      if (status === 401) {
+        Utils.Storage.get(function(data) {
+          if (data.refresh_token) {
+            Oauth.requestRefreshToken(data.refresh_token, function(err, response, status) {
+              if (err) {
+                error.call(this, status, response);
+              } else {
+                success.call(this, response);
+              }
+            });
+          } else {
+            error.call(this, status, response);
+          }
+        }.bind(this));
+      } else {
+        error.call(this, status, response);
+      }
+    }
+  });
+};
 
 module.exports = Oauth;

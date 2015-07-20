@@ -9,18 +9,14 @@ var Utils = require('./utils.js');
 var Settings = require('./settings.js');
 var Request = require('./request.js');
 var Button = require('./button.js');
+var Oauth = require('./oauth.js');
 
 module.exports = React.createClass({
   getInitialState: function() {
-    return { logged: false, currentPage: 'watch', loading: false, refreshToken: false };
+    return { logged: false, currentPage: 'watch', loading: false };
   },
   checkUserLogin: function() {
-    Request.send({
-      method: 'GET',
-      url: Settings.apiUri + '/users/requests',
-      success: this.userIsLogged,
-      error: this.userIsNotLogged
-    });
+    Oauth.getUserInfo(this.userIsLogged, this.userIsNotLogged);
   },
   userIsLogged: function(response) {
     Utils.Storage.get(function(data) {
@@ -29,17 +25,7 @@ module.exports = React.createClass({
     }.bind(this));
   },
   userIsNotLogged: function(status, response) {
-    if (status === 401) {
-      Utils.Storage.get(function(data) {
-        if (data.refresh_token) {
-          this.setState({ refreshToken: data.refresh_token, loading: true });
-        } else {
-          this.onTokenFailed(status, response);
-        }
-      }.bind(this));
-    } else {
-      this.onTokenFailed(status, response);
-    }
+    this.onTokenFailed(status, response);
   },
   getCurrentItem: function() {
     Utils.Messages.send('getCurrentItem', function(response) {
@@ -69,20 +55,14 @@ module.exports = React.createClass({
     }
   },
   onTokenSuccess: function(response) {
-    this.setState({ loading: false, refreshToken: false });
+    var options = JSON.parse(response);
+    this.setState({ loading: false, logged: !!options.access_token });
     Utils.Analytics.sendEvent('TokenSuccess', true);
-    this.saveToken(JSON.parse(response));
   },
   onTokenFailed: function(status, response) {
-    this.setState({ loading: false, refreshToken: false });
+    this.setState({ loading: false });
     Utils.Analytics.sendEvent('TokenFailed', false);
-    Utils.Storage.clear(function() {});
     console.error('traktflix: Get Token failed', status, response);
-  },
-  saveToken: function(options, callback) {
-    Utils.Storage.set(options, function() {
-      this.setState({ logged: !!options.access_token });
-    }.bind(this));
   },
   render: function() {
     var content;
@@ -100,7 +80,7 @@ module.exports = React.createClass({
         }
       } else {
         content =
-          <LoginButton refreshToken={this.state.refreshToken}
+          <LoginButton
             loading={this.state.loading} onClick={this.onLoginClicked}
             onTokenSuccess={this.onTokenSuccess} onTokenFailed={this.onTokenFailed} />
       }
