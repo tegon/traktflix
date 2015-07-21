@@ -23,11 +23,11 @@ module.exports = React.createClass({
     chrome.runtime.sendMessage({ type: 'sendAppView', view: 'Login' });
 
     return(
-      <div className="login-wrapper">
-        <div className="spinner-wrapper" style={this.getSpinnerStyle()}>
-          <div className="mdl-spinner mdl-spinner--single-color mdl-js-spinner is-active" />
+      <div className='login-wrapper'>
+        <div className='spinner-wrapper' style={this.getSpinnerStyle()}>
+          <div className='mdl-spinner mdl-spinner--single-color mdl-js-spinner is-active' />
         </div>
-        <button onClick={this.handleClick} className="mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect">
+        <button onClick={this.handleClick} className='mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect'>
           Login with Trakt.tv
         </button>
       </div>
