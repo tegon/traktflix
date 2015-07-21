@@ -4,13 +4,12 @@ var WatchEvents = require('./watch-events.js');
 var ItemParser = require('./item-parser.js');
 var Search = require('./search.js');
 var Scrobble = require('./scrobble.js');
-var Utils = require('./utils.js');
 
 var currentItem = null;
 var scrobble;
 
 function onSearchSuccess(response) {
-  Utils.Analytics.sendEvent('onSearchSuccess', currentItem.title);
+  chrome.runtime.sendMessage({ type: 'sendEvent', name: 'onSearchSuccess', value: currentItem.title });
   var scrobbleItem;
 
   if (currentItem.type === 'show') {
@@ -24,21 +23,21 @@ function onSearchSuccess(response) {
     scrubber: currentItem.getScrubber.bind(currentItem)
   });
   setActiveIcon();
-  Utils.Analytics.sendEvent('Scrobble', 'onPlay');
+  chrome.runtime.sendMessage({ type: 'sendEvent', name: 'Scrobble', value: 'onPlay' });
   scrobble.start({ success: onScrobbleSuccess, error: onScrobbleError });
 }
 
 function onSearchError(status, response) {
-  Utils.Analytics.sendEvent('onSearchError', status);
+  chrome.runtime.sendMessage({ type: 'sendEvent', name: 'onSearchError', value: status });
   console.error('traktflix: Search error', status, response);
 }
 
 function onScrobbleSuccess() {
-  Utils.Analytics.sendEvent('Scrobble', 'onSuccess');
+  chrome.runtime.sendMessage({ type: 'sendEvent', name: 'Scrobble', value: 'onSuccess' });
 }
 
 function onScrobbleError() {
-  Utils.Analytics.sendEvent('Scrobble', 'onError');
+  chrome.runtime.sendMessage({ type: 'sendEvent', name: 'Scrobble', value: 'onError' });
   console.error('traktflix: Scrobble error');
 }
 
@@ -64,7 +63,7 @@ var events = new WatchEvents({
       ItemParser.start(storeItem);
     } else {
       setActiveIcon();
-      Utils.Analytics.sendEvent('Scrobble', 'onPlay');
+      chrome.runtime.sendMessage({ type: 'sendEvent', name: 'Scrobble', value: 'onPlay' });
       scrobble.start({ success: onScrobbleSuccess, error: onScrobbleError });
     }
   },
@@ -72,7 +71,7 @@ var events = new WatchEvents({
   onPause: function(e) {
     if (scrobble != undefined) {
       setInactiveIcon();
-      Utils.Analytics.sendEvent('Scrobble', 'onPause');
+      chrome.runtime.sendMessage({ type: 'sendEvent', name: 'Scrobble', value: 'onPause' });
       scrobble.pause({ success: onScrobbleSuccess, error: onScrobbleError });
     }
   },
@@ -80,7 +79,7 @@ var events = new WatchEvents({
   onStop: function(e) {
     if (scrobble !== undefined) {
       setInactiveIcon();
-      Utils.Analytics.sendEvent('Scrobble', 'onStop');
+      chrome.runtime.sendMessage({ type: 'sendEvent', name: 'Scrobble', value: 'onStop' });
       scrobble.stop({ success: onScrobbleSuccess, error: onScrobbleError });
     }
     storeItem(null);
@@ -93,14 +92,16 @@ if (location.href.match(/watch/)) {
   ItemParser.start(storeItem);
 }
 
-Utils.Messages.addListener('getCurrentItem', function(){
-  return { item: currentItem, scrobble: scrobble };
+chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
+  if (request.type == 'getCurrentItem') {
+    sendResponse({ item: currentItem, scrobble: scrobble });
+  }
 });
 
 function setInactiveIcon() {
-  Utils.Messages.send('setInactiveIcon', function() {});
+  chrome.runtime.sendMessage({ type: 'setInactiveIcon' });
 }
 
 function setActiveIcon() {
-  Utils.Messages.send('setActiveIcon', function() {});
+  chrome.runtime.sendMessage({ type: 'setActiveIcon' });
 }

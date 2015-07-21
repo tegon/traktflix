@@ -1,7 +1,6 @@
 'use strict';
 
 var React = require('react');
-var Utils = require('./utils.js');
 
 module.exports = React.createClass({
   getRandomMessage: function() {
@@ -9,7 +8,7 @@ module.exports = React.createClass({
   },
   render: function() {
     var message = this.getRandomMessage();
-    Utils.Analytics.sendView('Info ' + message);
+    chrome.runtime.sendMessage({ type: 'sendAppView', view: 'Info ' + message });
 
     return(
       <div className="mdl-card mdl-shadow--2dp info-card">

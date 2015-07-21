@@ -5,11 +5,8 @@ var LoginButton = require('./login-button.js');
 var Header = require('./header.js');
 var Watching = require('./watching.js');
 var Info = require('./info.js');
-var Utils = require('./utils.js');
-var Settings = require('./settings.js');
-var Request = require('./request.js');
 var Button = require('./button.js');
-var Oauth = require('./oauth.js');
+var Oauth = require('../../oauth.js');
 
 module.exports = React.createClass({
   getInitialState: function() {
@@ -19,7 +16,7 @@ module.exports = React.createClass({
     Oauth.getUserInfo(this.userIsLogged, this.userIsNotLogged);
   },
   userIsLogged: function(response) {
-    Utils.Storage.get(function(data) {
+    chrome.storage.local.get(function(data) {
       this.setState({ logged: !!data.access_token });
       this.getCurrentItem();
     }.bind(this));
@@ -28,8 +25,14 @@ module.exports = React.createClass({
     this.onTokenFailed(status, response);
   },
   getCurrentItem: function() {
-    Utils.Messages.send('getCurrentItem', function(response) {
-      this.setState({ item: response.item, scrobble: response.scrobble });
+    chrome.tabs.query({ url: 'http://*.netflix.com/*' }, function(tabs) {
+      if (tabs.length > 0) {
+        chrome.tabs.sendMessage(tabs[0].id, { type: 'getCurrentItem' }, function(response) {
+          if (response) {
+            this.setState({ item: response.item, scrobble: response.scrobble });
+          }
+        }.bind(this));
+      }
     }.bind(this));
   },
   componentDidMount: function() {
@@ -39,8 +42,8 @@ module.exports = React.createClass({
     this.setState({ currentPage: 'about' });
   },
   logoutClicked: function(e) {
-    Utils.Analytics.sendEvent('Logout', false);
-    Utils.Storage.clear(function() {
+    chrome.runtime.sendMessage({ type: 'sendEvent', name: 'Logout', value: false });
+    chrome.storage.local.clear(function() {
       this.setState({ logged: false, currentPage: 'watch' });
     }.bind(this));
   },
@@ -57,11 +60,11 @@ module.exports = React.createClass({
   onTokenSuccess: function(response) {
     var options = JSON.parse(response);
     this.setState({ loading: false, logged: !!options.access_token });
-    Utils.Analytics.sendEvent('TokenSuccess', true);
+    chrome.runtime.sendMessage({ type: 'sendEvent', name: 'TokenSuccess', value:  true });
   },
   onTokenFailed: function(status, response) {
     this.setState({ loading: false });
-    Utils.Analytics.sendEvent('TokenFailed', false);
+    chrome.runtime.sendMessage({ type: 'sendEvent', name: 'TokenFailed', value: false });
     console.error('traktflix: Get Token failed', status, response);
   },
   render: function() {

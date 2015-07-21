@@ -1,23 +1,15 @@
 var React = require('react');
-var Settings = require('./settings.js');
-var Request = require('./request.js');
-var Utils = require('./utils.js');
-var Oauth = require('./oauth.js');
 
 module.exports = React.createClass({
-  getAuthorizeUrl: function() {
-    return Settings.authorizeUri + '?client_id=' + Settings.clientId +
-      '&redirect_uri=' + Settings.redirectUri + '&response_type=code';
-  },
   handleClick: function(e) {
     this.props.onClick(e);
-    Oauth.authorize(this.getAuthorizeUrl(), this.oauthCallback);
+    chrome.runtime.sendMessage({ type: 'launchAuthorize' }, this.oauthCallback);
   },
-  oauthCallback: function(err, response, status) {
-    if (err) {
-      this.props.onTokenSuccess(response);
+  oauthCallback: function(options) {
+    if (options.err) {
+      this.props.onTokenFailed(options.status, options.response);
     } else {
-      this.props.onTokenFailed(status, response);
+      this.props.onTokenSuccess(options.response);
     }
   },
   getSpinnerStyle: function() {
@@ -28,7 +20,7 @@ module.exports = React.createClass({
     }
   },
   render: function() {
-    Utils.Analytics.sendView('Login');
+    chrome.runtime.sendMessage({ type: 'sendAppView', view: 'Login' });
 
     return(
       <div className="login-wrapper">

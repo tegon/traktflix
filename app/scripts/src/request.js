@@ -1,32 +1,45 @@
 'use strict';
 
 var Settings = require('./settings.js');
-var Utils = require('./utils.js');
 
-module.exports = {
-  send: function(options) {
-    Utils.Storage.get(function(data) {
-      var xhr = new XMLHttpRequest();
+function Request() {};
 
-      xhr.open(options.method, options.url, true);
-      xhr.setRequestHeader('Content-type', 'application/json');
-      xhr.setRequestHeader('trakt-api-key', Settings.clientId);
-      xhr.setRequestHeader('trakt-api-version', Settings.apiVersion);
-
-      if (data.access_token) {
-        xhr.setRequestHeader('Authorization', 'Bearer ' + data.access_token);
-      }
-
-      xhr.onload = function() {
-        if (this.status >= 200 && this.status < 400) {
-          options.success.call(this, this.response);
-        } else {
-          options.error.call(this, this.status, this.responseText);
-        }
-      };
-      xhr.onerror = options.error;
-
-      xhr.send(JSON.stringify(options.params));
-    });
+Request.getCurrentToken = function(callback) {
+  if (chrome.tabs) { // Not in content_script. Safe to call chrome.storage
+    chrome.storage.local.get('access_token', callback);
+  } else { // Send a message so that background script handle chrome.storage calls
+    chrome.runtime.sendMessage({ type: 'getCurrentToken' }, callback);
   }
 };
+
+Request._send = function(options, accessToken) {
+  var xhr = new XMLHttpRequest();
+
+  xhr.open(options.method, options.url, true);
+  xhr.setRequestHeader('Content-type', 'application/json');
+  xhr.setRequestHeader('trakt-api-key', Settings.clientId);
+  xhr.setRequestHeader('trakt-api-version', Settings.apiVersion);
+
+  if (accessToken) {
+    xhr.setRequestHeader('Authorization', 'Bearer ' + accessToken);
+  }
+
+  xhr.onload = function() {
+    if (this.status >= 200 && this.status < 400) {
+      options.success.call(this, this.response);
+    } else {
+      options.error.call(this, this.status, this.responseText);
+    }
+  };
+  xhr.onerror = options.error;
+
+  xhr.send(JSON.stringify(options.params));
+};
+
+Request.send = function(options) {
+  Request.getCurrentToken(function(data) {
+    Request._send(options, data.access_token);
+  }.bind(this));
+};
+
+module.exports = Request;

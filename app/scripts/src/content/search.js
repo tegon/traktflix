@@ -1,7 +1,7 @@
 'use strict';
 
-var Request = require('./request.js');
-var Settings = require('./settings.js');
+var Request = require('../request.js');
+var Settings = require('../settings.js');
 
 function Search(options) {
   this.item = options.item;

@@ -1,7 +1,6 @@
 'use strict';
 
 var React = require('react');
-var Utils = require('./utils.js');
 
 module.exports = React.createClass({
   thumbUrl: function() {
@@ -24,7 +23,7 @@ module.exports = React.createClass({
     }
   },
   render: function() {
-    Utils.Analytics.sendView('Watching ' + this.getText());
+    chrome.runtime.sendMessage({ type: 'sendAppView', view: 'Watching ' + this.getText() });
 
     return(
       <div className="mdl-card mdl-shadow--2dp watching-card-thumb" style={this.thumbStyle()}>
