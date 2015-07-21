@@ -4,7 +4,7 @@ var Settings = require('./settings.js');
 
 function Request() {};
 
-Request.getCurrentToken = function(callback) {
+Request.getCurrentToken = function getCurrentToken(callback) {
   if (chrome.tabs) { // Not in content_script. Safe to call chrome.storage
     chrome.storage.local.get('access_token', callback);
   } else { // Send a message so that background script handle chrome.storage calls
@@ -12,7 +12,7 @@ Request.getCurrentToken = function(callback) {
   }
 };
 
-Request._send = function(options, accessToken) {
+Request._send = function _send(options, accessToken) {
   var xhr = new XMLHttpRequest();
 
   xhr.open(options.method, options.url, true);
@@ -36,7 +36,7 @@ Request._send = function(options, accessToken) {
   xhr.send(JSON.stringify(options.params));
 };
 
-Request.send = function(options) {
+Request.send = function send(options) {
   Request.getCurrentToken(function(data) {
     Request._send(options, data.access_token);
   }.bind(this));

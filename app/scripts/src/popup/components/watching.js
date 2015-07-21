@@ -4,17 +4,10 @@ var React = require('react');
 
 module.exports = React.createClass({
   thumbUrl: function() {
-    if (this.props.item.type === 'show') {
-      return this.props.scrobble.item.episode.images.screenshot.thumb;
+    if (this.props.item.images.poster) {
+      return this.props.item.images.poster.thumb;
     } else {
-      return this.props.scrobble.item.movie.images.poster.thumb;
-    }
-  },
-  getText: function() {
-    if (this.props.item.type === 'show') {
-      return this.props.item.title + ' - ' + this.props.item.epTitle;
-    } else {
-      return this.props.item.title;
+      return this.props.item.images.screenshot.thumb;
     }
   },
   thumbStyle: function() {
@@ -23,13 +16,13 @@ module.exports = React.createClass({
     }
   },
   render: function() {
-    chrome.runtime.sendMessage({ type: 'sendAppView', view: 'Watching ' + this.getText() });
+    chrome.runtime.sendMessage({ type: 'sendAppView', view: 'Watching ' + this.props.item.title });
 
     return(
       <div className="mdl-card mdl-shadow--2dp watching-card-thumb" style={this.thumbStyle()}>
         <div className="mdl-card__title mdl-card--expand"></div>
         <div className="mdl-card__actions">
-          <span className="watching-card-thumb__title">{this.getText()}</span>
+          <span className="watching-card-thumb__title">{this.props.item.title}</span>
         </div>
       </div>
     );

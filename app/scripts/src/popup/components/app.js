@@ -29,7 +29,7 @@ module.exports = React.createClass({
       if (tabs.length > 0) {
         chrome.tabs.sendMessage(tabs[0].id, { type: 'getCurrentItem' }, function(response) {
           if (response) {
-            this.setState({ item: response.item, scrobble: response.scrobble });
+            this.setState({ item: response.item });
           }
         }.bind(this));
       }
@@ -76,8 +76,8 @@ module.exports = React.createClass({
         </Info>
     } else {
       if (this.state.logged) {
-        if (this.state.item && this.state.scrobble) {
-          content = <Watching item={this.state.item} scrobble={this.state.scrobble} />
+        if (this.state.item) {
+          content = <Watching item={this.state.item} />
         } else {
           content = <Info messages={this.props.notWatchingMessages} />
         }

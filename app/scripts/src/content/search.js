@@ -66,7 +66,15 @@ Search.prototype = {
         options.error.call(this, status, response);
       }
     });
+  },
+
+  find: function(options) {
+    if (this.item.type == 'show') {
+      this.findEpisode(options);
+    } else {
+      this.findMovie(options);
+    }
   }
-}
+};
 
 module.exports = Search;

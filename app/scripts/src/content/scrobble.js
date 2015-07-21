@@ -4,9 +4,16 @@ var Request = require('../request.js');
 var Settings = require('../settings.js');
 
 function Scrobble(options) {
-  this.item = options.item;
+  if (options.type === 'show') {
+    this.item = { episode: options.response };
+  } else {
+    this.item = { movie: options.response.movie };
+  }
+
   this.scrubber = options.scrubber;
   this.url = Settings.apiUri + '/scrobble';
+  this.success = options.success;
+  this.error = options.error;
 };
 
 Scrobble.prototype = {
@@ -18,21 +25,21 @@ Scrobble.prototype = {
       method: 'POST',
       url: this.url + options.path,
       params: params,
-      success: options.success,
-      error: options.error
+      success: this.success,
+      error: this.error
     });
   },
 
-  start: function(options) {
-    this._sendScrobble({ path: '/start', success: options.success, error: options.error });
+  start: function() {
+    this._sendScrobble({ path: '/start' });
   },
 
-  pause: function(options) {
-    this._sendScrobble({ path: '/pause', success: options.success, error: options.error });
+  pause: function() {
+    this._sendScrobble({ path: '/pause' });
   },
 
-  stop: function(options) {
-    this._sendScrobble({ path: '/stop', success: options.success, error: options.error });
+  stop: function() {
+    this._sendScrobble({ path: '/stop' });
   }
 };
 

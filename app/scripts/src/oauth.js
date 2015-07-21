@@ -5,17 +5,17 @@ var Request = require('./request.js');
 
 function Oauth() {};
 
-Oauth.getAuthorizeUrl = function() {
+Oauth.getAuthorizeUrl = function getAuthorizeUrl() {
   return Settings.authorizeUri + '?client_id=' + Settings.clientId +
     '&redirect_uri=' + Settings.redirectUri + '&response_type=code';
 };
 
-Oauth.getCode = function(redirectUrl) {
+Oauth.getCode = function getCode(redirectUrl) {
   var code = redirectUrl.split('?')[1];
   return code.split('=')[1];
 };
 
-Oauth.requestToken = function(params, sendResponse) {
+Oauth.requestToken = function requestToken(params, sendResponse) {
   Request.send({
     method: 'POST',
     url: Settings.apiUri + '/oauth/token',
@@ -34,7 +34,7 @@ Oauth.requestToken = function(params, sendResponse) {
   });
 };
 
-Oauth.authorize = function(sendResponse) {
+Oauth.authorize = function authorize(sendResponse) {
   chrome.identity.launchWebAuthFlow({ url: Oauth.getAuthorizeUrl(), interactive: true },
     function(redirectUrl) {
       var params = {
@@ -50,7 +50,7 @@ Oauth.authorize = function(sendResponse) {
   );
 };
 
-Oauth.requestRefreshToken = function(refreshToken, sendResponse) {
+Oauth.requestRefreshToken = function requestRefreshToken(refreshToken, sendResponse) {
   var params = {
     refresh_token: refreshToken,
     client_id: Settings.clientId,
@@ -62,7 +62,7 @@ Oauth.requestRefreshToken = function(refreshToken, sendResponse) {
   Oauth.requestToken(params, sendResponse);
 };
 
-Oauth.getUserInfo = function(success, error) {
+Oauth.getUserInfo = function getUserInfo(success, error) {
   Request.send({
     method: 'GET',
     url: Settings.apiUri + '/users/me',
