@@ -1,0 +1,45 @@
+jest.dontMock('../../../app/scripts/src/popup/components/watching');
+
+var React = require('react/addons');
+var Watching = require('../../../app/scripts/src/popup/components/watching');
+var helper = require('../../test-helper.js');
+var TestUtils = React.addons.TestUtils;
+var item = { title: 'Item title', images: { poster: { thumb: 'http://images.foo/poster' } } };
+var watching = TestUtils.renderIntoDocument(<Watching item={item} />);
+
+describe('Watching', function() {
+  it('Text content equals props.item.title', function() {
+    var span = TestUtils.findRenderedDOMComponentWithTag(watching, 'span');
+    expect(item.title).toContain(span.getDOMNode().textContent);
+  });
+
+  it('Card div must have thumb in background style', function() {
+    var card = TestUtils.findRenderedDOMComponentWithClass(watching, 'mdl-card mdl-shadow--2dp watching-card-thumb');
+    expect(card.getDOMNode().style['background-image']).toBe('url(http://images.foo/poster)');
+  });
+
+  it('Has the correct html classes', function() {
+    var card = TestUtils.findRenderedDOMComponentWithClass(watching, 'mdl-card mdl-shadow--2dp watching-card-thumb');
+    var cardTitle = TestUtils.findRenderedDOMComponentWithClass(watching, 'mdl-card__title mdl-card--expand');
+    var cardActions = TestUtils.findRenderedDOMComponentWithClass(watching, 'mdl-card__actions');
+    var thumbTitle = TestUtils.findRenderedDOMComponentWithClass(watching, 'watching-card-thumb__title');
+    expect(card.getDOMNode().className).toBe('mdl-card mdl-shadow--2dp watching-card-thumb');
+    expect(cardTitle.getDOMNode().className).toBe('mdl-card__title mdl-card--expand');
+    expect(cardActions.getDOMNode().className).toBe('mdl-card__actions');
+    expect(thumbTitle.getDOMNode().className).toBe('watching-card-thumb__title');
+  });
+
+  it('Sends analytics appView', function() {
+    expect(chrome.runtime.sendMessage.mock.calls.length).toEqual(1);
+    expect(chrome.runtime.sendMessage.mock.calls[0]).toEqual([{
+      type: 'sendAppView', view: 'Watching ' + item.title
+    }]);
+  });
+
+  it('When item does not have an poster image, screenshot is used', function() {
+    var item = { title: 'Item title', images: { screenshot: { thumb: 'http://images.foo/screenshot' } } };
+    var watching = TestUtils.renderIntoDocument(<Watching item={item} />);
+    var card = TestUtils.findRenderedDOMComponentWithClass(watching, 'mdl-card mdl-shadow--2dp watching-card-thumb');
+    expect(card.getDOMNode().style['background-image']).toBe('url(http://images.foo/screenshot)');
+  });
+});
