@@ -1,7 +1,7 @@
-jest.dontMock('../app/scripts/src/header');
+jest.dontMock('../../../app/scripts/src/popup/components/header');
 
 var React = require('react/addons');
-var Header = require('../app/scripts/src/header');
+var Header = require('../../../app/scripts/src/popup/components/header');
 var TestUtils = React.addons.TestUtils;
 var items = [{ name: 'Foo', show: true }, { name: 'Bar', show: false }];
 var clickMock = jest.genMockFunction();

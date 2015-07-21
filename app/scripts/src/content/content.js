@@ -1,7 +1,7 @@
 'use strict';
 
 var WatchEvents = require('./watch-events.js');
-var ContentController = require('./content_controller.js');
+var ContentController = require('./content-controller.js');
 
 var controller = new ContentController();
 

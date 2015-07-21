@@ -1,5 +1,6 @@
-jest.dontMock('../app/scripts/src/item');
-var Item = require('../app/scripts/src/item');
+jest.dontMock('../../app/scripts/src/content/item');
+
+var Item = require('../../app/scripts/src/content/item');
 var rocky = new Item({
   title: 'Rocky', type: 'movie', scrubber: { style: { width: '25.22222%' } }
 });
