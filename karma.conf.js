@@ -1,5 +1,5 @@
 module.exports = function(config) {
-    config.set({
+    var configuration = {
 
         basePath: '',
 
@@ -36,5 +36,11 @@ module.exports = function(config) {
         },
 
         singleRun: true
-    });
+    };
+
+    if (process.env.TRAVIS) {
+        configuration.browsers = ['PhantomJS'];
+    }
+
+    config.set(configuration);
 };

@@ -27,3 +27,11 @@ window.chrome = {
 sinon.stub(window.chrome.storage.local, 'get', function(data, callback) {
   callback.call(this, {});
 });
+
+sinon.stub(window.chrome.storage.local, 'set', function(data, callback) {
+  callback.call(this, {});
+});
+
+sinon.stub(window.chrome.storage.local, 'clear', function(callback) {
+  callback.call(this, {});
+});
