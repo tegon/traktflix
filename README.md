@@ -6,7 +6,6 @@
 * [How this works?](#how-this-works)
 * [Limitations](#limitations)
 * [Problems](#problems)
-* [Installation](#installation)
 * [Development](#development)
 
 [![Build Status](https://travis-ci.org/tegon/traktflix.svg?branch=master)](https://travis-ci.org/tegon/traktflix)
