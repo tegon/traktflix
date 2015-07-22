@@ -41,13 +41,13 @@ module.exports = function(config) {
 
     if (process.env.TRAVIS) {
         configuration.browsers = ['PhantomJS'];
-        configuration.reporters.push('coverage', 'coveralls');
+        configuration.reporters.push('coverage');
         configuration.browserify.transform.push(istanbul({
             ignore: ['**/node_modules/**', '**/test/**'],
         }));
         configuration.coverageReporter = {
-            type : 'lcov',
-            dir : 'coverage/'
+            type: 'lcov',
+            dir: 'coverage/'
         };
     }
 
