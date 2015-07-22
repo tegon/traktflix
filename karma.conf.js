@@ -1,4 +1,5 @@
 module.exports = function(config) {
+    var istanbul = require('browserify-istanbul');
     var configuration = {
 
         basePath: '',
@@ -40,6 +41,10 @@ module.exports = function(config) {
 
     if (process.env.TRAVIS) {
         configuration.browsers = ['PhantomJS'];
+        configuration.reporters.push('coverage', 'coveralls');
+        configuration.browserify.transform.push(istanbul({
+            ignore: ['**/node_modules/**', '**/test/**'],
+        }));
     }
 
     config.set(configuration);
