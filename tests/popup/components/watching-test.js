@@ -1,8 +1,5 @@
-jest.dontMock('../../../app/scripts/src/popup/components/watching');
-
 var React = require('react/addons');
 var Watching = require('../../../app/scripts/src/popup/components/watching');
-var helper = require('../../test-helper.js');
 var TestUtils = React.addons.TestUtils;
 var item = { title: 'Item title', images: { poster: { thumb: 'http://images.foo/poster' } } };
 var watching = TestUtils.renderIntoDocument(<Watching item={item} />);
@@ -30,8 +27,9 @@ describe('Watching', function() {
   });
 
   it('Sends analytics appView', function() {
-    expect(chrome.runtime.sendMessage.mock.calls.length).toEqual(1);
-    expect(chrome.runtime.sendMessage.mock.calls[0]).toEqual([{
+    var watching = TestUtils.renderIntoDocument(<Watching item={item} />);
+    expect(chrome.runtime.sendMessage.callCount).toEqual(1);
+    expect(chrome.runtime.sendMessage.getCall(0).args).toEqual([{
       type: 'sendAppView', view: 'Watching ' + item.title
     }]);
   });

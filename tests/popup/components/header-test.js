@@ -1,11 +1,9 @@
-jest.dontMock('../../../app/scripts/src/popup/components/header');
-
 var React = require('react/addons');
 var Header = require('../../../app/scripts/src/popup/components/header');
 var TestUtils = React.addons.TestUtils;
 var items = [{ name: 'Foo', show: true }, { name: 'Bar', show: false }];
-var clickMock = jest.genMockFunction();
-var header = TestUtils.renderIntoDocument(<Header items={items} onItemClicked={clickMock} />);
+var click = sinon.stub();
+var header = TestUtils.renderIntoDocument(<Header items={items} onItemClicked={click} />);
 var nav = TestUtils.findRenderedDOMComponentWithTag(header, 'nav');
 
 describe('Header', function() {
@@ -27,7 +25,7 @@ describe('Header', function() {
 
   it('Calls on click function', function() {
     React.addons.TestUtils.Simulate.click(nav.getDOMNode().children[0]);
-    expect(clickMock.mock.calls.length).toEqual(1);
+    expect(click.callCount).toEqual(1);
   });
 
   it('has the correct html classes', function() {
