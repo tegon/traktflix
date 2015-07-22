@@ -6,7 +6,7 @@ var Settings = require('../settings.js');
 function Search(options) {
   this.item = options.item;
   this.url = Settings.apiUri + '/search';
-  this.episodeUrl = Settings.apiUri + '/shows';
+  this.showsUrl = Settings.apiUri + '/shows';
 };
 
 Search.prototype = {
@@ -15,7 +15,7 @@ Search.prototype = {
   },
 
   getEpisodeUrl: function(slug) {
-    return this.episodeUrl + '/' + slug + '/seasons/' + this.item.season
+    return this.showsUrl + '/' + slug + '/seasons/' + this.item.season
       + '/episodes/' + this.item.episode + '?extended=images';
   },
 

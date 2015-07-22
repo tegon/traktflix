@@ -1,14 +1,11 @@
 var Scrobble = require('../../app/scripts/src/content/scrobble');
 var Settings = require('../../app/scripts/src/settings.js');
-var scrubber;
-var success;
-var error;
+var scrubber = sinon.stub().returns(10.1);
+var success = sinon.spy();
+var error = sinon.spy();
 var scrobble;
 
 function createScrobble() {
-  scrubber = sinon.stub().returns(10.1);
-  success = sinon.spy();
-  error = sinon.spy();
   scrobble = new Scrobble({
     type: 'show',
     response: { foo: 'bar' },
@@ -29,6 +26,8 @@ describe('Scrobble', function() {
 
   afterEach(function() {
     this.xhr.restore();
+    error.reset();
+    success.reset();
   });
 
   it('sets properties in constructor', function() {
