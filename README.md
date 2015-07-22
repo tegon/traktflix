@@ -32,10 +32,12 @@ If you find any problems or have suggestions or questions, feel free to [open an
 
 ###Development
 Create an application in [Trakt API](http://trakt.tv/oauth/applications/new).
+
 Don't forget to check `/scrobble` permission.
-In `Redirect uri:` put https://{extensionId}.chromiumapp.org
-In `Javascript (cors) origins:` put https://{extensionId}.chromiumapp.org and 
-chrome-extension://{extensionId}
+
+In `Redirect uri:` put `https://{extensionId}.chromiumapp.org`
+
+In `Javascript (cors) origins:` put `https://{extensionId}.chromiumapp.org` and `chrome-extension://{extensionId}`
 
 Create a file `app/scripts/src/settings.js`, with this format:
 ```js
@@ -70,6 +72,7 @@ To get build version (generates app.zip, ready for chrome store)
 ```bash
 npm run build
 ```
+
 To run tests
 ```bash
 npm test
