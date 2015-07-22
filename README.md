@@ -5,7 +5,7 @@
 
 [![download](ChromeWebStore_BadgeWBorder_v2_206x58.png)](https://chrome.google.com/webstore/detail/bmoemkaigjgcgjjnpmdgkifndiidkeji/publish-delayed)
 
-###Table of Contents**
+###Table of Contents
 * [What is Trakt?](#what-is-trakt)
 * [Why do I need this extension?](#why-do-i-need-this-extension)
 * [How this works?](#how-this-works)
