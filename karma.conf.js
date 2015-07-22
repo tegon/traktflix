@@ -45,6 +45,10 @@ module.exports = function(config) {
         configuration.browserify.transform.push(istanbul({
             ignore: ['**/node_modules/**', '**/test/**'],
         }));
+        configuration.coverageReporter = {
+            type : 'lcov',
+            dir : 'coverage/'
+        };
     }
 
     config.set(configuration);
