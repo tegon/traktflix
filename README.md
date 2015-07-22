@@ -1,16 +1,17 @@
- ![traktflix](traktflix.png)
+![traktflix](traktflix.png)
+#Trakt.tv and Netflix integration
 
-###Trakt.tv and Netflix integration
+[![Build Status](https://travis-ci.org/tegon/traktflix.svg?branch=master)](https://travis-ci.org/tegon/traktflix)
+
+[![download](ChromeWebStore_BadgeWBorder_v2_206x58.png)](https://chrome.google.com/webstore/detail/bmoemkaigjgcgjjnpmdgkifndiidkeji/publish-delayed)
+
+###Table of Contents**
 * [What is Trakt?](#what-is-trakt)
 * [Why do I need this extension?](#why-do-i-need-this-extension)
 * [How this works?](#how-this-works)
 * [Limitations](#limitations)
 * [Problems](#problems)
 * [Development](#development)
-
-[![Build Status](https://travis-ci.org/tegon/traktflix.svg?branch=master)](https://travis-ci.org/tegon/traktflix)
-
-[![download](ChromeWebStore_BadgeWBorder_v2_206x58.png)](https://chrome.google.com/webstore/detail/bmoemkaigjgcgjjnpmdgkifndiidkeji/publish-delayed)
 
 ###What is Trakt?
 Automatically scrobble TV show episodes and movies you are watching to Trakt.tv! Keep a history of everything you've watched! Sign up for a free account at [Trakt.tv](http://trakt.tv) and get a ton of features.
