@@ -90,13 +90,13 @@ module.exports = React.createClass({
     }
 
     return(
-      <div className="mdl-layout mdl-layout--fixed-header">
+      <div className='mdl-layout mdl-layout--fixed-header'>
         <Header
           items={[{ name: 'About', show: true }, { name: 'Logout', show: this.state.logged }]}
           onItemClicked={this.onItemClicked} />
-        <main className="mdl-layout__content">
-          <div className="overlay"></div>
-          <div className="content">
+        <main className='mdl-layout__content'>
+          <div className='overlay'></div>
+          <div className='content'>
             {content}
           </div>
         </main>

@@ -11,8 +11,8 @@ module.exports = React.createClass({
     chrome.runtime.sendMessage({ type: 'sendAppView', view: 'Info ' + message });
 
     return(
-      <div className="mdl-card mdl-shadow--2dp info-card">
-        <div className="mdl-card__title mdl-card--expand">
+      <div className='mdl-card mdl-shadow--2dp info-card'>
+        <div className='mdl-card__title mdl-card--expand'>
           <h4>{message}</h4>
         </div>
         {this.props.children}
