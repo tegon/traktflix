@@ -7,4 +7,4 @@ before_script:
   - cp settings.js.dev app/scripts/src/settings.js
 script: "npm test"
 after_script:
-  - "cat ./coverage/**/lcov.info | ./node_modules/coveralls/bin/coveralls.js"
+  - "cat ./coverage/**/lcov.info | ./node_modules/coveralls/bin/coveralls.js --verbose"

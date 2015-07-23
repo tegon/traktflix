@@ -4,7 +4,7 @@ var ItemParser = require('./item-parser.js');
 var Search = require('./search.js');
 var Scrobble = require('./scrobble.js');
 
-function ContentController(options) {
+function ContentController() {
   this.item = null;
   this.scrobble = undefined;
 
