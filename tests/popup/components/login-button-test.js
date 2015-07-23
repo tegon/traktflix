@@ -62,13 +62,13 @@ describe('Login', function() {
   });
 
   it('Oauth callback calls onTokenFailed', function() {
-    loginButton.oauthCallback({ err: true, status: 401, response: '{}' });
+    loginButton.oauthCallback({ error: true, status: 401, response: '{}' });
     expect(onTokenFailed.callCount).toEqual(1);
     expect(onTokenFailed.getCall(0).args).toEqual([401, '{}']);
   });
 
   it('Oauth callback calls onTokenSuccess', function() {
-    loginButton.oauthCallback({ err: false, status: 200, response: '{foo: 1}' });
+    loginButton.oauthCallback({ error: false, status: 200, response: '{foo: 1}' });
     expect(onTokenSuccess.callCount).toEqual(1);
     expect(onTokenSuccess.getCall(0).args).toEqual(['{foo: 1}']);
   });

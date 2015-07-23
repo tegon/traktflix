@@ -6,7 +6,7 @@ module.exports = React.createClass({
     chrome.runtime.sendMessage({ type: 'launchAuthorize' }, this.oauthCallback);
   },
   oauthCallback: function(options) {
-    if (options.err) {
+    if (options.error) {
       this.props.onTokenFailed(options.status, options.response);
     } else {
       this.props.onTokenSuccess(options.response);

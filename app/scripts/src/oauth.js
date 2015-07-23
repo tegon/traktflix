@@ -72,18 +72,18 @@ Oauth.getUserInfo = function getUserInfo(success, error) {
         chrome.storage.local.get(function(data) {
           if (data.refresh_token) {
             Oauth.requestRefreshToken(data.refresh_token, function(options) {
-              if (options.err) {
+              if (options.error) {
                 error.call(this, options.status, options.response);
               } else {
                 success.call(this, options.response);
               }
             });
           } else {
-            error.call(this, options.status, options.response);
+            error.call(this, status, response);
           }
         }.bind(this));
       } else {
-        error.call(this, options.status, options.response);
+        error.call(this, status, response);
       }
     }
   });

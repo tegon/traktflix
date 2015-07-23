@@ -4,7 +4,7 @@
 [![Build Status](https://travis-ci.org/tegon/traktflix.svg?branch=master)](https://travis-ci.org/tegon/traktflix)
 [![Coverage Status](https://coveralls.io/repos/tegon/traktflix/badge.svg?branch=master&service=github)](https://coveralls.io/github/tegon/traktflix?branch=master)
 
-[![download](ChromeWebStore_BadgeWBorder_v2_206x58.png)](https://chrome.google.com/webstore/detail/bmoemkaigjgcgjjnpmdgkifndiidkeji/publish-delayed)
+[![download](ChromeWebStore_BadgeWBorder_v2_206x58.png)](https://chrome.google.com/webstore/detail/bmoemkaigjgcgjjnpmdgkifndiidkeji)
 
 ###Table of Contents
 * [What is Trakt?](#what-is-trakt)

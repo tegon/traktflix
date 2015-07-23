@@ -15,7 +15,7 @@ window.chrome = {
       clear: function(){}
     }
   },
-  identity: { launchWebAuthFlow: sinon.stub() },
+  identity: { launchWebAuthFlow: function(){} },
   tabs: {
     query: sinon.stub(),
     sendMessage: sinon.stub(),
@@ -25,7 +25,11 @@ window.chrome = {
 };
 
 sinon.stub(window.chrome.storage.local, 'get', function(data, callback) {
-  callback.call(this, {});
+  if (typeof(data) === 'function') {
+    data.call(this, {});
+  } else {
+    callback.call(this, {});
+  }
 });
 
 sinon.stub(window.chrome.storage.local, 'set', function(data, callback) {
@@ -34,4 +38,8 @@ sinon.stub(window.chrome.storage.local, 'set', function(data, callback) {
 
 sinon.stub(window.chrome.storage.local, 'clear', function(callback) {
   callback.call(this, {});
+});
+
+sinon.stub(window.chrome.identity, 'launchWebAuthFlow', function(options, callback) {
+  callback.call(this, 'chrome-extension://{extensionId}?code=123324adbadwqe');
 });
