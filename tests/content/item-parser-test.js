@@ -2,7 +2,7 @@ var ItemParser = require('../../app/scripts/src/content/item-parser.js');
 var Item = require('../../app/scripts/src/content/item.js');
 var callback = sinon.spy();
 
-describe('Search', function() {
+describe('ItemParser', function() {
   beforeEach(function() {
     document.body.innerHTML = '';
     callback.reset();
@@ -44,17 +44,5 @@ describe('Search', function() {
       type: 'movie'
     });
     expect(callback.getCall(0).args).toEqual([item]);
-  });
-
-  it('it will wait until player is on page to call parse function', function(done) {
-    expect(ItemParser.isReady()).toBe(false);
-    ItemParser.start(callback);
-    expect(callback.callCount).toBe(0);
-    renderPlayer('movie');
-    expect(ItemParser.isReady()).toBe(true);
-    setTimeout(function() {
-      expect(callback.callCount).toBe(1);
-      done();
-    }, 500);
   });
 });
