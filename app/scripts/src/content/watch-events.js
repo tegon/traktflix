@@ -55,7 +55,7 @@ WatchEvents.prototype = {
         e.target.className === 'player-scrubber-progress-completed' ||
         e.target.className === 'player-scrubber-progress-buffered' ||
         e.target.className === 'player-scrubber-progress') {
-      this.isPlaying() ? this.onPause(e) : this.onPlay(e);
+      this.isPlaying() ? this.onPlay(e) : this.onPause(e);
     } else if (e.target.className === 'play-icon') {
       this.onStop(e);
       this.onPlay(e);

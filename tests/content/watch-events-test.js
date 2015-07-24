@@ -67,18 +67,18 @@ describe('WatchEvents', function() {
     expect(onPlay.callCount).toBe(1);
   });
 
-  it('onPlay is called when progress bar is clicked', function() {
+  it('onPause is called when progress bar is clicked', function() {
     renderPlayer('show');
     var progress = document.querySelector('.' + progressBarClass());
     events.onClick({ target: progress });
-    expect(onPlay.callCount).toBe(1);
+    expect(onPause.callCount).toBe(1);
   });
 
-  it('onPause is called when progress bar is clicked', function() {
+  it('onPlay is called when progress bar is clicked', function() {
     renderPlayer('movie');
     var progress = document.querySelector('.' + progressBarClass());
     events.onClick({ target: progress });
-    expect(onPause.callCount).toBe(1);
+    expect(onPlay.callCount).toBe(1);
   });
 
   it('onPlay is called when space bar is pressed', function() {
