@@ -2,8 +2,6 @@
 
 var KEY_SPACE = 32;
 var KEY_ENTER = 13;
-var KEY_PAGE_UP = 33;
-var KEY_PAGE_DOWN = 34;
 var KEY_LEFT_ARROW = 37;
 var KEY_RIGHT_ARROW = 39;
 
@@ -69,12 +67,6 @@ WatchEvents.prototype = {
         break;
       case KEY_ENTER:
         this.isPlaying() ? this.onPause(e) : this.onPlay(e);
-        break;
-      case KEY_PAGE_UP:
-        this.onPlay(e);
-        break;
-      case KEY_PAGE_DOWN:
-        this.onPause(e);
         break;
       case KEY_LEFT_ARROW:
         this.onPause(e);

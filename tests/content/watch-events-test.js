@@ -10,8 +10,6 @@ var events = new WatchEvents({ onPlay: onPlay, onPause: onPause, onStop: onStop 
 events.startListeners();
 var KEY_SPACE = 32;
 var KEY_ENTER = 13;
-var KEY_PAGE_UP = 33;
-var KEY_PAGE_DOWN = 34;
 var KEY_LEFT_ARROW = 37;
 var KEY_RIGHT_ARROW = 39;
 
@@ -102,18 +100,6 @@ describe('WatchEvents', function() {
   it('onPause is called when enter is pressed', function() {
     renderPlayer('movie');
     events.onKeyUp({ which: KEY_ENTER });
-    expect(onPause.callCount).toBe(1);
-  });
-
-  it('onPlay is called when page up is pressed', function() {
-    renderPlayer('movie');
-    events.onKeyUp({ which: KEY_PAGE_UP });
-    expect(onPlay.callCount).toBe(1);
-  });
-
-  it('onPause is called when page down is pressed', function() {
-    renderPlayer('show');
-    events.onKeyUp({ which: KEY_PAGE_DOWN });
     expect(onPause.callCount).toBe(1);
   });
 
