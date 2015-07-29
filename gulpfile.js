@@ -11,7 +11,8 @@ var minimist = require('minimist');
 var autoprefixer = require('gulp-autoprefixer');
 var minifycss = require('gulp-minify-css');
 var zip = require('gulp-zip');
-var exit = require('gulp-exit');
+var del = require('del');
+var runSequence = require('run-sequence');
 
 var defaultOptions = {
   string: 'env',
@@ -82,8 +83,17 @@ gulp.task('vendor', function() {
     .pipe(gulp.dest('app/scripts/build'))
 });
 
+gulp.task('copy:pem', function() {
+    return gulp.src('app.pem')
+        .pipe(gulp.dest('app/key.pem'));
+});
+
+gulp.task('clean:pem', function(callback) {
+    return del('app/key.pem', callback);
+});
+
 gulp.task('zip', function() {
-    gulp.src([
+    return gulp.src([
         'app/**',
         '!app/scripts/src/**',
         '!app/scripts/vendor/**',
@@ -92,7 +102,6 @@ gulp.task('zip', function() {
     ])
     .pipe(zip('app.zip'))
     .pipe(gulp.dest('./'))
-    .pipe(exit())
 });
 
 gulp.task('default', [
@@ -103,4 +112,9 @@ gulp.task('default', [
     'vendor'
 ]);
 
-gulp.task('build', ['default', 'zip']);
+gulp.task('build', function(callback) {
+    runSequence('default', 'copy:pem', 'zip', 'clean:pem', function() {
+        callback();
+        process.exit(0);
+    });
+});
