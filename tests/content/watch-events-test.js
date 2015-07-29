@@ -26,12 +26,12 @@ describe('WatchEvents', function() {
   });
 
   it('isPlaying return false when video is paused', function() {
-    renderPlayer('show');
+    renderPlayer('movie');
     expect(events.isPlaying()).toBe(false);
   });
 
   it('isPlaying return true when video is playing', function() {
-    renderPlayer('movie');
+    renderPlayer('show');
     expect(events.isPlaying()).toBe(true);
   });
 
@@ -66,14 +66,14 @@ describe('WatchEvents', function() {
   });
 
   it('onPause is called when progress bar is clicked', function() {
-    renderPlayer('show');
+    renderPlayer('movie');
     var progress = document.querySelector('.' + progressBarClass());
     events.onClick({ target: progress });
     expect(onPause.callCount).toBe(1);
   });
 
   it('onPlay is called when progress bar is clicked', function() {
-    renderPlayer('movie');
+    renderPlayer('show');
     var progress = document.querySelector('.' + progressBarClass());
     events.onClick({ target: progress });
     expect(onPlay.callCount).toBe(1);

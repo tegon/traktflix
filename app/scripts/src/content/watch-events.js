@@ -52,7 +52,8 @@ WatchEvents.prototype = {
     } else if (e.target.className === 'player-scrubber-target' ||
         e.target.className === 'player-scrubber-progress-completed' ||
         e.target.className === 'player-scrubber-progress-buffered' ||
-        e.target.className === 'player-scrubber-progress') {
+        e.target.className === 'player-scrubber-progress' ||
+        e.target.className === 'player-scrubber horizontal') {
       this.isPlaying() ? this.onPlay(e) : this.onPause(e);
     } else if (e.target.className === 'play-icon') {
       this.onStop(e);
@@ -62,11 +63,15 @@ WatchEvents.prototype = {
 
   onKeyUp: function(e) {
     switch (e.which) {
+      /* I know, if the video is playing, the obvious would be call onPause,
+        if isn't playing, call onPlay.
+        But the HTML of the player gets updated before this function is called,
+        this way the correct approach is invert the conditions */
       case KEY_SPACE:
-        this.isPlaying() ? this.onPause(e) : this.onPlay(e);
+        this.isPlaying() ? this.onPlay(e) : this.onPause(e);
         break;
       case KEY_ENTER:
-        this.isPlaying() ? this.onPause(e) : this.onPlay(e);
+        this.isPlaying() ? this.onPlay(e) : this.onPause(e);
         break;
       case KEY_LEFT_ARROW:
         this.onPause(e);
@@ -92,7 +97,7 @@ WatchEvents.prototype = {
 
   isPlaying: function() {
     var playPause = this.document.querySelector('.player-play-pause');
-    return playPause && playPause.classList.contains('play');
+    return playPause && playPause.classList.contains('pause');
   }
 };
 
