@@ -55,7 +55,13 @@ WatchEvents.prototype = {
         e.target.className === 'player-scrubber-progress' ||
         e.target.className === 'player-scrubber horizontal') {
       this.isPlaying() ? this.onPlay(e) : this.onPause(e);
-    } else if (e.target.className === 'play-icon') {
+    } else if (e.target.className === 'play-icon' ||
+        e.target.className === 'player-postplay-still-hover-container' ||
+        e.target.className === 'player-postplay-still-hover' ||
+        e.target.className === 'player-postplay-recommendation-hover') {
+      this.onStop(e);
+      this.onPlay(e);
+    } else if (e.target.classList.contains('playLink')) {
       this.onStop(e);
       this.onPlay(e);
     }
