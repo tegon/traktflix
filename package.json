@@ -42,7 +42,7 @@
   },
   "scripts": {
     "start": "gulp --env development",
-    "build": "gulp build --env production",
+    "build": "gulp --env production",
     "test": "karma start"
   }
 }

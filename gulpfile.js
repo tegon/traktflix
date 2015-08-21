@@ -101,7 +101,3 @@ gulp.task('default', [
     'css',
     'vendor'
 ]);
-
-gulp.task('build', ['default', 'zip'], function() {
-    process.exit(0);
-});
