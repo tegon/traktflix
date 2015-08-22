@@ -43,6 +43,7 @@
   "scripts": {
     "start": "gulp --env development",
     "build": "gulp --env production",
+    "zip": "gulp zip",
     "test": "karma start"
   }
 }

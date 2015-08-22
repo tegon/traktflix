@@ -65,6 +65,7 @@ npm start
 To get build version (generates app.zip, ready for chrome store)
 ```bash
 npm run build
+npm run zip
 ```
 
 To run tests
