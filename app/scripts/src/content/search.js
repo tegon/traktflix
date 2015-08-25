@@ -11,7 +11,7 @@ function Search(options) {
 
 Search.prototype = {
   getUrl: function() {
-    return this.url + '?type=' + this.item.type + '&query=' + this.item.title;
+    return this.url + '?type=' + this.item.type + '&query=' + encodeURIComponent(this.item.title);
   },
 
   getEpisodeUrl: function(slug) {

@@ -13,7 +13,7 @@ describe('Item', function() {
   });
 
   it('creates a new show', function() {
-    expect(houseOfCards.title).toBe('House of Cards (US)');
+    expect(houseOfCards.title).toBe('House of Cards');
     expect(houseOfCards.type).toBe('show');
     expect(houseOfCards.scrubber).toEqual({});
     expect(houseOfCards.epTitle).toBe('Chapter 30');
