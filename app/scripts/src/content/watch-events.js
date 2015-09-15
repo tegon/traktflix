@@ -46,7 +46,6 @@ WatchEvents.prototype = {
 
   addPathChangeListener: function() {
     this.pathChangeInterval = setInterval(function() {
-      console.log('pathChangeInterval');
       if (this.path !== location.pathname) {
         this.onPathChange(this.path, location.pathname);
         this.path = location.pathname;
