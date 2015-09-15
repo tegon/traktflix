@@ -10,6 +10,7 @@ function WatchEvents(options) {
   this.onPlay = options.onPlay;
   this.onPause = options.onPause;
   this.onStop = options.onStop;
+  this.path = location.pathname;
 }
 
 WatchEvents.prototype = {
@@ -17,12 +18,14 @@ WatchEvents.prototype = {
     this.addClickListener();
     this.addStopListener();
     this.addKeyUpListener();
+    this.addPathChangeListener();
   },
 
   stopListeners: function() {
     this.removeClickListener();
     this.removeStopListener();
     this.removeKeyUpListener();
+    this.removePathChangeListener();
   },
 
   addClickListener: function() {
@@ -39,6 +42,16 @@ WatchEvents.prototype = {
 
   addKeyUpListener: function() {
     this.document.addEventListener('keyup', this.onKeyUp.bind(this), false);
+  },
+
+  addPathChangeListener: function() {
+    this.pathChangeInterval = setInterval(function() {
+      console.log('pathChangeInterval');
+      if (this.path !== location.pathname) {
+        this.onPathChange(this.path, location.pathname);
+        this.path = location.pathname;
+      }
+    }.bind(this), 1000);
   },
 
   onClick: function(e) {
@@ -64,6 +77,19 @@ WatchEvents.prototype = {
     } else if (e.target.classList.contains('playLink')) {
       this.onStop(e);
       this.onPlay(e);
+    }
+  },
+
+  onPathChange: function(oldPath, newPath) {
+    if (/watch/.test(oldPath) && /watch/.test(newPath)) {
+      this.onStop();
+      this.onPlay();
+    } else if (/watch/.test(oldPath)) {
+      console.log('onStop');
+      this.onStop();
+    } else if (/watch/.test(newPath)) {
+      console.log('onPlay');
+      this.onPlay();
     }
   },
 
@@ -99,6 +125,10 @@ WatchEvents.prototype = {
 
   removeKeyUpListener: function() {
     this.document.removeEventListener('keyup', this.onKeyUp.bind(this), false);
+  },
+
+  removePathChangeListener: function() {
+    clearInterval(this.pathChangeInterval);
   },
 
   isPlaying: function() {
