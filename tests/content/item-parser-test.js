@@ -17,6 +17,25 @@ describe('ItemParser', function() {
     expect(ItemParser.isReady()).toBe(true);
   });
 
+  it('waits until player arrives on page', function(done) {
+    ItemParser.start(callback);
+    renderPlayer('show');
+    setTimeout(function() {
+      expect(ItemParser.isReady()).toBe(true);
+      expect(callback.callCount).toBe(1);
+      done();
+    }, 500);
+  });
+
+  it('isReady returns false after timeout', function(done) {
+    ItemParser.start(callback);
+    setTimeout(function() {
+      expect(ItemParser.isReady()).toBe(false);
+      expect(callback.callCount).toBe(0);
+      done();
+    }, 500);
+  });
+
   it('when player has episodes selector, an show item is returned', function() {
     renderPlayer('show');
     ItemParser.start(callback);

@@ -1,6 +1,15 @@
 var Analytics = require('../../app/scripts/src/background/analytics');
 
 describe('Analytics', function() {
+  beforeEach(function() {
+    Analytics();
+  });
+
+  it('does not throws error when tracker is not set', function() {
+    expect(Analytics.sendAppView('Foo')).toBe(undefined);
+    expect(Analytics.sendEvent('Foozin', 'Bar')).toBe(undefined);
+  });
+
   it('sets the tracker', function() {
     var tracker = {
       sendAppView: sinon.stub(),
