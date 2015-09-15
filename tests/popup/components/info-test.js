@@ -26,7 +26,7 @@ describe('Info', function() {
     var h4 = TestUtils.findRenderedDOMComponentWithTag(info, 'h4');
     expect(chrome.runtime.sendMessage.callCount).toEqual(1);
     expect(chrome.runtime.sendMessage.getCall(0).args).toEqual([{
-      type: 'sendAppView', view: 'Info ' + h4.getDOMNode().textContent
+      type: 'sendAppView', view: 'Info'
     }]);
   });
 });

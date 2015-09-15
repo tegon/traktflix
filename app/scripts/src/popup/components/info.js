@@ -8,7 +8,7 @@ module.exports = React.createClass({
   },
   render: function() {
     var message = this.getRandomMessage();
-    chrome.runtime.sendMessage({ type: 'sendAppView', view: 'Info ' + message });
+    chrome.runtime.sendMessage({ type: 'sendAppView', view: 'Info' });
 
     return(
       <div className='mdl-card mdl-shadow--2dp info-card'>
