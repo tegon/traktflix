@@ -58,21 +58,12 @@ WatchEvents.prototype = {
       this.onPlay(e);
     } else if (e.target.classList.contains('pause')) {
       this.onPause(e);
-    } else if (e.target.classList.contains('player-next-episode')) {
-      this.onStop(e);
-      this.onPlay(e);
     } else if (e.target.className === 'player-scrubber-target' ||
         e.target.className === 'player-scrubber-progress-completed' ||
         e.target.className === 'player-scrubber-progress-buffered' ||
         e.target.className === 'player-scrubber-progress' ||
         e.target.className === 'player-scrubber horizontal') {
       this.isPlaying() ? this.onPlay(e) : this.onPause(e);
-    } else if (e.target.className === 'play-icon' ||
-        e.target.className === 'player-postplay-still-hover-container' ||
-        e.target.className === 'player-postplay-still-hover' ||
-        e.target.className === 'player-postplay-recommendation-hover') {
-      this.onStop(e);
-      this.onPlay(e);
     } else if (e.target.classList.contains('playLink')) {
       this.onStop(e);
       this.onPlay(e);
@@ -82,12 +73,6 @@ WatchEvents.prototype = {
   onPathChange: function(oldPath, newPath) {
     if (/watch/.test(oldPath) && /watch/.test(newPath)) {
       this.onStop();
-      this.onPlay();
-    } else if (/watch/.test(oldPath)) {
-      console.log('onStop');
-      this.onStop();
-    } else if (/watch/.test(newPath)) {
-      console.log('onPlay');
       this.onPlay();
     }
   },

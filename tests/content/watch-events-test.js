@@ -6,10 +6,6 @@ var progressBarClasses = [
   'player-scrubber-target', 'player-scrubber-progress-completed',
   'player-scrubber-progress-buffered', 'player-scrubber-progress'
 ];
-var postPlayClassess = [
-  'play-icon', 'player-postplay-still-hover-container',
-  'player-postplay-still-hover', 'player-postplay-recommendation-hover'
-];
 var events = new WatchEvents({ onPlay: onPlay, onPause: onPause, onStop: onStop });
 events.startListeners();
 var KEY_SPACE = 32;
@@ -53,22 +49,6 @@ describe('WatchEvents', function() {
     expect(onPause.callCount).toBe(1);
   });
 
-  it('onStop and onPlay are called when next episode is clicked', function() {
-    renderPlayer('show');
-    var nextEpisode = document.querySelector('.player-next-episode');
-    events.onClick({ target: nextEpisode });
-    expect(onStop.callCount).toBe(1);
-    expect(onPlay.callCount).toBe(1);
-  });
-
-  it('onStop and onPlay are called when other episode is clicked', function() {
-    renderPlayer('show');
-    var otherEpisode = document.querySelector('.play-icon');
-    events.onClick({ target: otherEpisode });
-    expect(onStop.callCount).toBe(1);
-    expect(onPlay.callCount).toBe(1);
-  });
-
   it('onPause is called when progress bar is clicked', function() {
     renderPlayer('movie');
     var progress = document.querySelector('.' + randomClass(progressBarClasses));
@@ -80,15 +60,6 @@ describe('WatchEvents', function() {
     renderPlayer('show');
     var progress = document.querySelector('.' + randomClass(progressBarClasses));
     events.onClick({ target: progress });
-    expect(onPlay.callCount).toBe(1);
-  });
-
-  it('onStop and onPlay are called when post play is clicked', function() {
-    renderPlayer('show');
-    var postPlay = document.createElement('a');
-    postPlay.className = randomClass(postPlayClassess);
-    events.onClick({ target: postPlay });
-    expect(onStop.callCount).toBe(1);
     expect(onPlay.callCount).toBe(1);
   });
 
@@ -141,18 +112,6 @@ describe('WatchEvents', function() {
     renderPlayer('show');
     events.onPathChange('/watch/1', '/watch/2');
     expect(onStop.callCount).toBe(1);
-    expect(onPlay.callCount).toBe(1);
-  });
-
-  it('onStop is called when path change from a movie', function() {
-    renderPlayer('show');
-    events.onPathChange('/watch/1', '/browse');
-    expect(onStop.callCount).toBe(1);
-  });
-
-  it('onPlay is called when path change to a movie', function() {
-    renderPlayer('movie');
-    events.onPathChange('/browse', '/watch/1');
     expect(onPlay.callCount).toBe(1);
   });
 });
