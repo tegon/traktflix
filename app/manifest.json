@@ -18,7 +18,7 @@
     "content_scripts": [
         {
             "matches": [
-                "http://*.netflix.com/*"
+                "*://*.netflix.com/*"
             ],
             "js": [
                 "scripts/build/content.js"
@@ -43,7 +43,8 @@
         "storage",
         "unlimitedStorage",
         "http://trakt.tv/*",
-        "https://www.google-analytics.com/"
+        "https://www.google-analytics.com/",
+        "*://*.netflix.com/*"
     ],
     "web_accessible_resources": [
         "images/svg/*.svg"

@@ -2,8 +2,11 @@
 
 var WatchEvents = require('./watch-events.js');
 var ContentController = require('./content-controller.js');
-
+var ViewingActivity = require('./viewing-activity.js');
 var controller = new ContentController();
+
+var viewingActivity = new ViewingActivity();
+// viewingActivity.sync();
 
 var events = new WatchEvents({
   onPlay: controller.onPlay.bind(controller),

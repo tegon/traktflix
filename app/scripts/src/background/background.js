@@ -33,5 +33,9 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
       chrome.storage.local.get('access_token', sendResponse);
       return true;
       break;
+    case 'getLastSyncedAt':
+      chrome.storage.local.get('synced_at', sendResponse);
+      return true;
+      break;
   }
 });
