@@ -41,9 +41,9 @@ In `Redirect uri:` put `https://{extensionId}.chromiumapp.org`
 
 In `Javascript (cors) origins:` put `https://{extensionId}.chromiumapp.org` and `chrome-extension://{extensionId}`
 
-Copy the `settings.js` example file and change Trakt.tv credentials:
+Copy the `config.js` example file and change Trakt.tv credentials:
 ```bash
-cp settings.js.dev app/scripts/src/settings.js
+cp config.js.dev config.js
 ```
 
 Use [nvm](https://github.com/creationix/nvm) to run in the correct version of node
