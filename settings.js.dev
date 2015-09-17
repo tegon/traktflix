@@ -1,9 +1,0 @@
-module.exports = {
-  authorizeUri: 'http://trakt.tv/oauth/authorize',
-  apiUri: 'https://api-v2launch.trakt.tv',
-  redirectUri: 'https://{extensionId}.chromiumapp.org',
-  clientId: '{TraktClientId}',
-  clientSecret: '{TraktClientSecret}',
-  apiVersion: 2,
-  analyticsId: '{GoogleAnalyticsId}'
-};

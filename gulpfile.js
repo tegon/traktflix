@@ -11,6 +11,8 @@ var minimist = require('minimist');
 var autoprefixer = require('gulp-autoprefixer');
 var minifycss = require('gulp-minify-css');
 var zip = require('gulp-zip');
+var config = require('./config.json');
+var replace = require('gulp-replace-task');
 
 var defaultOptions = {
   string: 'env',
@@ -18,6 +20,14 @@ var defaultOptions = {
 };
 
 var options = minimist(process.argv.slice(2), defaultOptions);
+
+var replacePatterns = {
+    patterns: [
+        { match: 'clientId', replacement: config[options.env].clientId },
+        { match: 'clientSecret', replacement: config[options.env].clientSecret },
+        { match: 'analyticsId', replacement: config[options.env].analyticsId }
+    ]
+};
 
 function buildJS(src) {
     var bundler = browserify({
@@ -35,6 +45,7 @@ function buildJS(src) {
         watcher.bundle()
         .pipe(source(src.file))
         .pipe(buffer())
+        .pipe(replace(replacePatterns))
         .pipe(gulpif(options.env === 'production', uglify()))
         .pipe(gulp.dest('./app/scripts/build/'))
         console.log(src.file + ' updated!', (Date.now() - updateStart) + 'ms');
@@ -42,6 +53,7 @@ function buildJS(src) {
     .bundle()
     .pipe(source(src.file))
     .pipe(buffer())
+    .pipe(replace(replacePatterns))
     .pipe(gulpif(options.env === 'production', uglify()))
     .pipe(gulp.dest('./app/scripts/build/'));
 }
