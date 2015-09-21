@@ -35,7 +35,7 @@ ItemParser.parse = function parse(callback) {
   }
 
   callback.call(this, item);
-}
+};
 
 ItemParser.start = function start(callback) {
   var readyTimeout;

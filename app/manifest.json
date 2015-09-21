@@ -25,7 +25,7 @@
             ]
         }
     ],
-    "browser_action": {
+    "page_action": {
         "default_icon": {
             "19": "images/traktflix-icon-19.png",
             "38": "images/traktflix-icon-38.png"
@@ -39,6 +39,7 @@
     },
     "permissions": [
         "identity",
+        "declarativeContent",
         "cookies",
         "storage",
         "unlimitedStorage",
