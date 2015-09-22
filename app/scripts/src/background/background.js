@@ -21,7 +21,7 @@ chrome.runtime.onInstalled.addListener(function() {
 });
 
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
-  switch (request.type) {
+  switch(request.type) {
     case 'setActiveIcon':
       chrome.pageAction.setIcon({
         tabId: sender.tab.id,
