@@ -7,12 +7,12 @@ var service = analytics.getService('traktflix');
 var tracker = service.getTracker(Settings.analyticsId);
 Analytics.setTracker(tracker);
 
-chrome.runtime.onInstalled.addListener(function () {
-  chrome.declarativeContent.onPageChanged.removeRules(undefined, function () {
+chrome.runtime.onInstalled.addListener(function() {
+  chrome.declarativeContent.onPageChanged.removeRules(undefined, function() {
     chrome.declarativeContent.onPageChanged.addRules([{
       conditions: [
         new chrome.declarativeContent.PageStateMatcher({
-          pageUrl: {hostSuffix: 'netflix.com'}
+          pageUrl: { hostSuffix: 'netflix.com' }
         })
       ],
       actions: [new chrome.declarativeContent.ShowPageAction()]
@@ -20,7 +20,7 @@ chrome.runtime.onInstalled.addListener(function () {
   });
 });
 
-chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
+chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
   switch (request.type) {
     case 'setActiveIcon':
       chrome.pageAction.setIcon({
