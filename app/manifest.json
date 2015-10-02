@@ -1,7 +1,7 @@
 {
     "name": "__MSG_appName__",
     "short_name": "__MSG_appShortName__",
-    "version": "1.0.4.4574",
+    "version": "1.0.4.4575",
     "manifest_version": 2,
     "description": "__MSG_appDescription__",
     "icons": {
@@ -25,7 +25,7 @@
             ]
         }
     ],
-    "browser_action": {
+    "page_action": {
         "default_icon": {
             "19": "images/traktflix-icon-19.png",
             "38": "images/traktflix-icon-38.png"
@@ -39,6 +39,7 @@
     },
     "permissions": [
         "identity",
+        "declarativeContent",
         "cookies",
         "storage",
         "unlimitedStorage",
