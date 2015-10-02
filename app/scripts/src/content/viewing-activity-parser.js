@@ -6,7 +6,7 @@ var Item = require('./item.js');
 function ViewingActivityParser() {}
 
 ViewingActivityParser.parse = function(syncedAt, activity) {
-  var date = activity.querySelector('.date').textContent;
+  var date = new Date(activity.querySelector('.date').textContent);
   date.setHours(0, 0, 0, 0);
 
   if (!syncedAt || date > syncedAt) {
@@ -21,7 +21,7 @@ ViewingActivityParser.parse = function(syncedAt, activity) {
       if (season) {
         season = season[0];
       }
-      var epTitle = splittedTitle[2].trim();
+      var epTitle = splittedTitle[2].trim().replace('"', '').replace('"', '');
 
       item = new Item({
         epTitle: epTitle,
@@ -39,7 +39,7 @@ ViewingActivityParser.parse = function(syncedAt, activity) {
 
 ViewingActivityParser.start = function(options) {
   var parser = new DOMParser();
-  var html = parser.parseFromString(response, 'text/html');
+  var html = parser.parseFromString(options.data, 'text/html');
   var viewingActivity = html.getElementById('viewingactivity');
   var activities = viewingActivity.getElementsByTagName('li');
   var parsedActivities = [];
@@ -49,6 +49,10 @@ ViewingActivityParser.start = function(options) {
 
     if (activity !== undefined) {
       parsedActivities.push(activity);
+    }
+
+    if (i > 10) {
+      break;
     }
   }
 

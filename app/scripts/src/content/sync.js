@@ -1,6 +1,7 @@
 'use strict';
 
 var ViewingActivity = require('./viewing-activity.js');
+var ViewingActivityParser = require('./viewing-activity-parser.js');
 var WatchedHistory = require('./watched-history.js');
 
 function Sync() {
@@ -14,9 +15,15 @@ Sync.prototype = {
 
   onSyncStart: function() {
     ViewingActivity.list({
-      syncedAt: this.syncedAt,
-      success: this.syncActivities,
-      error: this.onError
+      success: function(response) {
+        ViewingActivityParser.start({
+          data: response,
+          success: this.syncActivities.bind(this),
+          syncedAt: this.syncedAt,
+          error: this.onError.bind(this)
+        });
+      }.bind(this),
+      error: this.onError.bind(this)
     });
   },
 
@@ -30,24 +37,28 @@ Sync.prototype = {
         this.syncedAt = data.synced_at;
         this.onSyncStart();
       }
-    });
+    }.bind(this));
   },
 
   syncActivities: function(activities) {
     if (activities.length > 0) {
-      history.list({
-        success: activities.forEach(this.syncActivity.bind(this)),
-        error: this.onError
-      });
+      activities.forEach(this.syncActivity.bind(this)),
+      this.history.send();
     }
   },
 
   syncActivity: function(activity) {
-    this.history.include(activity, function(include)) {
-      if (!include) {
-        this.addToHistory(activity);
-      }
-    }
+    this.history.include({
+      activity: activity,
+      success: function(include) {
+        if (!include) {
+          this.addToHistory(activity);
+        }
+      }.bind(this),
+      error: function(status, response) {
+        this.onError(status, response);
+      }.bind(this)
+    });
   },
 
   addToHistory: function(activity) {

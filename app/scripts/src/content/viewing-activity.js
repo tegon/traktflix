@@ -12,11 +12,7 @@ ViewingActivity.list = function(options) {
     method: 'GET',
     url: 'https://www.netflix.com/WiViewingActivity',
     success: function(response) {
-      ViewingActivityParser.start({
-        data: response,
-        success: options.success,
-        syncedAt: options.syncedAt
-      });
+      options.success.call(this, response);
     },
     error: function(resp, status) {
       options.error.call(this, resp, status);

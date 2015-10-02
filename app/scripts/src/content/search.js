@@ -15,11 +15,16 @@ Search.prototype = {
   },
 
   getEpisodeUrl: function(slug) {
-    return this.showsUrl + '/' + slug + '/seasons/' + this.item.season
-      + '/episodes/' + this.item.episode + '?extended=images';
+    if (this.item.episode) {
+      return this.showsUrl + '/' + slug + '/seasons/' + this.item.season
+        + '/episodes/' + this.item.episode + '?extended=images';
+    } else {
+      return this.showsUrl + '/' + slug + '/seasons/' + this.item.season
+        + '?extended=images';
+    }
   },
 
-  findMovie: function(options) {
+  findItem: function(options) {
     Request.send({
       method: 'GET',
       url: this.getUrl(),
@@ -34,22 +39,32 @@ Search.prototype = {
   },
 
   findEpisode: function(options) {
-    Request.send({
-      method: 'GET',
-      url: this.getUrl(),
+    this.findItem({
       success: function(response) {
-        var data = JSON.parse(response)[0];
-
         Request.send({
           method: 'GET',
-          url: this.getEpisodeUrl(data['show']['ids']['slug']),
+          url: this.getEpisodeUrl(response['show']['ids']['slug']),
           success: function(resp) {
-            options.success.call(this, JSON.parse(resp));
-          },
+            if (this.item.episode) {
+              options.success.call(this, JSON.parse(resp));
+            } else {
+              var episodes = JSON.parse(resp);
+              var ep;
+
+              for (var i = 0; i < episodes.length; i++) {
+                var episode = episodes[i];
+                if (episode.title === this.item.epTitle) {
+                  ep = episode;
+                  break;
+                }
+              }
+              options.success.call(this, ep);
+            }
+          }.bind(this),
           error: function(st, resp) {
             options.error.call(this, st, resp);
           }
-        });
+        })
       }.bind(this),
       error: function(status, response) {
         options.error.call(this, status, response);
@@ -61,7 +76,7 @@ Search.prototype = {
     if (this.item.type == 'show') {
       this.findEpisode(options);
     } else {
-      this.findMovie(options);
+      this.findItem(options);
     }
   }
 };
