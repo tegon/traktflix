@@ -6,20 +6,22 @@ var Search = require('./search.js');
 
 function WatchedHistory() {
   this.url = Settings.apiUri + '/sync/history';
-  this.currentHistory = [];
-  this.cachedActivities = [];
 }
 
 WatchedHistory.prototype = {
   includeUrl: function(activity) {
-    return this.url + '/' + activity.item.type + '/' + activity.item.id;
+    if (activity.item.type === 'show') {
+      return this.url + '/episodes/' + activity.item.id;
+    } else {
+      return this.url + '/movies/' + activity.item.id;
+    }
   },
 
-  send: function() {
+  send: function(activities) {
     Request.send({
       method: 'POST',
       url: this.url,
-      params: this.params(),
+      params: this.params(activities),
       success: function(response) {
         console.log('sync success');
       },
@@ -29,24 +31,26 @@ WatchedHistory.prototype = {
     });
   },
 
-  params: function() {
+  params: function(activities) {
     var movies = [];
     var episodes = [];
 
-    this.cachedActivities.forEach(function(activity) {
-      activity.item['watched_at'] = activity.date;
+    activities.forEach(function(activity) {
+      var item = {
+        'watched_at': activity.date,
+        'ids': {
+          'trakt': activity.item.id
+        }
+      };
+
       if (activity.item.type === 'movie') {
-        movies.push(activity.item);
+        movies.push(item);
       } else {
-        episodes.push(activity.item);
+        episodes.push(item);
       }
     });
 
     return { movies: movies, episodes: episodes };
-  },
-
-  add: function(activity) {
-    this.cachedActivities.push(activity);
   },
 
   include: function(options) {
@@ -57,11 +61,17 @@ WatchedHistory.prototype = {
           method: 'GET',
           url: this.includeUrl(activity),
           success: function(response) {
+            console.log('response', response);
+            var include = false;
             var history = JSON.parse(response)[0];
-            var date = new Date(history.watched_at);
-            date.setHours(0, 0, 0, 0);
-            console.log('include', date, activity.date);
-            var include = date === activity.date;
+
+            if (history && history.watched_at) {
+              var date = new Date(history.watched_at);
+              date.setHours(0, 0, 0, 0);
+              console.log('include', date, activity.date);
+              include = date.getTime() === activity.date.getTime();
+            }
+
             options.success.call(this, include);
           },
           error: function(status, response) {

@@ -3,6 +3,7 @@
 var ViewingActivity = require('./viewing-activity.js');
 var ViewingActivityParser = require('./viewing-activity-parser.js');
 var WatchedHistory = require('./watched-history.js');
+var async = require('async');
 
 function Sync() {
   this.history = new WatchedHistory();
@@ -41,28 +42,25 @@ Sync.prototype = {
   },
 
   syncActivities: function(activities) {
+    console.log('activities', activities)
     if (activities.length > 0) {
-      activities.forEach(this.syncActivity.bind(this)),
-      this.history.send();
+      async.filter(activities, this.syncActivity.bind(this), function(activities) {
+        console.log('cb -------------', activities);
+        this.history.send(activities);
+      }.bind(this));
     }
   },
 
-  syncActivity: function(activity) {
+  syncActivity: function(activity, callback) {
     this.history.include({
       activity: activity,
       success: function(include) {
-        if (!include) {
-          this.addToHistory(activity);
-        }
-      }.bind(this),
+        callback(!include);
+      },
       error: function(status, response) {
-        this.onError(status, response);
-      }.bind(this)
+        callback(true);
+      }
     });
-  },
-
-  addToHistory: function(activity) {
-    this.history.add(activity);
   },
 
   onError: function(status, response) {

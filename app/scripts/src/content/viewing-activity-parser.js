@@ -51,7 +51,7 @@ ViewingActivityParser.start = function(options) {
       parsedActivities.push(activity);
     }
 
-    if (i > 10) {
+    if (i >= 10) {
       break;
     }
   }

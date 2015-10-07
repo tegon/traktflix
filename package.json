@@ -8,6 +8,7 @@
   },
   "private": true,
   "dependencies": {
+    "async": "1.4.2",
     "react": "0.13.3"
   },
   "devDependencies": {
