@@ -18,8 +18,14 @@ module.exports = React.createClass({
   },
   userIsLogged: function(response) {
     chrome.storage.local.get(function(data) {
-      this.setState({ logged: !!data.access_token });
+      this.setState({
+        logged: !!data.access_token,
+        autoSync: data.auto_sync,
+        showSyncButton: data.show_sync_button,
+        syncedAt: data.synced_at
+      });
       this.getCurrentItem();
+      this.syncIfNeeded();
     }.bind(this));
   },
   userIsNotLogged: function(status, response) {
@@ -73,6 +79,43 @@ module.exports = React.createClass({
     chrome.runtime.sendMessage({ type: 'sendEvent', name: 'TokenFailed', value: false });
     console.error('traktflix: Get Token failed', status, response);
   },
+  onAutoSyncChanged: function(e) {
+    chrome.storage.local.set({ 'auto_sync': e.target.checked }, function() {});
+  },
+  onShowSyncButtonChanged: function(e) {
+    chrome.storage.local.set({ 'show_sync_button': e.target.checked }, function() {});
+  },
+  onSyncNowClicked: function(e) {
+    this.setState({ loading: true });
+    this.startSync();
+  },
+  startSync: function() {
+    chrome.tabs.query({ url: 'http://*.netflix.com/*' }, function(tabs) {
+      if (tabs.length > 0) {
+        chrome.tabs.sendMessage(tabs[0].id, { type: 'startSync' }, function(success) {
+          console.log('sync finished- --------------------------------------')
+          this.setState({ loading: false });
+
+          if (success) {
+            chrome.storage.local.set({ 'synced_at': new Date() });
+          }
+        }.bind(this));
+      }
+    }.bind(this));
+  },
+  needToSync: function() {
+    var now = new Date();
+    now.setHours(0, 0, 0, 0);
+    var lastSync = new Date(this.state.syncedAt);
+    lastSync.setHours(0, 0, 0, 0);
+    console.log('needToSync', this.state.syncedAt, now, lastSync);
+    return !this.state.syncedAt || now > lastSync;
+  },
+  syncIfNeeded: function() {
+    if (this.needToSync() && this.state.autoSync) {
+      this.startSync();
+    }
+  },
   render: function() {
     var content;
     if (this.state.currentPage === 'about') {
@@ -85,7 +128,14 @@ module.exports = React.createClass({
         if (this.state.item) {
           content = <Watching item={this.state.item} />
         } else if (this.state.currentPage === 'history') {
-          content = <History />
+          content =
+            <History
+              autoSync={this.state.autoSync}
+              showSyncButton={this.state.showSyncButton}
+              onAutoSyncChanged={this.onAutoSyncChanged}
+              onShowSyncButtonChanged={this.onShowSyncButtonChanged}
+              onSyncNowClicked={this.onSyncNowClicked}
+              loading={this.state.loading} />
         } else {
           content = <Info messages={this.props.notWatchingMessages} />
         }

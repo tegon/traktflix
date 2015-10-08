@@ -17,16 +17,18 @@ WatchedHistory.prototype = {
     }
   },
 
-  send: function(activities) {
+  send: function(activities, callback) {
     Request.send({
       method: 'POST',
       url: this.url,
       params: this.params(activities),
       success: function(response) {
         console.log('sync success');
+        callback.call(this, true);
       },
       error: function(status, response) {
         console.log('sync error', status, response);
+        callback.call(this, false);
       }
     });
   },

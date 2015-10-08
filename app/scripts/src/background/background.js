@@ -48,8 +48,12 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
       chrome.storage.local.get('access_token', sendResponse);
       return true;
       break;
-    case 'getLastSyncedAt':
-      chrome.storage.local.get('synced_at', sendResponse);
+    case 'getStorageValue':
+      chrome.storage.local.get(request.key, sendResponse);
+      return true;
+      break;
+    case 'setStorageValue':
+      chrome.storage.local.set(request.value, sendResponse);
       return true;
       break;
   }

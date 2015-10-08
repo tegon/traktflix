@@ -10,8 +10,9 @@ function Sync() {
 };
 
 Sync.prototype = {
-  start: function() {
-    this.syncIfNeeded();
+  start: function(callback) {
+    this.callback = callback;
+    this.onSyncStart();
   },
 
   onSyncStart: function() {
@@ -28,25 +29,12 @@ Sync.prototype = {
     });
   },
 
-  needToSync: function(syncedAt) {
-    return !syncedAt || new Date() > new Date(syncedAt);
-  },
-
-  syncIfNeeded: function() {
-    chrome.runtime.sendMessage({ type: 'getLastSyncedAt' }, function(data) {
-      if (this.needToSync(data.synced_at)) {
-        this.syncedAt = data.synced_at;
-        this.onSyncStart();
-      }
-    }.bind(this));
-  },
-
   syncActivities: function(activities) {
     console.log('activities', activities)
     if (activities.length > 0) {
       async.filter(activities, this.syncActivity.bind(this), function(activities) {
         console.log('cb -------------', activities);
-        this.history.send(activities);
+        this.history.send(activities, this.callback);
       }.bind(this));
     }
   },
