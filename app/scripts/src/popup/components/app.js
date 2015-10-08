@@ -6,6 +6,7 @@ var Header = require('./header.js');
 var Watching = require('./watching.js');
 var Info = require('./info.js');
 var Button = require('./button.js');
+var History = require('./history.js');
 var Oauth = require('../../oauth.js');
 
 module.exports = React.createClass({
@@ -47,12 +48,17 @@ module.exports = React.createClass({
       this.setState({ logged: false, currentPage: 'watch' });
     }.bind(this));
   },
+  historyClicked: function(e) {
+    this.setState({ currentPage: 'history' });
+  },
   onLoginClicked: function(e) {
     this.setState({ loading: true });
   },
   onItemClicked: function(e) {
     if (e.target.classList.contains('item-About')) {
       this.aboutClicked(e);
+    } else if (e.target.classList.contains('item-History')) {
+      this.historyClicked(e);
     } else {
       this.logoutClicked(e);
     }
@@ -78,6 +84,8 @@ module.exports = React.createClass({
       if (this.state.logged) {
         if (this.state.item) {
           content = <Watching item={this.state.item} />
+        } else if (this.state.currentPage === 'history') {
+          content = <History />
         } else {
           content = <Info messages={this.props.notWatchingMessages} />
         }
@@ -92,7 +100,7 @@ module.exports = React.createClass({
     return(
       <div className='mdl-layout mdl-layout--fixed-header'>
         <Header
-          items={[{ name: 'About', show: true }, { name: 'Logout', show: this.state.logged }]}
+          items={[{ name: 'About', show: true }, { name: 'History', show: this.state.logged }, { name: 'Logout', show: this.state.logged }]}
           onItemClicked={this.onItemClicked} />
         <main className='mdl-layout__content'>
           <div className='overlay'></div>
