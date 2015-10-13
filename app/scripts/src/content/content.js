@@ -22,6 +22,8 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
   if (request.type == 'startSync') {
+    console.log('start sync', sendResponse);
     sync.start(sendResponse);
+    return true;
   }
 });

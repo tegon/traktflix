@@ -1,0 +1,9 @@
+.spinner-wrapper {
+  position: absolute;
+  padding: 104px 118px;
+  background: rgba(0, 0, 0, 0.5);
+  height: 25px;
+  width: 280px;
+  z-index: 2;
+  border-radius: 2px;
+}

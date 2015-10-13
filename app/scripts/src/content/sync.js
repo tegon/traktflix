@@ -34,7 +34,11 @@ Sync.prototype = {
     if (activities.length > 0) {
       async.filter(activities, this.syncActivity.bind(this), function(activities) {
         console.log('cb -------------', activities);
-        this.history.send(activities, this.callback);
+        if (activities.length > 0) {
+          this.history.send(activities, this.callback);
+        } else {
+          this.callback.call(this, true);
+        }
       }.bind(this));
     }
   },

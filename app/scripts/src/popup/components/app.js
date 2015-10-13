@@ -93,17 +93,19 @@ module.exports = React.createClass({
     chrome.tabs.query({ url: 'http://*.netflix.com/*' }, function(tabs) {
       if (tabs.length > 0) {
         chrome.tabs.sendMessage(tabs[0].id, { type: 'startSync' }, function(success) {
-          console.log('sync finished- --------------------------------------')
+          console.log('sync finished- --------------------------------------', success);
           this.setState({ loading: false });
 
           if (success) {
-            chrome.storage.local.set({ 'synced_at': new Date() });
+            var now = new Date();
+            chrome.storage.local.set({ 'synced_at': now.toISOString() });
           }
         }.bind(this));
       }
     }.bind(this));
   },
   needToSync: function() {
+    console.log('state', this.state);
     var now = new Date();
     now.setHours(0, 0, 0, 0);
     var lastSync = new Date(this.state.syncedAt);

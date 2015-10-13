@@ -23,7 +23,7 @@ WatchedHistory.prototype = {
       url: this.url,
       params: this.params(activities),
       success: function(response) {
-        console.log('sync success');
+        console.log('sync success', callback);
         callback.call(this, true);
       },
       error: function(status, response) {
