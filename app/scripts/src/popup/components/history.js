@@ -2,10 +2,15 @@
 
 var React = require('react');
 var Loading = require('./loading.js');
+var ChromeStorage = require('../../chrome-storage.js');
 
 module.exports = React.createClass({
   componentDidMount: function() {
     componentHandler.upgradeDom();
+  },
+  onAutoSyncChanged: function(e) {
+    ChromeStorage.set({ 'auto_sync': e.target.checked }, function() {});
+    this.props.onAutoSyncChanged(e);
   },
   render: function() {
     chrome.runtime.sendMessage({ type: 'sendAppView', view: 'History' });
@@ -19,13 +24,8 @@ module.exports = React.createClass({
         </div>
 
         <label htmlFor='autoSync' className='mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect'>
-          <input onChange={this.props.onAutoSyncChanged} type='checkbox' id='autoSync' className='mdl-checkbox__input' checked={this.props.autoSync} />
-          <span className='mdl-checkbox__label'>Automatically sync</span>
-        </label>
-
-        <label htmlFor='showSyncButton' className='mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect'>
-          <input onChange={this.props.onShowSyncButtonChanged} type='checkbox' id='showSyncButton' className='mdl-checkbox__input' checked={this.props.showSyncButton} />
-          <span className='mdl-checkbox__label'>Show sync button</span>
+          <input onChange={this.onAutoSyncChanged} type='checkbox' id='autoSync' className='mdl-checkbox__input' checked={this.props.autoSync} />
+          <span className='mdl-checkbox__label'>Automatically sync in background</span>
         </label>
 
         <button onClick={this.props.onSyncNowClicked} className='mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect'>

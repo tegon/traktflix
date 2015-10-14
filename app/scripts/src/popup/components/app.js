@@ -8,6 +8,7 @@ var Info = require('./info.js');
 var Button = require('./button.js');
 var History = require('./history.js');
 var Oauth = require('../../oauth.js');
+var ChromeStorage = require('../../chrome-storage.js');
 
 module.exports = React.createClass({
   getInitialState: function() {
@@ -17,30 +18,31 @@ module.exports = React.createClass({
     Oauth.getUserInfo(this.userIsLogged, this.userIsNotLogged);
   },
   userIsLogged: function(response) {
-    chrome.storage.local.get(function(data) {
+    ChromeStorage.get(null, function(data) {
       this.setState({
         logged: !!data.access_token,
-        autoSync: data.auto_sync,
-        showSyncButton: data.show_sync_button,
-        syncedAt: data.synced_at
+        autoSync: data.auto_sync
       });
       this.getCurrentItem();
-      this.syncIfNeeded();
     }.bind(this));
   },
   userIsNotLogged: function(status, response) {
     this.onTokenFailed(status, response);
   },
-  getCurrentItem: function() {
-    chrome.tabs.query({ url: 'http://*.netflix.com/*' }, function(tabs) {
+  sendToContentScript: function(type, callback) {
+    chrome.tabs.query({ url: '*://*.netflix.com/*' }, function(tabs) {
       if (tabs.length > 0) {
-        chrome.tabs.sendMessage(tabs[0].id, { type: 'getCurrentItem' }, function(response) {
-          if (response) {
-            this.setState({ item: response.item });
-          }
-        }.bind(this));
+        chrome.tabs.sendMessage(tabs[0].id, { type: type }, callback);
       }
-    }.bind(this));
+    });
+  },
+  getCurrentItem: function() {
+    this.sendToContentScript('getCurrentItem', this.onItemReceived.bind(this));
+  },
+  onItemReceived: function(response) {
+    if (response) {
+      this.setState({ item: response.item });
+    }
   },
   componentDidMount: function() {
     this.checkUserLogin();
@@ -50,7 +52,7 @@ module.exports = React.createClass({
   },
   logoutClicked: function(e) {
     chrome.runtime.sendMessage({ type: 'sendEvent', name: 'Logout', value: false });
-    chrome.storage.local.clear(function() {
+    ChromeStorage.clear(function() {
       this.setState({ logged: false, currentPage: 'watch' });
     }.bind(this));
   },
@@ -80,43 +82,18 @@ module.exports = React.createClass({
     console.error('traktflix: Get Token failed', status, response);
   },
   onAutoSyncChanged: function(e) {
-    chrome.storage.local.set({ 'auto_sync': e.target.checked }, function() {});
-  },
-  onShowSyncButtonChanged: function(e) {
-    chrome.storage.local.set({ 'show_sync_button': e.target.checked }, function() {});
+    this.setState({ autoSync: e.target.checked });
   },
   onSyncNowClicked: function(e) {
     this.setState({ loading: true });
     this.startSync();
   },
   startSync: function() {
-    chrome.tabs.query({ url: 'http://*.netflix.com/*' }, function(tabs) {
-      if (tabs.length > 0) {
-        chrome.tabs.sendMessage(tabs[0].id, { type: 'startSync' }, function(success) {
-          console.log('sync finished- --------------------------------------', success);
-          this.setState({ loading: false });
-
-          if (success) {
-            var now = new Date();
-            chrome.storage.local.set({ 'synced_at': now.toISOString() });
-          }
-        }.bind(this));
-      }
-    }.bind(this));
+    this.sendToContentScript('startSync', this.onSyncCompleted.bind(this));
   },
-  needToSync: function() {
-    console.log('state', this.state);
-    var now = new Date();
-    now.setHours(0, 0, 0, 0);
-    var lastSync = new Date(this.state.syncedAt);
-    lastSync.setHours(0, 0, 0, 0);
-    console.log('needToSync', this.state.syncedAt, now, lastSync);
-    return !this.state.syncedAt || now > lastSync;
-  },
-  syncIfNeeded: function() {
-    if (this.needToSync() && this.state.autoSync) {
-      this.startSync();
-    }
+  onSyncCompleted: function(success) {
+    console.log('sync finished- --------------------------------------', success);
+    this.setState({ loading: false });
   },
   render: function() {
     var content;
@@ -135,7 +112,6 @@ module.exports = React.createClass({
               autoSync={this.state.autoSync}
               showSyncButton={this.state.showSyncButton}
               onAutoSyncChanged={this.onAutoSyncChanged}
-              onShowSyncButtonChanged={this.onShowSyncButtonChanged}
               onSyncNowClicked={this.onSyncNowClicked}
               loading={this.state.loading} />
         } else {

@@ -8,8 +8,10 @@ function ViewingActivityParser() {}
 ViewingActivityParser.parse = function(syncedAt, activity) {
   var date = new Date(activity.querySelector('.date').textContent);
   date.setHours(0, 0, 0, 0);
+  console.log('syncedAt', syncedAt);
+  console.log('date', date);
 
-  if (!syncedAt || date > syncedAt) {
+  if (!syncedAt || date >= syncedAt) {
     var item;
     var type = !!activity.attributes['data-series'].value ? 'show' : 'movie';
     var title = activity.querySelector('.title').textContent;
@@ -43,17 +45,19 @@ ViewingActivityParser.start = function(options) {
   var viewingActivity = html.getElementById('viewingactivity');
   var activities = viewingActivity.getElementsByTagName('li');
   var parsedActivities = [];
+  var lastSync = new Date(options.syncedAt);
+  lastSync.setHours(0, 0, 0, 0);
 
   for (var i = 0; i < activities.length; i++) {
-    var activity = ViewingActivityParser.parse(options.syncedAt, activities[i]);
+    var activity = ViewingActivityParser.parse(lastSync, activities[i]);
 
     if (activity !== undefined) {
       parsedActivities.push(activity);
     }
 
-    if (i >= 10) {
-      break;
-    }
+    // if (i >= 10) {
+    //   break;
+    // }
   }
 
   options.success.call(this, parsedActivities);

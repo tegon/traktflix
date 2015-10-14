@@ -2,6 +2,7 @@
 
 var Settings = require('./settings.js');
 var Request = require('./request.js');
+var ChromeStorage = require('./chrome-storage.js');
 
 function Oauth() {};
 
@@ -69,7 +70,7 @@ Oauth.getUserInfo = function getUserInfo(success, error) {
     success: success,
     error: function(status, response) {
       if (status === 401) {
-        chrome.storage.local.get(function(data) {
+        ChromeStorage.get('refresh_token', function(data) {
           if (data.refresh_token) {
             Oauth.requestRefreshToken(data.refresh_token, function(options) {
               if (options.error) {

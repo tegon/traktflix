@@ -44,16 +44,16 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     case 'sendEvent':
       Analytics.sendEvent(request.name, request.value);
       break;
-    case 'getCurrentToken':
-      chrome.storage.local.get('access_token', sendResponse);
-      return true;
-      break;
     case 'getStorageValue':
       chrome.storage.local.get(request.key, sendResponse);
       return true;
       break;
     case 'setStorageValue':
       chrome.storage.local.set(request.value, sendResponse);
+      return true;
+      break;
+    case 'clearStorage':
+      chrome.storage.local.clear(sendResponse);
       return true;
       break;
   }

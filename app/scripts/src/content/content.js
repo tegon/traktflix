@@ -13,6 +13,13 @@ var events = new WatchEvents({
 });
 
 events.startListeners();
+sync.needToSync(function(needToSync) {
+  if (needToSync) {
+    sync.start(function(success) {
+      console.log('sync completed', success);
+    });
+  }
+});
 
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
   if (request.type == 'getCurrentItem') {
@@ -22,7 +29,6 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
   if (request.type == 'startSync') {
-    console.log('start sync', sendResponse);
     sync.start(sendResponse);
     return true;
   }
