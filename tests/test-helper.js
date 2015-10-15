@@ -4,7 +4,7 @@ window.chrome = window.chrome || {};
 
 window.chrome = {
   runtime: {
-    sendMessage: sinon.stub(),
+    sendMessage: function(){},
     onMessage: { addListener: sinon.stub() },
     getManifest: sinon.stub()
   },
@@ -23,6 +23,12 @@ window.chrome = {
   },
   browserAction: { setIcon: sinon.stub() }
 };
+
+sinon.stub(window.chrome.runtime, 'sendMessage', function(data, callback) {
+  if (typeof(callback) === 'function') {
+    callback.call(this, {});
+  }
+});
 
 sinon.stub(window.chrome.storage.local, 'get', function(data, callback) {
   if (typeof(data) === 'function') {

@@ -39,8 +39,8 @@ describe('Search', function() {
       madMen.episode + '?extended=images');
   });
 
-  it('findMovie returns first search result', function() {
-    movieSearch.findMovie({ success: success, error: error });
+  it('findItem returns first search result', function() {
+    movieSearch.findItem({ success: success, error: error });
     expect(this.requests.length).toBe(1);
     this.requests[0].respond(200, { 'Content-Type': 'application/json' },
       '[{ "movie": { "title": "Rocky" } }, { "movie": { "title": "Rocky II" } }]');
@@ -48,8 +48,8 @@ describe('Search', function() {
     expect(success.getCall(0).args).toEqual([{ movie: { title: 'Rocky' } }]);
   });
 
-  it('findMovie returns error callback', function() {
-    movieSearch.findMovie({ success: success, error: error });
+  it('findItem returns error callback', function() {
+    movieSearch.findItem({ success: success, error: error });
     expect(this.requests.length).toBe(1);
     this.requests[0].respond(400, { 'Content-Type': 'application/json' },
       '{ "errors": "Bad Request" }');
@@ -99,10 +99,10 @@ describe('Search', function() {
     expect(episodeSearch.findEpisode.getCall(0).args).toEqual([{ success: success, error: error }]);
   });
 
-  it('when item type is movie, ind calls findMovie', function() {
-    movieSearch.findMovie = sinon.spy();
+  it('when item type is movie, ind calls findItem', function() {
+    movieSearch.findItem = sinon.spy();
     movieSearch.find({ success: success, error: error });
-    expect(movieSearch.findMovie.callCount).toBe(1);
-    expect(movieSearch.findMovie.getCall(0).args).toEqual([{ success: success, error: error }]);
+    expect(movieSearch.findItem.callCount).toBe(1);
+    expect(movieSearch.findItem.getCall(0).args).toEqual([{ success: success, error: error }]);
   });
 });
