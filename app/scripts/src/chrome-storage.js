@@ -9,7 +9,7 @@ ChromeStorage.isAvailable = function() {
 };
 
 ChromeStorage.get = function(key, callback) {
-  if (ChromeStorage.isAvailable) {
+  if (ChromeStorage.isAvailable()) {
     chrome.storage.local.get(key, callback);
   } else {
     chrome.runtime.sendMessage({ type: 'getStorageValue', key: key }, callback);
@@ -17,7 +17,7 @@ ChromeStorage.get = function(key, callback) {
 };
 
 ChromeStorage.set = function(value, callback) {
-  if (ChromeStorage.isAvailable) {
+  if (ChromeStorage.isAvailable()) {
     chrome.storage.local.set(value, callback);
   } else {
     chrome.runtime.sendMessage({ type: 'setStorageValue', value: value }, callback);
@@ -25,7 +25,7 @@ ChromeStorage.set = function(value, callback) {
 };
 
 ChromeStorage.clear = function(callback) {
-  if (ChromeStorage.isAvailable) {
+  if (ChromeStorage.isAvailable()) {
     chrome.storage.local.clear(callback);
   } else {
     chrome.runtime.sendMessage({ type: 'clearStorage' }, callback);
