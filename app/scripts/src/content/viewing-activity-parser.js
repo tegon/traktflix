@@ -8,11 +8,8 @@ function ViewingActivityParser() {}
 ViewingActivityParser.parse = function(syncedAt, activity) {
   var date = new Date(activity.querySelector('.date').textContent);
   date.setHours(0, 0, 0, 0);
-  console.log('syncedAt', syncedAt);
-  console.log('date', date);
 
   if (isNaN(syncedAt.getTime()) || date >= syncedAt) {
-    console.log('parsing');
     var item;
     var type = !!activity.attributes['data-series'].value ? 'show' : 'movie';
     var title = activity.querySelector('.title').textContent;
