@@ -106,7 +106,7 @@ describe('Sync', function() {
 
   describe('onSyncStart', function() {
     var parser = sinon.stub(ViewingActivityParser, 'start', function(options) {
-      options.success.call(this, {});
+      options.callback.call(this, {});
     });
     var list = sinon.stub(ViewingActivity, 'list', function(options) {
       options.success.call(this, {});
@@ -135,17 +135,6 @@ describe('Sync', function() {
       expect(list.callCount).toBe(1);
       expect(parser.callCount).toBe(1);
       expect(syncActivities.callCount).toBe(1);
-    });
-
-    it('when ViewingActivityParser.start fails, sync.onError is called', function() {
-      parser.restore();
-      parser = sinon.stub(ViewingActivityParser, 'start', function(options) {
-        options.error.call(this, {});
-      });
-      sync.onSyncStart();
-      expect(list.callCount).toBe(1);
-      expect(parser.callCount).toBe(1);
-      expect(onError.callCount).toBe(1);
     });
 
     it('when ViewingActivity.list fails, sync.onError is called', function() {

@@ -42,9 +42,8 @@ Sync.prototype = {
         success: function(response) {
           ViewingActivityParser.start({
             data: response,
-            success: this.syncActivities.bind(this),
-            syncedAt: data.synced_at,
-            error: this.onError.bind(this)
+            callback: this.syncActivities.bind(this),
+            syncedAt: data.synced_at
           });
         }.bind(this),
         error: this.onError.bind(this)

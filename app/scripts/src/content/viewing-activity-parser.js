@@ -12,6 +12,7 @@ ViewingActivityParser.parse = function(syncedAt, activity) {
   console.log('date', date);
 
   if (isNaN(syncedAt.getTime()) || date >= syncedAt) {
+    console.log('parsing');
     var item;
     var type = !!activity.attributes['data-series'].value ? 'show' : 'movie';
     var title = activity.querySelector('.title').textContent;
@@ -21,7 +22,9 @@ ViewingActivityParser.parse = function(syncedAt, activity) {
       var title = splittedTitle[0];
       var season = splittedTitle[1].match(/\d+/g);
       if (season) {
-        season = season[0];
+        season = parseInt(season[0]);
+      } else {
+        return;
       }
       var epTitle = splittedTitle[2].trim().replace('"', '').replace('"', '');
 
@@ -54,13 +57,9 @@ ViewingActivityParser.start = function(options) {
     if (activity !== undefined) {
       parsedActivities.push(activity);
     }
-
-    // if (i >= 10) {
-    //   break;
-    // }
   }
 
-  options.success.call(this, parsedActivities);
+  options.callback.call(this, parsedActivities);
 };
 
 module.exports = ViewingActivityParser;

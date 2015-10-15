@@ -2,6 +2,10 @@ var ChromeStorage = require('../app/scripts/src/chrome-storage.js');
 var callback = sinon.spy();
 
 describe('ChromeStorage', function() {
+  beforeEach(function() {
+    ChromeStorage();
+  });
+
   afterEach(function() {
     callback.reset();
     chrome.storage.local.get.reset();
