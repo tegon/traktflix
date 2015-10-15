@@ -38,6 +38,24 @@ Search.prototype = {
     });
   },
 
+  findEpisodeByTitle: function(response, options) {
+    var episodes = JSON.parse(response);
+    var episode;
+
+    for (var i = 0; i < episodes.length; i++) {
+      if (episodes[i].title === this.item.epTitle) {
+        episode = episodes[i];
+        break;
+      }
+    }
+
+    if (episode) {
+      options.success.call(this, episode);
+    } else {
+      options.error.call(this, 404, 'Episode not found.');
+    }
+  },
+
   findEpisode: function(options) {
     this.findItem({
       success: function(response) {
@@ -48,23 +66,13 @@ Search.prototype = {
             if (this.item.episode) {
               options.success.call(this, JSON.parse(resp));
             } else {
-              var episodes = JSON.parse(resp);
-              var ep;
-
-              for (var i = 0; i < episodes.length; i++) {
-                var episode = episodes[i];
-                if (episode.title === this.item.epTitle) {
-                  ep = episode;
-                  break;
-                }
-              }
-              options.success.call(this, ep);
+              this.findEpisodeByTitle(resp, options);
             }
           }.bind(this),
           error: function(st, resp) {
             options.error.call(this, st, resp);
           }
-        })
+        });
       }.bind(this),
       error: function(status, response) {
         options.error.call(this, status, response);

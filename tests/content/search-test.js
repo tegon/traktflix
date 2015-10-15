@@ -5,7 +5,9 @@ var error = sinon.spy();
 var rocky = { title: 'Rocky', type: 'movie' };
 var movieSearch = new Search({ item: rocky });
 var madMen = { type: 'show', season: 1, episode: 1, title: 'Mad Men' };
+var narcos = { type: 'show', season: 1, title: 'Narcos', epTitle: 'The Sword of Simón Bolívar' };
 var episodeSearch = new Search({ item: madMen });
+var episodeSearchByTitle = new Search({ item: narcos });
 
 describe('Search', function() {
   beforeEach(function() {
@@ -33,10 +35,15 @@ describe('Search', function() {
       '&query=' + rocky.title);
   });
 
-  it('getEpisodeUrl function', function() {
+  it('getEpisodeUrl uses episode number when item has an episode number', function() {
     expect(episodeSearch.getEpisodeUrl('mad-men')).toBe(Settings.apiUri +
       '/shows/mad-men/seasons/' + madMen.season + '/episodes/' +
       madMen.episode + '?extended=images');
+  });
+
+  it('getEpisodeUrl gets all episodes when item does not have an episode number', function() {
+    expect(episodeSearchByTitle.getEpisodeUrl('narcos')).toBe(Settings.apiUri +
+      '/shows/narcos/seasons/' + madMen.season + '?extended=images');
   });
 
   it('findItem returns first search result', function() {
@@ -69,6 +76,32 @@ describe('Search', function() {
     expect(success.getCall(0).args).toEqual([{
       title: 'Ladies Room', season: 1, number: 2
     }]);
+  });
+
+  it('findEpisode returns first search result with same title', function() {
+    episodeSearchByTitle.findEpisode({ success: success, error: error });
+    expect(this.requests.length).toBe(1);
+    this.requests[0].respond(200, { 'Content-Type': 'application/json' },
+      '[{ "show": { "title": "Narcos", "ids": { "slug": "narcos" } } }]');
+    expect(this.requests.length).toBe(2);
+    this.requests[1].respond(200, { 'Content-Type': 'application/json' },
+      '[{ "season": 1, "number": 1, "title": "Descenso" }, { "season": 1, "number": 2, "title": "The Sword of Simón Bolívar" }]');
+    expect(success.callCount).toBe(1);
+    expect(success.getCall(0).args).toEqual([{
+      title: 'The Sword of Simón Bolívar', season: 1, number: 2
+    }]);
+  });
+
+  it('findEpisode returns error callback when an episode with same title was not found', function() {
+    episodeSearchByTitle.findEpisode({ success: success, error: error });
+    expect(this.requests.length).toBe(1);
+    this.requests[0].respond(200, { 'Content-Type': 'application/json' },
+      '[{ "show": { "title": "Narcos", "ids": { "slug": "narcos" } } }]');
+    expect(this.requests.length).toBe(2);
+    this.requests[1].respond(200, { 'Content-Type': 'application/json' },
+      '[{ "season": 1, "number": 1, "title": "Descenso" }, { "season": 1, "number": 3, "title": "The Men of Always" }]');
+    expect(error.callCount).toBe(1);
+    expect(error.getCall(0).args).toEqual([404, 'Episode not found.']);
   });
 
   it('findEpisode returns error callback', function() {
