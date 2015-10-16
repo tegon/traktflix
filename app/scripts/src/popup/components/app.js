@@ -113,6 +113,7 @@ module.exports = React.createClass({
               showSyncButton={this.state.showSyncButton}
               onAutoSyncChanged={this.onAutoSyncChanged}
               onSyncNowClicked={this.onSyncNowClicked}
+              componentHandler={componentHandler}
               loading={this.state.loading} />
         } else {
           content = <Info messages={this.props.notWatchingMessages} />

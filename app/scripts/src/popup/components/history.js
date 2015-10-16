@@ -6,7 +6,7 @@ var ChromeStorage = require('../../chrome-storage.js');
 
 module.exports = React.createClass({
   componentDidMount: function() {
-    componentHandler.upgradeDom();
+    this.props.componentHandler.upgradeDom();
   },
   onAutoSyncChanged: function(e) {
     ChromeStorage.set({ 'auto_sync': e.target.checked }, function() {});
