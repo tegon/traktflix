@@ -2,6 +2,10 @@ var ViewingActivityParser = require('../../app/scripts/src/content/viewing-activ
 var ViewingActivity = require('../../app/scripts/src/content/viewing-activity.js');
 
 describe('ViewingActivityParser', function() {
+  beforeEach(function() {
+    ViewingActivityParser();
+  });
+
   describe('parse', function() {
     it('creates the activity when synced_at is undefined', function() {
       var activity = ViewingActivityParser.parse(new Date(undefined), window.movieActivity);
