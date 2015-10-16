@@ -30,7 +30,6 @@ describe('ViewingActivity', function() {
     var activity = new ViewingActivity({ item: rocky, date: date });
     expect(activity.item).toBe(rocky);
     expect(activity.date).toBe(date);
-    expect(activity.url).toBe('https://www.netflix.com/WiViewingActivity');
   });
 
   it('list calls success callback', function() {

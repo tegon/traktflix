@@ -5,13 +5,12 @@ var Request = require('../request.js');
 function ViewingActivity(options) {
   this.item = options.item;
   this.date = options.date;
-  this.url = 'https://www.netflix.com/WiViewingActivity';
 }
 
 ViewingActivity.list = function(options) {
   Request.send({
     method: 'GET',
-    url: this.url,
+    url: 'https://www.netflix.com/WiViewingActivity',
     success: function(response) {
       options.success.call(this, response);
     },
