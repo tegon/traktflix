@@ -98,8 +98,11 @@ WatchedHistory.prototype = {
             options.activity.item.id = response.ids.trakt;
             options.activity.item.episode = response.number;
           }
+
+          options.success.call(this, options.activity);
+        } else {
+          options.error.call(this, options.activity);
         }
-        options.success.call(this, options.activity);
       },
       error: function(status, response) {
         options.error.call(this, status, response);
