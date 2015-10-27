@@ -10,3 +10,8 @@
 .history-card span.mdl-checkbox__label {
   color: white;
 }
+
+.history-card .mdl-card__supporting-text {
+  color: white;
+  padding: 0 16px;
+}

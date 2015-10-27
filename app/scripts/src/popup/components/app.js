@@ -37,7 +37,7 @@ module.exports = React.createClass({
     });
   },
   getCurrentItem: function() {
-    this.sendToContentScript('getCurrentItem', this.onItemReceived.bind(this));
+    this.sendToContentScript('getCurrentItem', this.onItemReceived);
   },
   onItemReceived: function(response) {
     if (response) {
@@ -89,7 +89,7 @@ module.exports = React.createClass({
     this.startSync();
   },
   startSync: function() {
-    this.sendToContentScript('startSync', this.onSyncCompleted.bind(this));
+    this.sendToContentScript('startSync', this.onSyncCompleted);
   },
   onSyncCompleted: function(success) {
     console.log('sync finished- --------------------------------------', success);

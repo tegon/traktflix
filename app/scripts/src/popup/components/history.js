@@ -23,6 +23,10 @@ module.exports = React.createClass({
           <h5>Sync your viewing activity from other devices</h5>
         </div>
 
+        <div className='mdl-card__supporting-text'>
+          Note: this is currently in beta, please report any issues.
+        </div>
+
         <label htmlFor='autoSync' className='mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect'>
           <input onChange={this.onAutoSyncChanged} type='checkbox' id='autoSync' className='mdl-checkbox__input' checked={this.props.autoSync} />
           <span className='mdl-checkbox__label'>Automatically sync in background</span>
