@@ -21,6 +21,7 @@ Request._send = function _send(options, accessToken) {
     if (this.status >= 200 && this.status < 400) {
       options.success.call(this, this.response);
     } else {
+      console.log('onerror ------------------ ', this);
       options.error.call(this, this.status, this.responseText);
     }
   };

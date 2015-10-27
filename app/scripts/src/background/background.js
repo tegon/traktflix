@@ -34,6 +34,13 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
         path: chrome.runtime.getManifest().page_action.default_icon
       });
       break;
+    case 'setErrorIcon':
+      console.log('setErrorIcon -----------------');
+      chrome.pageAction.setIcon({
+        tabId: sender.tab.id,
+        path: chrome.runtime.getManifest().page_action.error_icon
+      });
+      break;
     case 'launchAuthorize':
       Oauth.authorize(sendResponse);
       return true;

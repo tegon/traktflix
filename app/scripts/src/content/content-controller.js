@@ -33,15 +33,17 @@ ContentController.prototype = {
   onSearchError: function(status, response) {
     this.sendAnalyticsEvent({ name: 'onSearchError', value: status });
     console.error('traktflix: Search error', status, response);
+    this.onError(response);
   },
 
   onScrobbleSuccess: function() {
     this.sendAnalyticsEvent({ name: 'Scrobble', value: 'onSuccess' });
   },
 
-  onScrobbleError: function() {
+  onScrobbleError: function(status, response) {
     this.sendAnalyticsEvent({ name: 'Scrobble', value: 'onError' });
-    console.error('traktflix: Scrobble error');
+    console.error('traktflix: Scrobble error', status);
+    this.onError(response);
   },
 
   storeItem: function(item) {
@@ -85,12 +87,22 @@ ContentController.prototype = {
     this.storeItem(null);
   },
 
+  onError: function(e) {
+    console.log('content onError -----------------', e);
+    this.setErrorIcon();
+    chrome.runtime.sendMessage({ type: 'onError', error: e });
+  },
+
   setInactiveIcon: function() {
     chrome.runtime.sendMessage({ type: 'setInactiveIcon' });
   },
 
   setActiveIcon: function() {
     chrome.runtime.sendMessage({ type: 'setActiveIcon' });
+  },
+
+  setErrorIcon: function() {
+    chrome.runtime.sendMessage({ type: 'setErrorIcon' });
   },
 
   sendAnalyticsEvent: function(options) {

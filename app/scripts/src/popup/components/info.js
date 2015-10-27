@@ -6,6 +6,12 @@ module.exports = React.createClass({
   getRandomMessage: function() {
     return this.props.messages[Math.floor(Math.random() * this.props.messages.length)];
   },
+  componentWillUnmount: function() {
+    console.log('componentWillUnmount ---------------------- ', this.props.componentWillUnmount);
+    if (this.props.componentWillUnmount) {
+      this.props.componentWillUnmount();
+    }
+  },
   render: function() {
     var message = this.getRandomMessage();
     chrome.runtime.sendMessage({ type: 'sendAppView', view: 'Info' });

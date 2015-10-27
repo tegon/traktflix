@@ -34,6 +34,10 @@
             "19": "images/traktflix-icon-selected-19.png",
             "38": "images/traktflix-icon-selected-38.png"
         },
+        "error_icon": {
+            "19": "images/traktflix-icon-error-19.png",
+            "38": "images/traktflix-icon-error-38.png"
+        },
         "default_title": "traktflix",
         "default_popup": "popup.html"
     },

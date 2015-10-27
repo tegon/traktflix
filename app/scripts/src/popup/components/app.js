@@ -12,6 +12,7 @@ var ChromeStorage = require('../../chrome-storage.js');
 
 module.exports = React.createClass({
   getInitialState: function() {
+    this.addErrorListener();
     return { logged: false, currentPage: 'watch', loading: false };
   },
   checkUserLogin: function() {
@@ -79,6 +80,9 @@ module.exports = React.createClass({
   onTokenFailed: function(status, response) {
     this.setState({ loading: false });
     chrome.runtime.sendMessage({ type: 'sendEvent', name: 'TokenFailed', value: false });
+    if (status > 401) {
+      this.onError(response);
+    }
     console.error('traktflix: Get Token failed', status, response);
   },
   onAutoSyncChanged: function(e) {
@@ -95,6 +99,22 @@ module.exports = React.createClass({
     console.log('sync finished- --------------------------------------', success);
     this.setState({ loading: false });
   },
+  setInactiveIcon: function() {
+    chrome.runtime.sendMessage({ type: 'setInactiveIcon' });
+  },
+  addErrorListener: function() {
+    chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
+      console.log('onMessage ----------------', request);
+      if (request.type == 'setError') {
+        this.onError(request.error);
+      }
+    }.bind(this));
+  },
+  onError: function(error) {
+    console.log('popup onError -------------------------');
+    chrome.runtime.sendMessage({ type: 'setErrorIcon' });
+    this.setState({ error: error });
+  },
   render: function() {
     var content;
     if (this.state.currentPage === 'about') {
@@ -102,7 +122,13 @@ module.exports = React.createClass({
         <Info messages={this.props.aboutMessages}>
           <Button url={'https://github.com/tegon/traktflix'} text={'Read more'} />
         </Info>
+    } else if (this.state.error) {
+      content =
+        <Info
+          messages={this.props.errorMessages}
+          componentWillUnmount={this.setInactiveIcon} />
     } else {
+      console.log('this.state ----------------', this.state);
       if (this.state.logged) {
         if (this.state.item) {
           content = <Watching item={this.state.item} />

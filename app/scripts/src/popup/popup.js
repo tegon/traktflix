@@ -22,7 +22,16 @@ var aboutMessages = [
   'Bringing your Netflix history to Trakt.tv'
 ];
 
+var errorMessages = [
+  'Ouch... Trakt has returned an error. Please try again later.',
+  'Looks like Trakt has some errors to take care. Please come back later.',
+  'Something is wrong with Trakt. We\'re sorry. Give us a time and come back later.'
+];
+
 React.render(
-  <App notWatchingMessages={notWatchingMessages} aboutMessages={aboutMessages} />,
+  <App
+    notWatchingMessages={notWatchingMessages}
+    aboutMessages={aboutMessages}
+    errorMessages={errorMessages} />,
   document.querySelector('.app-container')
 );
