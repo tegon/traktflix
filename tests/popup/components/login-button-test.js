@@ -17,28 +17,10 @@ describe('Login', function() {
     chrome.runtime.sendMessage.reset();
   });
 
-  it('When props.loading is true, spinner-wrapper has display: block style', function() {
-    var spinnerWrapper = TestUtils.findRenderedDOMComponentWithClass(loginButton, 'spinner-wrapper');
-    expect(spinnerWrapper.getDOMNode().style['display']).toBe('block');
-  });
-
-  it('When props.loading is false, spinner-wrapper has display: none style', function() {
-    var loginButton = TestUtils.renderIntoDocument(
-      <Login onClick={onClick} loading={false}
-        onTokenSuccess={onTokenSuccess} onTokenFailed={onTokenFailed} />
-    );
-    var spinnerWrapper = TestUtils.findRenderedDOMComponentWithClass(loginButton, 'spinner-wrapper');
-    expect(spinnerWrapper.getDOMNode().style['display']).toBe('none');
-  });
-
   it('Has the correct html classes', function() {
     var loginWrapper = TestUtils.findRenderedDOMComponentWithClass(loginButton, 'login-wrapper');
-    var spinnerWrapper = TestUtils.findRenderedDOMComponentWithClass(loginButton, 'spinner-wrapper');
-    var spinner = TestUtils.findRenderedDOMComponentWithClass(loginButton, 'mdl-spinner mdl-spinner--single-color mdl-js-spinner is-active');
     var button = TestUtils.findRenderedDOMComponentWithClass(loginButton, 'mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect');
     expect(loginWrapper.getDOMNode().className).toBe('login-wrapper');
-    expect(spinnerWrapper.getDOMNode().className).toBe('spinner-wrapper');
-    expect(spinner.getDOMNode().className).toBe('mdl-spinner mdl-spinner--single-color mdl-js-spinner is-active');
     expect(button.getDOMNode().className).toBe('mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect');
   });
 

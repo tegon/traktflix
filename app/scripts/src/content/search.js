@@ -15,11 +15,16 @@ Search.prototype = {
   },
 
   getEpisodeUrl: function(slug) {
-    return this.showsUrl + '/' + slug + '/seasons/' + this.item.season
-      + '/episodes/' + this.item.episode + '?extended=images';
+    if (this.item.episode) {
+      return this.showsUrl + '/' + slug + '/seasons/' + this.item.season
+        + '/episodes/' + this.item.episode + '?extended=images';
+    } else {
+      return this.showsUrl + '/' + slug + '/seasons/' + this.item.season
+        + '?extended=images';
+    }
   },
 
-  findMovie: function(options) {
+  findItem: function(options) {
     Request.send({
       method: 'GET',
       url: this.getUrl(),
@@ -33,19 +38,37 @@ Search.prototype = {
     });
   },
 
-  findEpisode: function(options) {
-    Request.send({
-      method: 'GET',
-      url: this.getUrl(),
-      success: function(response) {
-        var data = JSON.parse(response)[0];
+  findEpisodeByTitle: function(response, options) {
+    var episodes = JSON.parse(response);
+    var episode;
 
+    for (var i = 0; i < episodes.length; i++) {
+      if (episodes[i].title === this.item.epTitle) {
+        episode = episodes[i];
+        break;
+      }
+    }
+
+    if (episode) {
+      options.success.call(this, episode);
+    } else {
+      options.error.call(this, 404, 'Episode not found.');
+    }
+  },
+
+  findEpisode: function(options) {
+    this.findItem({
+      success: function(response) {
         Request.send({
           method: 'GET',
-          url: this.getEpisodeUrl(data['show']['ids']['slug']),
+          url: this.getEpisodeUrl(response['show']['ids']['slug']),
           success: function(resp) {
-            options.success.call(this, JSON.parse(resp));
-          },
+            if (this.item.episode) {
+              options.success.call(this, JSON.parse(resp));
+            } else {
+              this.findEpisodeByTitle(resp, options);
+            }
+          }.bind(this),
           error: function(st, resp) {
             options.error.call(this, st, resp);
           }
@@ -61,7 +84,7 @@ Search.prototype = {
     if (this.item.type == 'show') {
       this.findEpisode(options);
     } else {
-      this.findMovie(options);
+      this.findItem(options);
     }
   }
 };

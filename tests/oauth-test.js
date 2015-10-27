@@ -116,8 +116,8 @@ describe('Oauth', function() {
   it('getUserInfo requests refreshToken with success', function() {
     window.chrome.storage.local.get.restore();
     sinon.stub(window.chrome.storage.local, 'get', function(data, cb) {
-      if (typeof(data) === 'function') {
-        data.call(this, { refresh_token: '343567564qweqwertet' });
+      if (data === 'refresh_token') {
+        cb.call(this, { refresh_token: '343567564qweqwertet' });
       } else {
         cb.call(this, {});
       }
@@ -138,8 +138,8 @@ describe('Oauth', function() {
   it('getUserInfo requests refreshToken with error', function() {
     window.chrome.storage.local.get.restore();
     sinon.stub(window.chrome.storage.local, 'get', function(data, cb) {
-      if (typeof(data) === 'function') {
-        data.call(this, { refresh_token: '343567564qweqwertet' });
+      if (data === 'refresh_token') {
+        cb.call(this, { refresh_token: '343567564qweqwertet' });
       } else {
         cb.call(this, {});
       }

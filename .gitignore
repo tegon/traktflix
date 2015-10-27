@@ -9,8 +9,8 @@ package
 build
 *.log
 .DS_Store
-app/scripts/src/settings.js
 *.crx
 *.pem
 coverage
 app.zip
+config.json

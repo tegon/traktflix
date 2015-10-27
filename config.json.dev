@@ -1,0 +1,12 @@
+{
+  "production": {
+    "clientId": "{TraktClientId}",
+    "clientSecret": "{TraktClientSecret}",
+    "analyticsId": "{GoogleAnalyticsId}"
+  },
+  "development": {
+    "clientId": "{TraktClientId}",
+    "clientSecret": "{TraktClientSecret}",
+    "analyticsId": "{GoogleAnalyticsId}"
+  }
+}

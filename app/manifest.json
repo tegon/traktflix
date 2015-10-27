@@ -1,7 +1,7 @@
 {
     "name": "__MSG_appName__",
     "short_name": "__MSG_appShortName__",
-    "version": "1.0.4.4575",
+    "version": "1.0.5",
     "manifest_version": 2,
     "description": "__MSG_appDescription__",
     "icons": {
@@ -18,7 +18,7 @@
     "content_scripts": [
         {
             "matches": [
-                "http://*.netflix.com/*"
+                "*://*.netflix.com/*"
             ],
             "js": [
                 "scripts/build/content.js"
@@ -44,7 +44,8 @@
         "storage",
         "unlimitedStorage",
         "http://trakt.tv/*",
-        "https://www.google-analytics.com/"
+        "https://www.google-analytics.com/",
+        "*://*.netflix.com/*"
     ],
     "web_accessible_resources": [
         "images/svg/*.svg"

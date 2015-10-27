@@ -1,16 +1,9 @@
 'use strict';
 
 var Settings = require('./settings.js');
+var ChromeStorage = require('./chrome-storage.js');
 
 function Request() {};
-
-Request.getCurrentToken = function getCurrentToken(callback) {
-  if (chrome.tabs) { // Not in content_script. Safe to call chrome.storage
-    chrome.storage.local.get('access_token', callback);
-  } else { // Send a message so that background script handle chrome.storage calls
-    chrome.runtime.sendMessage({ type: 'getCurrentToken' }, callback);
-  }
-};
 
 Request._send = function _send(options, accessToken) {
   var xhr = new XMLHttpRequest();
@@ -37,7 +30,7 @@ Request._send = function _send(options, accessToken) {
 };
 
 Request.send = function send(options) {
-  Request.getCurrentToken(function(data) {
+  ChromeStorage.get('access_token', function(data) {
     Request._send(options, data.access_token);
   }.bind(this));
 };

@@ -4,7 +4,7 @@
 [![Build Status](https://travis-ci.org/tegon/traktflix.svg?branch=master)](https://travis-ci.org/tegon/traktflix)
 [![Coverage Status](https://coveralls.io/repos/tegon/traktflix/badge.svg?branch=master&service=github)](https://coveralls.io/github/tegon/traktflix?branch=master)
 
-[![download](ChromeWebStore_BadgeWBorder_v2_206x58.png)](https://chrome.google.com/webstore/detail/bmoemkaigjgcgjjnpmdgkifndiidkeji)
+[![download](ChromeWebStore_BadgeWBorder_v2_206x58.png)](https://chrome.google.com/webstore/detail/bmoemkaigjgcgjjnpmdgkifndiidkeji?utm_source=github&utm_medium=readme& utm_campaign=repo)
 
 ###Table of Contents
 * [What is Trakt?](#what-is-trakt)
@@ -41,9 +41,9 @@ In `Redirect uri:` put `https://{extensionId}.chromiumapp.org`
 
 In `Javascript (cors) origins:` put `https://{extensionId}.chromiumapp.org` and `chrome-extension://{extensionId}`
 
-Copy the `settings.js` example file and change Trakt.tv credentials:
+Copy the `config.json` example file and change Trakt.tv credentials:
 ```bash
-cp settings.js.dev app/scripts/src/settings.js
+cp config.json.dev config.json
 ```
 
 Use [nvm](https://github.com/creationix/nvm) to run in the correct version of node
@@ -73,4 +73,4 @@ To run tests
 npm test
 ```
 
-[LICENSE](LICENSE-MIT)
+[LICENSE](LICENSE)
