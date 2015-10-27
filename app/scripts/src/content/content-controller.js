@@ -89,7 +89,7 @@ ContentController.prototype = {
 
   onError: function(e) {
     this.setErrorIcon();
-    chrome.runtime.sendMessage({ type: 'onError', error: e });
+    chrome.runtime.sendMessage({ type: 'setError', error: e });
   },
 
   setInactiveIcon: function() {
