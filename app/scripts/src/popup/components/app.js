@@ -30,10 +30,19 @@ module.exports = React.createClass({
   userIsNotLogged: function(status, response) {
     this.onTokenFailed(status, response);
   },
-  sendToContentScript: function(type, callback) {
+  getTabId: function(callback) {
     chrome.tabs.query({ url: '*://*.netflix.com/*' }, function(tabs) {
       if (tabs.length > 0) {
-        chrome.tabs.sendMessage(tabs[0].id, { type: type }, callback);
+        callback.call(this, tabs[0].id);
+      } else {
+        callback.call(this, null);
+      }
+    });
+  },
+  sendToContentScript: function(type, callback) {
+    this.getTabId(function(id) {
+      if (id) {
+        chrome.tabs.sendMessage(id, { type: type }, callback);
       }
     });
   },
@@ -76,11 +85,12 @@ module.exports = React.createClass({
     var options = JSON.parse(response);
     this.setState({ loading: false, logged: !!options.access_token });
     chrome.runtime.sendMessage({ type: 'sendEvent', name: 'TokenSuccess', value:  true });
+    this.setInactiveIcon();
   },
   onTokenFailed: function(status, response) {
     this.setState({ loading: false });
     chrome.runtime.sendMessage({ type: 'sendEvent', name: 'TokenFailed', value: false });
-    if (status > 401) {
+    if (status === 0 || status > 401) {
       this.onError(response);
     }
     console.error('traktflix: Get Token failed', status, response);
@@ -100,20 +110,27 @@ module.exports = React.createClass({
     this.setState({ loading: false });
   },
   setInactiveIcon: function() {
-    chrome.runtime.sendMessage({ type: 'setInactiveIcon' });
+    this.getTabId(function(id) {
+      if (id) {
+        chrome.runtime.sendMessage({ type: 'setInactiveIcon', tabId: id });
+      }
+    }.bind(this));
   },
   addErrorListener: function() {
     chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
-      console.log('onMessage ----------------', request);
       if (request.type == 'setError') {
         this.onError(request.error);
       }
     }.bind(this));
   },
   onError: function(error) {
-    console.log('popup onError -------------------------');
-    chrome.runtime.sendMessage({ type: 'setErrorIcon' });
-    this.setState({ error: error });
+    this.getTabId(function(id) {
+      if (id) {
+        chrome.runtime.sendMessage({ type: 'setErrorIcon', tabId: id });
+      }
+
+      this.setState({ error: error || true });
+    }.bind(this));
   },
   render: function() {
     var content;
@@ -124,11 +141,8 @@ module.exports = React.createClass({
         </Info>
     } else if (this.state.error) {
       content =
-        <Info
-          messages={this.props.errorMessages}
-          componentWillUnmount={this.setInactiveIcon} />
+        <Info messages={this.props.errorMessages} />
     } else {
-      console.log('this.state ----------------', this.state);
       if (this.state.logged) {
         if (this.state.item) {
           content = <Watching item={this.state.item} />

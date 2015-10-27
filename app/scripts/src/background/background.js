@@ -24,20 +24,19 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
   switch(request.type) {
     case 'setActiveIcon':
       chrome.pageAction.setIcon({
-        tabId: sender.tab.id,
+        tabId: request.tabId || sender.tab.id,
         path: chrome.runtime.getManifest().page_action.selected_icon
       });
       break;
     case 'setInactiveIcon':
       chrome.pageAction.setIcon({
-        tabId: sender.tab.id,
+        tabId: request.tabId || sender.tab.id,
         path: chrome.runtime.getManifest().page_action.default_icon
       });
       break;
     case 'setErrorIcon':
-      console.log('setErrorIcon -----------------');
       chrome.pageAction.setIcon({
-        tabId: sender.tab.id,
+        tabId: request.tabId || sender.tab.id,
         path: chrome.runtime.getManifest().page_action.error_icon
       });
       break;

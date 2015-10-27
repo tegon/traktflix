@@ -74,20 +74,16 @@ Oauth.getUserInfo = function getUserInfo(success, error) {
           if (data.refresh_token) {
             Oauth.requestRefreshToken(data.refresh_token, function(options) {
               if (options.error) {
-                console.log('auth error ---------------', options.status, options.response);
                 error.call(this, options.status, options.response);
               } else {
                 success.call(this, options.response);
               }
             });
           } else {
-            console.log('auth error ---------------', status, response);
-
             error.call(this, status, response);
           }
         }.bind(this));
       } else {
-        console.log('auth error ---------------', status, response);
         error.call(this, status, response);
       }
     }

@@ -88,7 +88,6 @@ ContentController.prototype = {
   },
 
   onError: function(e) {
-    console.log('content onError -----------------', e);
     this.setErrorIcon();
     chrome.runtime.sendMessage({ type: 'onError', error: e });
   },
