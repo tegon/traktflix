@@ -32,8 +32,8 @@ ContentController.prototype = {
 
   onSearchError: function(status, response) {
     this.sendAnalyticsEvent({ name: 'onSearchError', value: status });
-    console.error('traktflix: Search error', status, response);
     this.onError(response);
+    console.error('traktflix: Search error', status, response);
   },
 
   onScrobbleSuccess: function() {
@@ -42,8 +42,8 @@ ContentController.prototype = {
 
   onScrobbleError: function(status, response) {
     this.sendAnalyticsEvent({ name: 'Scrobble', value: 'onError' });
-    console.error('traktflix: Scrobble error', status);
     this.onError(response);
+    console.error('traktflix: Scrobble error', status);
   },
 
   storeItem: function(item) {
@@ -57,6 +57,7 @@ ContentController.prototype = {
       });
     } else {
       this.scrobble = undefined;
+      this.error = undefined;
     }
   },
 
@@ -89,7 +90,7 @@ ContentController.prototype = {
 
   onError: function(e) {
     this.setErrorIcon();
-    chrome.runtime.sendMessage({ type: 'setError', error: e });
+    this.error = e;
   },
 
   setInactiveIcon: function() {
@@ -111,7 +112,9 @@ ContentController.prototype = {
   },
 
   getCurrentItem: function() {
-    if (this.item && this.item.type === 'show') {
+    if (this.error) {
+      return { error: error };
+    } else if (this.item && this.item.type === 'show') {
       return { item: this.scrobble.item.episode };
     } else if (this.item && this.item.type === 'movie') {
       return { item: this.scrobble.item.movie };

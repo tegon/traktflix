@@ -12,7 +12,6 @@ var ChromeStorage = require('../../chrome-storage.js');
 
 module.exports = React.createClass({
   getInitialState: function() {
-    this.addErrorListener();
     return { logged: false, currentPage: 'watch', loading: false };
   },
   checkUserLogin: function() {
@@ -51,7 +50,7 @@ module.exports = React.createClass({
   },
   onItemReceived: function(response) {
     if (response) {
-      this.setState({ item: response.item });
+      this.setState(response);
     }
   },
   componentDidMount: function() {
@@ -90,7 +89,7 @@ module.exports = React.createClass({
   onTokenFailed: function(status, response) {
     this.setState({ loading: false });
     chrome.runtime.sendMessage({ type: 'sendEvent', name: 'TokenFailed', value: false });
-    if (status === 0 || status > 401) {
+    if (status === 0 || status > 404) {
       this.onError(response);
     }
     console.error('traktflix: Get Token failed', status, response);
@@ -112,25 +111,26 @@ module.exports = React.createClass({
   setInactiveIcon: function() {
     this.getTabId(function(id) {
       if (id) {
-        chrome.runtime.sendMessage({ type: 'setInactiveIcon', tabId: id });
+        chrome.pageAction.setIcon({
+          tabId: id,
+          path: chrome.runtime.getManifest().page_action.default_icon
+        });
       }
-    }.bind(this));
+    });
   },
-  addErrorListener: function() {
-    chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
-      if (request.type == 'setError') {
-        this.onError(request.error);
-      }
-    }.bind(this));
-  },
-  onError: function(error) {
+  setErrorIcon: function() {
     this.getTabId(function(id) {
       if (id) {
-        chrome.runtime.sendMessage({ type: 'setErrorIcon', tabId: id });
+        chrome.pageAction.setIcon({
+          tabId: id,
+          path: chrome.runtime.getManifest().page_action.error_icon
+        });
       }
-
-      this.setState({ error: error || true });
-    }.bind(this));
+    });
+  },
+  onError: function(error) {
+    this.setErrorIcon();
+    this.setState({ error: error || true });
   },
   render: function() {
     var content;
@@ -144,9 +144,7 @@ module.exports = React.createClass({
         <Info messages={this.props.errorMessages} />
     } else {
       if (this.state.logged) {
-        if (this.state.item) {
-          content = <Watching item={this.state.item} />
-        } else if (this.state.currentPage === 'history') {
+        if (this.state.currentPage === 'history') {
           content =
             <History
               autoSync={this.state.autoSync}
@@ -155,6 +153,8 @@ module.exports = React.createClass({
               onSyncNowClicked={this.onSyncNowClicked}
               componentHandler={componentHandler}
               loading={this.state.loading} />
+        } else if (this.state.item) {
+          content = <Watching item={this.state.item} />
         } else {
           content = <Info messages={this.props.notWatchingMessages} />
         }
