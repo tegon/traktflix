@@ -7,6 +7,7 @@ var Scrobble = require('./scrobble.js');
 function ContentController() {
   this.item = null;
   this.scrobble = undefined;
+  this.error = undefined;
 
   if (location.href.match(/watch/)) {
     ItemParser.start(this.storeItem.bind(this));
@@ -113,7 +114,7 @@ ContentController.prototype = {
 
   getCurrentItem: function() {
     if (this.error) {
-      return { error: error };
+      return { error: this.error };
     } else if (this.item && this.item.type === 'show') {
       return { item: this.scrobble.item.episode };
     } else if (this.item && this.item.type === 'movie') {
