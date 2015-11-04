@@ -21,6 +21,12 @@ describe('Item', function() {
     expect(houseOfCards.episode).toBe(4);
   });
 
+  it('returns the full title', function() {
+    var starWars = new Item({ title: 'Star Wars: The Clone Wars', type: 'show',
+      scrubber: {}, epTitle: 'Ambush', season: 1, episode: 1 });
+    expect(starWars.title).toBe('"Star Wars: The Clone Wars"');
+  });
+
   it('getScrubber must be a number', function() {
     expect(rocky.getScrubber()).toBe(25.22);
   });
