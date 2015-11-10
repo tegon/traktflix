@@ -10,7 +10,7 @@ function WatchEvents(options) {
   this.onPlay = options.onPlay;
   this.onPause = options.onPause;
   this.onStop = options.onStop;
-  this.path = location.pathname;
+  this.path = location.href;
 }
 
 WatchEvents.prototype = {
@@ -46,9 +46,9 @@ WatchEvents.prototype = {
 
   addPathChangeListener: function() {
     this.pathChangeInterval = setInterval(function() {
-      if (this.path !== location.pathname) {
-        this.onPathChange(this.path, location.pathname);
-        this.path = location.pathname;
+      if (this.path !== location.href) {
+        this.onPathChange(this.path, location.href);
+        this.path = location.href;
       }
     }.bind(this), 1000);
   },
