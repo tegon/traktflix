@@ -29,10 +29,19 @@ module.exports = React.createClass({
   userIsNotLogged: function(status, response) {
     this.onTokenFailed(status, response);
   },
-  sendToContentScript: function(type, callback) {
+  getTabId: function(callback) {
     chrome.tabs.query({ url: '*://*.netflix.com/*' }, function(tabs) {
       if (tabs.length > 0) {
-        chrome.tabs.sendMessage(tabs[0].id, { type: type }, callback);
+        callback.call(this, tabs[0].id);
+      } else {
+        callback.call(this, null);
+      }
+    });
+  },
+  sendToContentScript: function(type, callback) {
+    this.getTabId(function(id) {
+      if (id) {
+        chrome.tabs.sendMessage(id, { type: type }, callback);
       }
     });
   },
@@ -41,7 +50,7 @@ module.exports = React.createClass({
   },
   onItemReceived: function(response) {
     if (response) {
-      this.setState({ item: response.item });
+      this.setState(response);
     }
   },
   componentDidMount: function() {
@@ -75,10 +84,14 @@ module.exports = React.createClass({
     var options = JSON.parse(response);
     this.setState({ loading: false, logged: !!options.access_token });
     chrome.runtime.sendMessage({ type: 'sendEvent', name: 'TokenSuccess', value:  true });
+    this.setInactiveIcon();
   },
   onTokenFailed: function(status, response) {
     this.setState({ loading: false });
     chrome.runtime.sendMessage({ type: 'sendEvent', name: 'TokenFailed', value: false });
+    if (status === 0 || status > 404) {
+      this.onError(response);
+    }
     console.error('traktflix: Get Token failed', status, response);
   },
   onAutoSyncChanged: function(e) {
@@ -95,6 +108,30 @@ module.exports = React.createClass({
     console.log('sync finished- --------------------------------------', success);
     this.setState({ loading: false });
   },
+  setInactiveIcon: function() {
+    this.getTabId(function(id) {
+      if (id) {
+        chrome.pageAction.setIcon({
+          tabId: id,
+          path: chrome.runtime.getManifest().page_action.default_icon
+        });
+      }
+    });
+  },
+  setErrorIcon: function() {
+    this.getTabId(function(id) {
+      if (id) {
+        chrome.pageAction.setIcon({
+          tabId: id,
+          path: chrome.runtime.getManifest().page_action.error_icon
+        });
+      }
+    });
+  },
+  onError: function(error) {
+    this.setErrorIcon();
+    this.setState({ error: error || true });
+  },
   render: function() {
     var content;
     if (this.state.currentPage === 'about') {
@@ -102,11 +139,12 @@ module.exports = React.createClass({
         <Info messages={this.props.aboutMessages}>
           <Button url={'https://github.com/tegon/traktflix'} text={'Read more'} />
         </Info>
+    } else if (this.state.error) {
+      content =
+        <Info messages={this.props.errorMessages} />
     } else {
       if (this.state.logged) {
-        if (this.state.item) {
-          content = <Watching item={this.state.item} />
-        } else if (this.state.currentPage === 'history') {
+        if (this.state.currentPage === 'history') {
           content =
             <History
               autoSync={this.state.autoSync}
@@ -115,6 +153,8 @@ module.exports = React.createClass({
               onSyncNowClicked={this.onSyncNowClicked}
               componentHandler={componentHandler}
               loading={this.state.loading} />
+        } else if (this.state.item) {
+          content = <Watching item={this.state.item} />
         } else {
           content = <Info messages={this.props.notWatchingMessages} />
         }

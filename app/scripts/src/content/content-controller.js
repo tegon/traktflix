@@ -7,6 +7,7 @@ var Scrobble = require('./scrobble.js');
 function ContentController() {
   this.item = null;
   this.scrobble = undefined;
+  this.error = undefined;
 
   if (location.href.match(/watch/)) {
     ItemParser.start(this.storeItem.bind(this));
@@ -32,6 +33,7 @@ ContentController.prototype = {
 
   onSearchError: function(status, response) {
     this.sendAnalyticsEvent({ name: 'onSearchError', value: status });
+    this.onError(response);
     console.error('traktflix: Search error', status, response);
   },
 
@@ -39,9 +41,10 @@ ContentController.prototype = {
     this.sendAnalyticsEvent({ name: 'Scrobble', value: 'onSuccess' });
   },
 
-  onScrobbleError: function() {
+  onScrobbleError: function(status, response) {
     this.sendAnalyticsEvent({ name: 'Scrobble', value: 'onError' });
-    console.error('traktflix: Scrobble error');
+    this.onError(response);
+    console.error('traktflix: Scrobble error', status);
   },
 
   storeItem: function(item) {
@@ -55,6 +58,7 @@ ContentController.prototype = {
       });
     } else {
       this.scrobble = undefined;
+      this.error = undefined;
     }
   },
 
@@ -85,12 +89,21 @@ ContentController.prototype = {
     this.storeItem(null);
   },
 
+  onError: function(e) {
+    this.setErrorIcon();
+    this.error = e;
+  },
+
   setInactiveIcon: function() {
     chrome.runtime.sendMessage({ type: 'setInactiveIcon' });
   },
 
   setActiveIcon: function() {
     chrome.runtime.sendMessage({ type: 'setActiveIcon' });
+  },
+
+  setErrorIcon: function() {
+    chrome.runtime.sendMessage({ type: 'setErrorIcon' });
   },
 
   sendAnalyticsEvent: function(options) {
@@ -100,7 +113,9 @@ ContentController.prototype = {
   },
 
   getCurrentItem: function() {
-    if (this.item && this.item.type === 'show') {
+    if (this.error) {
+      return { error: this.error };
+    } else if (this.item && this.item.type === 'show') {
       return { item: this.scrobble.item.episode };
     } else if (this.item && this.item.type === 'movie') {
       return { item: this.scrobble.item.movie };

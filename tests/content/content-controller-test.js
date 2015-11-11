@@ -13,6 +13,7 @@ describe('ContentController', function() {
     sinon.spy(controller, 'sendAnalyticsEvent');
     sinon.spy(controller, 'setActiveIcon');
     sinon.spy(controller, 'setInactiveIcon');
+    sinon.spy(controller, 'setErrorIcon');
     sinon.stub(ItemParser, 'start');
     sinon.stub(Scrobble.prototype, 'start');
     sinon.stub(Scrobble.prototype, 'pause');
@@ -24,6 +25,7 @@ describe('ContentController', function() {
     controller.sendAnalyticsEvent.restore();
     controller.setActiveIcon.restore();
     controller.setInactiveIcon.restore();
+    controller.setErrorIcon.restore();
     ItemParser.start.restore();
     Scrobble.prototype.start.restore();
     Scrobble.prototype.pause.restore();
@@ -44,6 +46,7 @@ describe('ContentController', function() {
     expect(controller.sendAnalyticsEvent.getCall(0).args).toEqual([{
       name: 'onSearchError', value: 401
     }]);
+    expect(controller.setErrorIcon.callCount).toBe(1);
   });
 
   it('onScrobbleSuccess sends event to analytics', function() {
@@ -60,11 +63,13 @@ describe('ContentController', function() {
     expect(controller.sendAnalyticsEvent.getCall(0).args).toEqual([{
       name: 'Scrobble', value: 'onError'
     }]);
+    expect(controller.setErrorIcon.callCount).toBe(1);
   });
 
-  it('when item is null, storeItem sets scrobble to undefined', function() {
+  it('when item is null, storeItem sets scrobble and error to undefined', function() {
     controller.storeItem(null);
     expect(controller.scrobble).toBe(undefined);
+    expect(controller.error).toBe(undefined);
   });
 
   it('storeItem calls Search.find', function() {
@@ -112,20 +117,36 @@ describe('ContentController', function() {
     }]);
     expect(controller.item).toBe(null);
     expect(controller.scrobble).toBe(undefined);
+    expect(controller.error).toBe(undefined);
+  });
+
+  it('onError sets the error, and calls setErrorIcon', function() {
+    var error = new Error('foo');
+    controller.onError(error);
+    expect(controller.setErrorIcon.callCount).toBe(1);
+    expect(controller.error).toBe(error);
   });
 
   it('getCurrentItem returns movie object', function() {
+    controller.error = undefined;
     controller.scrobble = scrobble;
     controller.item = item;
-    expect(controller.getCurrentItem()).toEqual({ item: scrobble.item.movie  });
+    expect(controller.getCurrentItem()).toEqual({ item: scrobble.item.movie });
   });
 
   it('getCurrentItem returns episode object', function() {
+    controller.error = undefined;
     var response = { episode: { title: 'Chapter 31' } };
     var item = { type: 'show', title: 'Chapter 31', getScrubber: sinon.stub() };
     var scrobble = new Scrobble({ response: response, type: 'episode' });
     controller.scrobble = scrobble;
     controller.item = item;
-    expect(controller.getCurrentItem()).toEqual({ item: scrobble.item.episode  });
+    expect(controller.getCurrentItem()).toEqual({ item: scrobble.item.episode });
+  });
+
+  it('getCurrentItem returns error object', function() {
+    var error = new Error('Request failed');
+    controller.error = error;
+    expect(controller.getCurrentItem()).toEqual({ error: error });
   });
 });

@@ -17,14 +17,15 @@ Request._send = function _send(options, accessToken) {
     xhr.setRequestHeader('Authorization', 'Bearer ' + accessToken);
   }
 
-  xhr.onload = function() {
-    if (this.status >= 200 && this.status < 400) {
-      options.success.call(this, this.response);
-    } else {
-      options.error.call(this, this.status, this.responseText);
+  xhr.onreadystatechange = function(e) {
+    if (this.readyState === 4) {
+      if (this.status >= 200 && this.status < 400) {
+        options.success.call(this, this.response);
+      } else {
+        options.error.call(this, this.status, this.responseText);
+      }
     }
   };
-  xhr.onerror = options.error;
 
   xhr.send(JSON.stringify(options.params));
 };
