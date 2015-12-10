@@ -24,7 +24,10 @@ describe('Item', function() {
   it('returns the full title', function() {
     var starWars = new Item({ title: 'Star Wars: The Clone Wars', type: 'show',
       scrubber: {}, epTitle: 'Ambush', season: 1, episode: 1 });
+    var theOffice = new Item({ title: 'The Office (U.S.)', type: 'show',
+      scrubber: {}, epTitle: 'Pilot', season: 1, episode: 1 });
     expect(starWars.title).toBe('"Star Wars: The Clone Wars"');
+    expect(theOffice.title).toBe('The Office (US)');
   });
 
   it('getScrubber must be a number', function() {

@@ -3,7 +3,8 @@
 /* This was necessary to priorize Star Wars: The Clone Wars (2008) over Star Wars: Clone Wars (2003).
   I left this object because it could be useful for other movies/shows */
 var fullTitles = {
-  'Star Wars: The Clone Wars': '"Star Wars: The Clone Wars"'
+  'Star Wars: The Clone Wars': '"Star Wars: The Clone Wars"',
+  'The Office (U.S.)': 'The Office (US)'
 }
 
 function Item(options) {
