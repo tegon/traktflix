@@ -63,15 +63,6 @@ describe('WatchEvents', function() {
     expect(onPlay.callCount).toBe(1);
   });
 
-  it('onStop and onPlay are called when playLink is clicked', function() {
-    renderPlayer('show');
-    var playLink = document.createElement('a');
-    playLink.classList.add('playLink');
-    events.onClick({ target: playLink });
-    expect(onStop.callCount).toBe(1);
-    expect(onPlay.callCount).toBe(1);
-  });
-
   it('onPlay is called when space bar is pressed', function() {
     renderPlayer('show');
     events.onKeyUp({ which: KEY_SPACE });
@@ -108,10 +99,22 @@ describe('WatchEvents', function() {
     expect(onPause.callCount).toBe(1);
   });
 
-  it('onStop and onPlay are called when path change from a movie to another', function() {
+  it('onStop and onPlay are called when url change from a show to another', function() {
     renderPlayer('show');
-    events.onPathChange('/watch/1', '/watch/2');
+    events.onUrlChange('/watch/1', '/watch/2');
     expect(onStop.callCount).toBe(1);
+    expect(onPlay.callCount).toBe(1);
+  });
+
+  it('onStop is called when url change from a show to a regular page', function() {
+    renderPlayer('show');
+    events.onUrlChange('/watch/1', '/browse');
+    expect(onStop.callCount).toBe(1);
+  });
+
+  it('onPlay is called when url change from a regular page to a show', function() {
+    renderPlayer('show');
+    events.onUrlChange('/browse', '/watch/1');
     expect(onPlay.callCount).toBe(1);
   });
 });

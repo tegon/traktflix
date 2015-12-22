@@ -10,7 +10,7 @@ function WatchEvents(options) {
   this.onPlay = options.onPlay;
   this.onPause = options.onPause;
   this.onStop = options.onStop;
-  this.path = location.href;
+  this.url = location.href;
 }
 
 WatchEvents.prototype = {
@@ -18,14 +18,14 @@ WatchEvents.prototype = {
     this.addClickListener();
     this.addStopListener();
     this.addKeyUpListener();
-    this.addPathChangeListener();
+    this.addUrlChangeListener();
   },
 
   stopListeners: function() {
     this.removeClickListener();
     this.removeStopListener();
     this.removeKeyUpListener();
-    this.removePathChangeListener();
+    this.removeUrlChangeListener();
   },
 
   addClickListener: function() {
@@ -33,7 +33,6 @@ WatchEvents.prototype = {
   },
 
   addStopListener: function() {
-    window.onpopstate = this.onStop;
     window.onbeforeunload = function() {
       this.onStop();
       this.stopListeners();
@@ -44,42 +43,45 @@ WatchEvents.prototype = {
     this.document.addEventListener('keyup', this.onKeyUp.bind(this), false);
   },
 
-  addPathChangeListener: function() {
-    this.pathChangeInterval = setInterval(function() {
-      if (this.path !== location.href) {
-        this.onPathChange(this.path, location.href);
-        this.path = location.href;
+  addUrlChangeListener: function() {
+    this.urlChangeInterval = setInterval(function() {
+      if (this.url !== location.href) {
+        this.onUrlChange(this.url, location.href);
+        this.url = location.href;
       }
     }.bind(this), 1000);
   },
 
   onClick: function(e) {
-    if (e.target.classList.contains('play')) {
-      this.onPlay(e);
-    } else if (e.target.classList.contains('pause')) {
-      this.onPause(e);
+    if (e.target.classList.contains('player-play-pause')) {
+      if (e.target.classList.contains('play')) {
+        this.onPlay(e);
+      } else if (e.target.classList.contains('pause')) {
+        this.onPause(e);
+      }
     } else if (e.target.className === 'player-scrubber-target' ||
         e.target.className === 'player-scrubber-progress-completed' ||
         e.target.className === 'player-scrubber-progress-buffered' ||
         e.target.className === 'player-scrubber-progress' ||
         e.target.className === 'player-scrubber horizontal') {
       this.isPlaying() ? this.onPlay(e) : this.onPause(e);
-    } else if (e.target.classList.contains('playLink')) {
-      this.onStop(e);
-      this.onPlay(e);
     }
   },
 
-  onPathChange: function(oldPath, newPath) {
-    if (/watch/.test(oldPath) && /watch/.test(newPath)) {
+  onUrlChange: function(oldUrl, newUrl) {
+    if (/watch/.test(oldUrl) && /watch/.test(newUrl)) {
       this.onStop();
+      this.onPlay();
+    } else if (/watch/.test(oldUrl) && !/watch/.test(newUrl)) {
+      this.onStop();
+    } else if (!/watch/.test(oldUrl) && /watch/.test(newUrl)) {
       this.onPlay();
     }
   },
 
   onKeyUp: function(e) {
     switch (e.which) {
-      /* I know, if the video is playing, the obvious would be call onPause,
+      /* If the video is playing, the obvious would be call onPause,
         if isn't playing, call onPlay.
         But the HTML of the player gets updated before this function is called,
         this way the correct approach is invert the conditions */
@@ -111,8 +113,8 @@ WatchEvents.prototype = {
     this.document.removeEventListener('keyup', this.onKeyUp.bind(this), false);
   },
 
-  removePathChangeListener: function() {
-    clearInterval(this.pathChangeInterval);
+  removeUrlChangeListener: function() {
+    clearInterval(this.urlChangeInterval);
   },
 
   isPlaying: function() {
