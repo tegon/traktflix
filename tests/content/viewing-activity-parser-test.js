@@ -68,7 +68,7 @@ describe('ViewingActivityParser', function() {
         callback: callback, data: window.viewingActivityList(), syncedAt: '09/01/2015'
       });
       expect(callback.callCount).toBe(1);
-      expect(callback.getCall(0).args[0].length).toBe(10);
+      expect(callback.getCall(0).args[0].length).toBe(18);
     });
   });
 });
