@@ -31,7 +31,7 @@ ContentController.prototype = {
   },
 
   onSearchError: function(status, response) {
-    this.sendAnalyticsEvent({ name: 'onSearchError', value: status });
+    this.sendAnalyticsEvent({ name: 'onSearchError', value: (this.item && this.item.title) ? this.item.title : status });
     console.error('traktflix: Search error', status, response);
   },
 

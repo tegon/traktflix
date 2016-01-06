@@ -59,20 +59,24 @@ Search.prototype = {
   findEpisode: function(options) {
     this.findItem({
       success: function(response) {
-        Request.send({
-          method: 'GET',
-          url: this.getEpisodeUrl(response['show']['ids']['slug']),
-          success: function(resp) {
-            if (this.item.episode) {
-              options.success.call(this, JSON.parse(resp));
-            } else {
-              this.findEpisodeByTitle(resp, options);
+        if (!response) {
+          options.error.call(this, "200", response);
+        } else {
+          Request.send({
+            method: 'GET',
+            url: this.getEpisodeUrl(response['show']['ids']['slug']),
+            success: function(resp) {
+              if (this.item.episode) {
+                options.success.call(this, JSON.parse(resp));
+              } else {
+                this.findEpisodeByTitle(resp, options);
+              }
+            }.bind(this),
+            error: function(st, resp) {
+              options.error.call(this, st, resp);
             }
-          }.bind(this),
-          error: function(st, resp) {
-            options.error.call(this, st, resp);
-          }
-        });
+          });
+        }
       }.bind(this),
       error: function(status, response) {
         options.error.call(this, status, response);
