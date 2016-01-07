@@ -60,7 +60,7 @@ Search.prototype = {
     this.findItem({
       success: function(response) {
         if (!response) {
-          options.error.call(this, "200", response);
+          options.error.call(this, "200");
         } else {
           Request.send({
             method: 'GET',
