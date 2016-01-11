@@ -9,6 +9,7 @@
   "private": true,
   "dependencies": {
     "async": "1.4.2",
+    "moment": "2.11.1",
     "react": "0.13.3"
   },
   "devDependencies": {

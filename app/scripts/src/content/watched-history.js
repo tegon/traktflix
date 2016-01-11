@@ -3,6 +3,7 @@
 var Settings = require('../settings.js');
 var Request = require('../request.js');
 var Search = require('./search.js');
+var moment = require('moment');
 
 function WatchedHistory() {
   this.url = Settings.apiUri + '/sync/history';
@@ -68,10 +69,9 @@ WatchedHistory.prototype = {
             var history = JSON.parse(response)[0];
 
             if (history && history.watched_at) {
-              var date = new Date(history.watched_at);
-              date.setHours(0, 0, 0, 0);
-              console.log('include', date, activity.date);
-              include = date.getTime() === activity.date.getTime();
+              var date = moment(history.watched_at);
+              console.log('include', date.format(), activity.date.format());
+              include = date.diff(activity.date, 'days') == 0;
             }
 
             options.success.call(this, include);
