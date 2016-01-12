@@ -30,7 +30,11 @@ Search.prototype = {
       url: this.getUrl(),
       success: function(response) {
         var data = JSON.parse(response)[0];
-        options.success.call(this, data);
+        if (data == undefined) {
+          options.error.call(this, "200");
+        } else {
+          options.success.call(this, data);
+        }
       },
       error: function(status, response) {
         options.error.call(this, status, response);
@@ -59,24 +63,20 @@ Search.prototype = {
   findEpisode: function(options) {
     this.findItem({
       success: function(response) {
-        if (!response) {
-          options.error.call(this, "200");
-        } else {
-          Request.send({
-            method: 'GET',
-            url: this.getEpisodeUrl(response['show']['ids']['slug']),
-            success: function(resp) {
-              if (this.item.episode) {
-                options.success.call(this, JSON.parse(resp));
-              } else {
-                this.findEpisodeByTitle(resp, options);
-              }
-            }.bind(this),
-            error: function(st, resp) {
-              options.error.call(this, st, resp);
+        Request.send({
+          method: 'GET',
+          url: this.getEpisodeUrl(response['show']['ids']['slug']),
+          success: function(resp) {
+            if (this.item.episode) {
+              options.success.call(this, JSON.parse(resp));
+            } else {
+              this.findEpisodeByTitle(resp, options);
             }
-          });
-        }
+          }.bind(this),
+          error: function(st, resp) {
+            options.error.call(this, st, resp);
+          }
+        });
       }.bind(this),
       error: function(status, response) {
         options.error.call(this, status, response);
