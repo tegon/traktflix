@@ -102,12 +102,20 @@ describe('WatchedHistory', function() {
       expect(error.getCall(0).args).toEqual([400, '{ "errors": "Bad Request" }']);
     });
 
-    it('calls error callback when search returns nothing', function() {
+    it('calls error callback when search returns nothing for movie', function() {
       history.searchItem({ activity: movieActivity, success: success, error: error });
       expect(this.requests.length).toBe(1);
       this.requests[0].respond(200, { 'Content-Type': 'application/json' }, '[]');
       expect(error.callCount).toBe(1);
-      expect(error.getCall(0).args).toEqual([movieActivity]);
+      expect(error.getCall(0).args).toEqual([200, undefined]);
+    });
+
+    it('calls error callback when search returns nothing for show', function() {
+      history.searchItem({ activity: episodeActivity, success: success, error: error });
+      expect(this.requests.length).toBe(1);
+      this.requests[0].respond(200, { 'Content-Type': 'application/json' }, '[]');
+      expect(error.callCount).toBe(1);
+      expect(error.getCall(0).args).toEqual([200, undefined]);
     });
   });
 

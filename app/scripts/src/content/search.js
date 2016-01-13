@@ -31,7 +31,7 @@ Search.prototype = {
       success: function(response) {
         var data = JSON.parse(response)[0];
         if (data == undefined) {
-          options.error.call(this, "200");
+          options.error.call(this, 200);
         } else {
           options.success.call(this, data);
         }
