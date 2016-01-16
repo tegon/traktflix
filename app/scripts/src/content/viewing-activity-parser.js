@@ -43,7 +43,7 @@ ViewingActivityParser.start = function(options) {
   var viewedItems = res.viewedItems;
 
   var parsedActivities = [];
-  var lastSync = moment(options.syncedAt);
+  var lastSync = moment(options.syncedAt, "YYYY-MM-DDTHH:mm:ss.SSSSZ");
 
   for (var i = 0; i < viewedItems.length; i++) {
     var activity = ViewingActivityParser.parse(lastSync, viewedItems[i]);

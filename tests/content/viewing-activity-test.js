@@ -36,6 +36,8 @@ describe('ViewingActivity', function() {
     ViewingActivity.list({ success: success, error: error });
     expect(this.requests.length).toBe(1);
     this.requests[0].respond(200, { 'Content-Type': 'text/html' },
+      window.activityPage());
+    this.requests[1].respond(200, { 'Content-Type': 'application/json' },
       window.viewingActivityList());
     expect(success.callCount).toBe(1);
     expect(success.getCall(0).args).toEqual([window.viewingActivityList()]);
