@@ -43,7 +43,17 @@ describe('ViewingActivity', function() {
     expect(success.getCall(0).args).toEqual([window.viewingActivityList()]);
   });
 
-  it('list calls error callback', function() {
+  it('list calls error callback on inner request', function() {
+    ViewingActivity.list({ success: success, error: error });
+    expect(this.requests.length).toBe(1);
+    this.requests[0].respond(200, { 'Content-Type': 'text/html' },
+      window.activityPage());
+    this.requests[1].respond(404, { 'Content-Type': 'application/json' }, '');
+    expect(error.callCount).toBe(1);
+    expect(error.getCall(0).args).toEqual([404, '']);
+  });
+
+  it('list calls error callback on outer request', function() {
     ViewingActivity.list({ success: success, error: error });
     expect(this.requests.length).toBe(1);
     this.requests[0].respond(404, { 'Content-Type': 'text/html' }, '');
