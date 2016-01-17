@@ -27,7 +27,7 @@ describe('ViewingActivityParser', function() {
       var activity = ViewingActivityParser.parse(moment('10/01/2015', 'M/D/YYYY'), window.movieActivity);
       expect(activity.item.title).toBe('Bad Boys');
       expect(activity.item.type).toBe('movie');
-      expect(activity.date.valueOf()).toEqual(moment('10/13/2015', 'M/D/YYYY').valueOf());
+      expect(activity.date.valueOf()).toEqual(moment(1444687200000).valueOf());
       expect(activity.item.scrubber).toBe(undefined);
     });
 
@@ -38,7 +38,7 @@ describe('ViewingActivityParser', function() {
       expect(activity.item.epTitle).toBe('Pilot');
       expect(activity.item.season).toBe(1);
       expect(activity.item.episode).toBe(undefined);
-      expect(activity.date.valueOf()).toEqual(moment('10/2/2015', 'M/D/YYYY').valueOf());
+      expect(activity.date.valueOf()).toEqual(moment(1443736800000).valueOf());
       expect(activity.item.scrubber).toBe(undefined);
     });
   });
