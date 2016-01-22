@@ -30,7 +30,11 @@ Search.prototype = {
       url: this.getUrl(),
       success: function(response) {
         var data = JSON.parse(response)[0];
-        options.success.call(this, data);
+        if (data == undefined) {
+          options.error.call(this, 200);
+        } else {
+          options.success.call(this, data);
+        }
       },
       error: function(status, response) {
         options.error.call(this, status, response);

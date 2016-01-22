@@ -42,7 +42,7 @@ describe('ContentController', function() {
     controller.onSearchError(401, '{ "errors": "Unauthorized" }');
     expect(controller.sendAnalyticsEvent.callCount).toBe(1);
     expect(controller.sendAnalyticsEvent.getCall(0).args).toEqual([{
-      name: 'onSearchError', value: 401
+      name: 'onSearchError', value: '401 - Rocky'
     }]);
   });
 

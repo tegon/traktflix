@@ -91,18 +91,14 @@ WatchedHistory.prototype = {
     var search = new Search({ item: options.activity.item });
     search.find({
       success: function(response) {
-        if (response) {
-          if (options.activity.item.type === 'movie') {
-            options.activity.item.id = response.movie.ids.trakt;
-          } else {
-            options.activity.item.id = response.ids.trakt;
-            options.activity.item.episode = response.number;
-          }
-
-          options.success.call(this, options.activity);
+        if (options.activity.item.type === 'movie') {
+          options.activity.item.id = response.movie.ids.trakt;
         } else {
-          options.error.call(this, options.activity);
+          options.activity.item.id = response.ids.trakt;
+          options.activity.item.episode = response.number;
         }
+
+        options.success.call(this, options.activity);
       },
       error: function(status, response) {
         options.error.call(this, status, response);
