@@ -14,7 +14,7 @@ describe('ViewingActivityParser', function() {
     });
 
     it('creates the activity when synced_at equals to item date', function() {
-      var activity = ViewingActivityParser.parse(moment('10/2/2015', 'M/D/YYYY'), window.episodeActivity);
+      var activity = ViewingActivityParser.parse(moment('10/1/2015', 'M/D/YYYY'), window.episodeActivity);
       expect(activity instanceof ViewingActivity).toBeTruthy();
     });
 
