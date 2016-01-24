@@ -2,14 +2,15 @@ var WatchedHistory = require('../../app/scripts/src/content/watched-history.js')
 var ViewingActivity = require('../../app/scripts/src/content/viewing-activity.js');
 var Item = require('../../app/scripts/src/content/item.js');
 var Settings = require('../../app/scripts/src/settings.js');
+var moment = require('moment');
 var success = sinon.spy();
 var error = sinon.spy();
 var callback = sinon.spy();
 var history = new WatchedHistory();
 var rocky = new Item({ title: 'Rocky', type: 'movie', id: 123 });
-var movieActivity = new ViewingActivity({ item: rocky, date: new Date('10/13/2015') });
+var movieActivity = new ViewingActivity({ item: rocky, date: moment('10/13/2015', 'MM/DD/YYYY') });
 var houseOfCards = new Item({ title: 'House of Cards', type: 'show', epTitle: 'Chapter 30', season: 3, id: 231 });
-var episodeActivity = new ViewingActivity({ item: houseOfCards, date: new Date('01/10/2015') });
+var episodeActivity = new ViewingActivity({ item: houseOfCards, date: moment('01/10/2015', 'MM/DD/YYYY') });
 var activities = [movieActivity, episodeActivity];
 
 describe('WatchedHistory', function() {
