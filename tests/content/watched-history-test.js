@@ -108,7 +108,7 @@ describe('WatchedHistory', function() {
       expect(this.requests.length).toBe(1);
       this.requests[0].respond(200, { 'Content-Type': 'application/json' }, '[]');
       expect(error.callCount).toBe(1);
-      expect(error.getCall(0).args).toEqual([200, undefined]);
+      expect(error.getCall(0).args).toEqual([404, undefined]);
     });
 
     it('calls error callback when search returns nothing for show', function() {
@@ -116,7 +116,7 @@ describe('WatchedHistory', function() {
       expect(this.requests.length).toBe(1);
       this.requests[0].respond(200, { 'Content-Type': 'application/json' }, '[]');
       expect(error.callCount).toBe(1);
-      expect(error.getCall(0).args).toEqual([200, undefined]);
+      expect(error.getCall(0).args).toEqual([404, undefined]);
     });
   });
 
