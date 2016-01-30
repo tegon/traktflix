@@ -4,7 +4,9 @@
   I left this object because it could be useful for other movies/shows */
 var fullTitles = {
   'Star Wars: The Clone Wars': '"Star Wars: The Clone Wars"',
-  'The Office (U.S.)': 'The Office (US)'
+  'The Office (U.S.)': 'The Office (US)',
+  'The Blind Side': '"The Blind Side"',
+  'The Avengers': '"The Avengers"'
 }
 
 function Item(options) {
