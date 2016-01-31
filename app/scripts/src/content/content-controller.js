@@ -20,7 +20,6 @@ ContentController.prototype = {
     this.scrobble = new Scrobble({
       response: response,
       type: this.item.type,
-      scrubber: this.item.getScrubber.bind(this.item),
       success: this.onScrobbleSuccess.bind(this),
       error: this.onScrobbleError.bind(this)
     });

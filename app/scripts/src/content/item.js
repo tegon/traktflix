@@ -10,7 +10,6 @@ var fullTitles = {
 }
 
 function Item(options) {
-  this.scrubber = options.scrubber;
   this.title = fullTitles[options.title] || options.title;
   this.type = options.type;
 
@@ -20,9 +19,5 @@ function Item(options) {
     this.episode = options.episode;
   }
 }
-
-Item.prototype.getScrubber = function() {
-  return parseFloat(parseFloat(this.scrubber.style.width).toFixed(2));
-};
 
 module.exports = Item;

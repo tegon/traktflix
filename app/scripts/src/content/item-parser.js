@@ -11,7 +11,6 @@ ItemParser.isReady = function checkPage() {
 
 ItemParser.parse = function parse(callback) {
   var item;
-  var scrubber = document.querySelector('.player-scrubber-progress-completed');
   var playerStatus = document.querySelectorAll('.player-status span');
   var type = playerStatus.length > 1 ? 'show' : 'movie';
   var mainTitle = playerStatus[0].textContent;
@@ -24,14 +23,13 @@ ItemParser.parse = function parse(callback) {
 
     item = new Item({
       epTitle: title,
-      scrubber: scrubber,
       title: mainTitle,
       season: season,
       episode: number,
       type: type
     });
   } else {
-    item = new Item({ scrubber: scrubber, title: mainTitle, type: type });
+    item = new Item({ title: mainTitle, type: type });
   }
 
   callback.call(this, item);
