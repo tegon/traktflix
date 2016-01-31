@@ -44,9 +44,12 @@ Scrobble.prototype = {
   },
 
   castScrubber: function() {
-    var progress = document.querySelector('.player-slider progress');
-    if (progress) {
-      this.progress = parseInt(progress.getAttribute('value')) * 100 / parseFloat(progress.getAttribute('max'));
+    var progressElement = document.querySelector('.player-slider progress');
+    if (progressElement) {
+      var newProgress = parseInt(progressElement.getAttribute('value')) * 100 / parseFloat(progressElement.getAttribute('max'));
+      if (newProgress > 0) {
+        this.progress = newProgress;
+      }
     }
   },
 
