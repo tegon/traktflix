@@ -40,10 +40,9 @@ describe('ItemParser', function() {
     renderPlayer('show');
     ItemParser.start(callback);
     expect(callback.callCount).toBe(1);
-    var scrubber = document.querySelector('.player-scrubber-progress-completed');
+
     var item = new Item({
       epTitle: 'Capítulo 31',
-      scrubber: scrubber,
       title: 'House of Cards',
       season: '3',
       episode: '5',
@@ -56,9 +55,8 @@ describe('ItemParser', function() {
     renderPlayer('movie');
     ItemParser.start(callback);
     expect(callback.callCount).toBe(1);
-    var scrubber = document.querySelector('.player-scrubber-progress-completed');
+
     var item = new Item({
-      scrubber: scrubber,
       title: 'Rocky um Lutador',
       type: 'movie'
     });

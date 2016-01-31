@@ -1,12 +1,10 @@
 var Scrobble = require('../../app/scripts/src/content/scrobble');
 var Settings = require('../../app/scripts/src/settings.js');
-var scrubber = sinon.stub().returns(10.1);
 var success = sinon.spy();
 var error = sinon.spy();
 var scrobbleShow = new Scrobble({
   type: 'show',
   response: { foo: 'bar' },
-  scrubber: scrubber,
   success: success,
   error: error
 });
@@ -19,6 +17,8 @@ var scrobbleMovie = new Scrobble({
 
 describe('Scrobble', function() {
   beforeEach(function() {
+    document.body.innerHTML = '';
+
     this.xhr = sinon.useFakeXMLHttpRequest();
     var requests = this.requests = [];
     this.xhr.onCreate = function (xhr) {
@@ -34,7 +34,6 @@ describe('Scrobble', function() {
 
   it('sets properties in constructor', function() {
     expect(scrobbleShow.item).toEqual({ episode: { foo: 'bar' } });
-    expect(scrobbleShow.scrubber).toBe(scrubber);
     expect(scrobbleShow.success).toBe(success);
     expect(scrobbleShow.error).toBe(error);
     expect(scrobbleShow.url).toBe(Settings.apiUri + '/scrobble');
@@ -89,4 +88,16 @@ describe('Scrobble', function() {
     this.requests[0].respond(500, { 'Content-Type': 'application/json' }, '');
     expect(error.callCount).toBe(1);
   });
+
+  it('webScrubber sets the progress', function() {
+    window.renderPlayer('show');
+    scrobbleShow.webScrubber();
+    expect(scrobbleShow.progress.toFixed(2)).toBe('1.57');
+  });
+
+  it('castScrubber sets the progress', function() {
+    window.renderCastPlayer();
+    scrobbleMovie.castScrubber();
+    expect(scrobbleMovie.progress.toFixed(2)).toBe('2.91');
+  })
 });
