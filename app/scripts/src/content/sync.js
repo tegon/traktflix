@@ -35,10 +35,32 @@ Sync.prototype = {
     this.callback = callback;
     this.onSyncStart();
   },
+  startFull : function(callback){
+    this.callback = callback;
+    var _this = this;
 
+    //force update everything
+    ChromeStorage.set({ 'synced_at': null }, function() { 
+     _this.onFullSyncStart();
+    });
+  },
   onSyncStart: function() {
     ChromeStorage.get('synced_at', function(data) {
       ViewingActivity.list({
+        success: function(response) {
+          ViewingActivityParser.start({
+            data: response,
+            callback: this.syncActivities.bind(this),
+            syncedAt: data.synced_at
+          });
+        }.bind(this),
+        error: this.onError.bind(this)
+      });
+    }.bind(this));
+  },
+  onFullSyncStart: function() {
+    ChromeStorage.get('synced_at', function(data) {
+      ViewingActivity.fullList({
         success: function(response) {
           ViewingActivityParser.start({
             data: response,
