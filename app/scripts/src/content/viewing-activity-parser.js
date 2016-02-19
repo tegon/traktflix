@@ -56,7 +56,8 @@ ViewingActivityParser.start = function(options) {
       parsedActivities.push(activity);
     }
   }
-  options.callback.call(this, parsedActivities.slice(0, 10));
+  // options.callback.call(this, parsedActivities.slice(0, 10));
+  options.callback.call(this, parsedActivities); // remove slice
 };
 
 module.exports = ViewingActivityParser;

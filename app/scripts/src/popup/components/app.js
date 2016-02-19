@@ -88,8 +88,15 @@ module.exports = React.createClass({
     this.setState({ loading: true });
     this.startSync();
   },
+  onFullSyncNowClicked: function(e){
+    this.setState({ loading: true });
+    this.startFullSync();
+  },
   startSync: function() {
     this.sendToContentScript('startSync', this.onSyncCompleted);
+  },
+  startFullSync: function(){
+    this.sendToContentScript('startFullSync', this.onSyncCompleted);
   },
   onSyncCompleted: function(success) {
     console.log('sync finished- --------------------------------------', success);
@@ -113,6 +120,7 @@ module.exports = React.createClass({
               showSyncButton={this.state.showSyncButton}
               onAutoSyncChanged={this.onAutoSyncChanged}
               onSyncNowClicked={this.onSyncNowClicked}
+              onFullSyncNowClicked={this.onFullSyncNowClicked}
               componentHandler={componentHandler}
               loading={this.state.loading} />
         } else {

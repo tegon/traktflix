@@ -33,3 +33,10 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     return true;
   }
 });
+
+chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
+  if (request.type == 'startFullSync') {
+    sync.startFull(sendResponse);
+    return true;
+  }
+});

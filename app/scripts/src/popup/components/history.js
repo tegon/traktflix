@@ -32,9 +32,14 @@ module.exports = React.createClass({
           <span className='mdl-checkbox__label'>Automatically sync in background</span>
         </label>
 
+        <button onClick={this.props.onFullSyncNowClicked} className='mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect'>
+          Full Sync
+        </button>
+
         <button onClick={this.props.onSyncNowClicked} className='mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect'>
           Sync Now
         </button>
+        
       </div>
     );
   }
