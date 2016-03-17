@@ -22,7 +22,11 @@ ViewingActivityParser.parse = function(syncedAt, activity) {
       } else {
         return;
       }
-      var epTitle = splittedTitle[1].trim().replace('"', '').replace('"', '');
+      if(splittedTitle[1]) {
+        var epTitle = splittedTitle[1].trim().replace('"', '').replace('"', '');
+      } else {
+        return;
+      }
 
       item = new Item({
         epTitle: epTitle,
