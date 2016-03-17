@@ -6,7 +6,8 @@ var fullTitles = {
   'Star Wars: The Clone Wars': '"Star Wars: The Clone Wars"',
   'The Office (U.S.)': 'The Office (US)',
   'The Blind Side': '"The Blind Side"',
-  'The Avengers': '"The Avengers"'
+  'The Avengers': '"The Avengers"',
+  'The Seven Deadly Sins': '"The Seven Deadly Sins"'
 }
 
 function Item(options) {
