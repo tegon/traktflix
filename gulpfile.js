@@ -2,7 +2,6 @@ var gulp = require('gulp');
 var source = require('vinyl-source-stream');
 var browserify = require('browserify');
 var watchify = require('watchify');
-var reactify = require('reactify');
 var concat = require('gulp-concat');
 var uglify = require('gulp-uglify');
 var buffer = require('vinyl-buffer');
@@ -32,10 +31,10 @@ var replacePatterns = {
 function buildJS(src) {
     var bundler = browserify({
         entries: 'app/scripts/src/' + src.folder + '/' + src.file,
-        transform: [reactify],
         debug: options.env !== 'production',
         cache: {}, packageCache: {}, fullPaths: true
-    });
+    })
+    .transform('babelify', { presets: ['es2015', 'react'] });
     var watcher  = watchify(bundler);
 
     return watcher
@@ -78,6 +77,10 @@ gulp.task('browserify-background', function() {
     buildJS({ folder: 'background', file: 'background.js' });
 });
 
+gulp.task('browserify-history-sync', function() {
+    buildJS({ folder: 'history-sync', file: 'history-sync.js' });
+});
+
 gulp.task('css', function () {
     gulp.watch('app/styles/src/*.css', buildCss);
     buildCss();
@@ -110,6 +113,7 @@ gulp.task('default', [
     'browserify-popup',
     'browserify-content',
     'browserify-background',
+    'browserify-history-sync',
     'css',
     'vendor'
 ]);
