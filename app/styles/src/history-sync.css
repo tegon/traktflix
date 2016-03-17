@@ -1,0 +1,12 @@
+.mdl-list__item--three-line {
+  height: 150px;
+}
+
+.mdl-list__item--three-line .mdl-list__item-primary-content {
+  height: auto;
+}
+
+.mdl-list__item-avatar {
+  height: 100px;
+  width: 100px;
+}
