@@ -1,28 +1,26 @@
 'use strict';
 
 var React = require('react');
+var ReactRouter = require('react-router');
+var Router = ReactRouter.Router;
+var Route = ReactRouter.Route;
+var IndexRoute = ReactRouter.IndexRoute;
+var browserHistory = ReactRouter.browserHistory;
+
 var App = require('./components/app.js');
+var LoginButton = require('./components/login-button.js');
+var About = require('./components/about.js');
+var NotWatching = require('./components/not-watching.js');
+var Watching = require('./components/watching.js');
 
-var notWatchingMessages = [
-  'You\'re not watching anything right now :/',
-  'Dude, just watch something',
-  'Grab a pillow, a blanket and a movie on Netflix',
-  'Two of five doctors says you should be watching something on Netflix right now',
-  'Get yourself some rest, and some movie on Netflix',
-  'Now is a great time to watch something',
-  'A Netflix movie a day, keeps the doctor away',
-  'Did you hear that? That\'s the sound of you not watching something on Netflix',
-  'It\'s Netflix time!',
-  'You really deserve it! Watch something on Netflix.',
-  'Hey psst... Netflix has some great stuff for you to watch. Go check it out!',
-  'A wise man once said that you should watch more Netflix. In fact, why don\'t you start, right now!'
-];
-
-var aboutMessages = [
-  'Bringing your Netflix history to Trakt.tv'
-];
-
-React.render(
-  <App notWatchingMessages={notWatchingMessages} aboutMessages={aboutMessages} />,
-  document.querySelector('.app-container')
-);
+React.render((
+  <Router history={browserHistory}>
+    <Route path='/popup.html' component={App}>
+      <IndexRoute component={LoginButton} />
+      <Route path='/login' component={LoginButton}/>
+      <Route path='/about' component={About}/>
+      <Route path='/not-watching' component={NotWatching}/>
+      <Route path='/watching/:item' component={Watching}/>
+    </Route>
+  </Router>
+), document.querySelector('.app-container'));

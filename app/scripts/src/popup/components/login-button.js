@@ -5,7 +5,7 @@ var Loading = require('./loading.js');
 
 module.exports = React.createClass({
   handleClick: function(e) {
-    this.props.onClick(e);
+    this.props.onLoginClicked(e);
     chrome.runtime.sendMessage({ type: 'launchAuthorize' }, this.oauthCallback);
   },
   oauthCallback: function(options) {
