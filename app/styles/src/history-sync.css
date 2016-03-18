@@ -10,3 +10,7 @@
   height: 100px;
   width: 100px;
 }
+
+#viewing-activity-app .mdl-button {
+  margin: 0 20px;
+}

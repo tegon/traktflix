@@ -26,8 +26,7 @@ export default class NetflixWebAPIUtils {
         method: 'GET',
         url: `${NETFLIX_HOST}/Activate`,
         success: function(response) {
-          //pg=0 means the first page. This is only the first 100 results.
-          let url = `${NETFLIX_API_HOST}/${NetflixWebAPIUtils.extractBuildIndentifier(response)}/viewingactivity?authURL=${NetflixWebAPIUtils.extractAuthURL(response)}&pg=0`;
+          let url = `${NETFLIX_API_HOST}/${NetflixWebAPIUtils.extractBuildIndentifier(response)}/viewingactivity?authURL=${NetflixWebAPIUtils.extractAuthURL(response)}`;
           resolve(url);
         },
         error: reject
@@ -35,10 +34,10 @@ export default class NetflixWebAPIUtils {
     });
   }
 
-  static listActivities(url) {
+  static listActivities(url, page) {
     Request.send({
       method: 'GET',
-      url: url,
+      url: `${url}&pg=${page}`,
       success: (response) => {
         let activities = JSON.parse(response).viewedItems;
         let parsedActivities = activities
@@ -55,8 +54,9 @@ export default class NetflixWebAPIUtils {
     });
   }
 
-  static getActivities() {
-    NetflixWebAPIUtils.activateAPI().then(url => NetflixWebAPIUtils.listActivities(url));
+  static getActivities(page = 0) {
+    NetflixWebAPIUtils.activateAPI()
+      .then(url => NetflixWebAPIUtils.listActivities(url, page));
   }
 
   static parseActivity(activity) {

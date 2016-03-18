@@ -6,6 +6,7 @@ import NetflixWebAPIUtils from '../utils/netflix-web-api-utils';
 
 const CHANGE_EVENT = 'CHANGE';
 
+let _page = 0;
 let _activities = [];
 let _message = undefined;
 
@@ -30,6 +31,10 @@ class ActivityStore extends EventEmitter {
     return _message;
   }
 
+  getPage() {
+    return _page;
+  }
+
   toggleActivity(activity, value) {
     let toggle = _activities.find((a) => a === activity);
     toggle.add = value;
@@ -42,6 +47,7 @@ instance.dispatchToken = ViewingActivityAppDispatcher.register((action) => {
   switch(action.type) {
     case ActionTypes.RECEIVE_ACTIVITIES:
       _activities = action.activities;
+      _page++
       instance.emitChange();
       break;
     case ActionTypes.RECEIVE_ACTIVITIES_FAILED:

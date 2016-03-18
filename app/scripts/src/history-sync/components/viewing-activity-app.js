@@ -3,12 +3,14 @@ import React from 'react';
 import ActivityList from './activity-list';
 import ActivityStore from '../stores/activity-store';
 import TraktWebAPIUtils from '../utils/trakt-web-api-utils';
+import NetflixWebAPIUtils from '../utils/netflix-web-api-utils';
 
 export default class ViewingActivityApp extends React.Component {
   getStateFromStores() {
     return {
       activities: ActivityStore.getAll(),
-      message: ActivityStore.getMessage()
+      message: ActivityStore.getMessage(),
+      page: ActivityStore.getPage()
     }
   }
 
@@ -27,6 +29,8 @@ export default class ViewingActivityApp extends React.Component {
   }
 
   componentDidUpdate() {
+    componentHandler.upgradeDom();
+
     if (this.state.message) {
       this.showSnackbar();
     }
@@ -37,9 +41,14 @@ export default class ViewingActivityApp extends React.Component {
     this.setState(Object.assign(state, { loading: false }));
   }
 
-  _onClick() {
+  _onSyncClick() {
     this.setState({ loading: true });
     TraktWebAPIUtils.addActivities(this.state.activities);
+  }
+
+  _onNextPageClick() {
+    this.setState({ loading: true });
+    NetflixWebAPIUtils.getActivities(this.state.page);
   }
 
   showSnackbar() {
@@ -56,18 +65,25 @@ export default class ViewingActivityApp extends React.Component {
           <div className='mdl-spinner mdl-spinner--single-color mdl-js-spinner is-active' />
         </div>
       );
-    } else {
+    } else if (this.state.activities.length) {
       content = (
         <div>
           <ActivityList activities={this.state.activities} />
           <div style={{textAlign: 'center'}}>
-            <button onClick={this._onClick.bind(this)} className='mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect'>
+            <button onClick={this._onSyncClick.bind(this)} className='mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect'>
               Sync now
+            </button>
+
+            <button onClick={this._onNextPageClick.bind(this)} className='mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect'>
+              Next page
             </button>
           </div>
         </div>
       )
+    } else {
+      content = (<div><h4>There's no more items in your history. Refresh the page to go to the beginning.</h4></div>);
     }
+
     return(
       <div>
         {content}
