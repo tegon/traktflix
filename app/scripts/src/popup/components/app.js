@@ -50,6 +50,9 @@ module.exports = React.createClass({
   componentDidMount: function() {
     this.checkUserLogin();
   },
+  componentDidUpdate: function() {
+    componentHandler.upgradeDom();
+  },
   logoutClicked: function(e) {
     chrome.runtime.sendMessage({ type: 'sendEvent', name: 'Logout', value: false });
     ChromeStorage.clear(function() {
