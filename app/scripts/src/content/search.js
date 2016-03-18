@@ -42,7 +42,7 @@ Search.prototype = {
     });
   },
 
-  findEpisodeByTitle: function(response, options) {
+  findEpisodeByTitle: function(show, response, options) {
     var episodes = JSON.parse(response);
     var episode;
 
@@ -54,7 +54,7 @@ Search.prototype = {
     }
 
     if (episode) {
-      options.success.call(this, episode);
+      options.success.call(this, Object.assign(episode, show));
     } else {
       options.error.call(this, 404, 'Episode not found.');
     }
@@ -68,9 +68,9 @@ Search.prototype = {
           url: this.getEpisodeUrl(response['show']['ids']['slug']),
           success: function(resp) {
             if (this.item.episode) {
-              options.success.call(this, JSON.parse(resp));
+              options.success.call(this, Object.assign(JSON.parse(resp), response));
             } else {
-              this.findEpisodeByTitle(resp, options);
+              this.findEpisodeByTitle(response, resp, options);
             }
           }.bind(this),
           error: function(st, resp) {

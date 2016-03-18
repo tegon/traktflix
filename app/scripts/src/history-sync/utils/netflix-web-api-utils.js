@@ -86,6 +86,7 @@ export default class NetflixWebAPIUtils {
     }
 
     return new Promise((resolve, reject) => {
+      let netflix = Object.assign(item, { id: activity.movieID });
       TraktWebAPIUtils.getActivity({ item, date }).then(resolve).catch(reject);
     });
   }

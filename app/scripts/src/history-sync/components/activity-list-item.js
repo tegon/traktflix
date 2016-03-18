@@ -29,14 +29,17 @@ export default class ActivityListItem extends React.Component {
     let traktImage = trakt.images.poster ? trakt.images.poster : trakt.images.screenshot;
     let thumb = traktImage.thumb ? traktImage.thumb : 'https://trakt.tv/assets/placeholders/thumb/poster-2d5709c1b640929ca1ab60137044b152.png';
     let netflixTitle = netflix.epTitle ? `${netflix.title}: ${netflix.epTitle}` : netflix.title;
+    let netflixUrl = `https://www.netflix.com/watch/${netflix.id}`;
+    let traktUrl = trakt.season ? `https://trakt.tv/shows/${trakt.show.ids.slug}/seasons/${trakt.season}/episodes/${trakt.number}` : `https://trakt.tv/movies/${trakt.ids.slug}`;
+    let traktTitle = trakt.show ? `${trakt.show.title}: ${trakt.title}` : trakt.title;
 
     return(
       <li className='mdl-list__item mdl-list__item--three-line'>
         <span className='mdl-list__item-primary-content'>
           <div style={{backgroundImage: `url(${thumb})`, backgroundSize: 'cover'}} className='mdl-list__item-avatar'></div>
-          <span>Netflix title: {netflixTitle}</span>
+          <span><a href={netflixUrl} target='_blank'>Netflix title: {netflixTitle}</a></span>
           <span> / </span>
-          <span>Trakt.tv title: {trakt.title}</span>
+          <span><a href={traktUrl} target='_blank'>Trakt.tv title: {traktTitle}</a></span>
           <span className='mdl-list__item-text-body'>
             Netflix date: {netflix.date.format('MMMM Do YYYY, h:mm:ss a')} / Trakt.tv date: {traktDate}
             <br />
