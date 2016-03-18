@@ -45,7 +45,8 @@
         "unlimitedStorage",
         "http://trakt.tv/*",
         "https://www.google-analytics.com/",
-        "*://*.netflix.com/*"
+        "*://*.netflix.com/*",
+        "notifications"
     ],
     "web_accessible_resources": [
         "images/svg/*.svg"

@@ -31,6 +31,7 @@ ContentController.prototype = {
 
   onSearchError: function(status, response) {
     this.sendAnalyticsEvent({ name: 'onSearchError', value: status + ' - ' + this.item.title });
+    this.showErrorNotification();
     console.error('traktflix: Search error', status, response, this.item.title);
   },
 
@@ -40,6 +41,7 @@ ContentController.prototype = {
 
   onScrobbleError: function() {
     this.sendAnalyticsEvent({ name: 'Scrobble', value: 'onError' });
+    this.showErrorNotification();
     console.error('traktflix: Scrobble error');
   },
 
@@ -96,6 +98,10 @@ ContentController.prototype = {
     chrome.runtime.sendMessage({
       type: 'sendEvent', name: options.name, value: options.value
     });
+  },
+
+  showErrorNotification: function() {
+    chrome.runtime.sendMessage({ type: 'showErrorNotification' });
   },
 
   getCurrentItem: function() {

@@ -57,5 +57,13 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
       chrome.storage.local.clear(sendResponse);
       return true;
       break;
+    case 'showErrorNotification':
+      chrome.notifications.create({
+        type: 'basic',
+        iconUrl: 'images/traktflix-icon-128.png',
+        title: 'An error has occurred :(',
+        message: "We couldn't talk to Trakt.tv servers. We're trying to fix it, please try again later"
+      });
+      break;
   }
 });
