@@ -1,14 +1,24 @@
 import React from 'react';
 
 import ActivityActionCreators from '../actions/activity-action-creators';
+import ReportActivity from './report-activity';
 
 export default class ActivityListItem extends React.Component {
+  constructor() {
+    super();
+    this.state = { showReport: false };
+  }
+
   componentDidMount() {
     this.props.componentHandler.upgradeDom();
   }
 
   _onChange(event) {
     ActivityActionCreators.toggleActivity(this.props.activity, event.target.checked);
+  }
+
+  _onShowReport(event) {
+    this.setState({ showReport: true });
   }
 
   render() {
@@ -30,7 +40,8 @@ export default class ActivityListItem extends React.Component {
           <span className='mdl-list__item-text-body'>
             Netflix date: {netflix.date.format('MMMM Do YYYY, h:mm:ss a')} / Trakt.tv date: {traktDate}
             <br />
-            Is this wrong?<a> Report</a>
+            Is this wrong? <a className='report' onClick={this._onShowReport.bind(this)}>Report</a>
+            <ReportActivity activity={activity} show={this.state.showReport} />
           </span>
         </span>
         <span className='mdl-list__item-secondary-action'>

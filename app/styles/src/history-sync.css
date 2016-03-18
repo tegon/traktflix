@@ -11,6 +11,11 @@
   width: 100px;
 }
 
-#viewing-activity-app .mdl-button {
+#viewing-activity-app .mdl-button--raised {
   margin: 0 20px;
+}
+
+.mdl-textfield--floating-label {
+  margin: 0 10px;
+  width: 300px;
 }

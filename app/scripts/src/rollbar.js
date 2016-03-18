@@ -11,5 +11,5 @@ let config = {
 };
 
 const Rollbar = rollbar.init(config);
-
+window.Rollbar = Rollbar;
 export default Rollbar;
