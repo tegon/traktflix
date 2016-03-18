@@ -2,11 +2,13 @@
   "production": {
     "clientId": "{TraktClientId}",
     "clientSecret": "{TraktClientSecret}",
-    "analyticsId": "{GoogleAnalyticsId}"
+    "analyticsId": "{GoogleAnalyticsId}",
+    "rollbarToken": "{RollbarToken}"
   },
   "development": {
     "clientId": "{TraktClientId}",
     "clientSecret": "{TraktClientSecret}",
-    "analyticsId": "{GoogleAnalyticsId}"
+    "analyticsId": "{GoogleAnalyticsId}",
+    "rollbarToken": "{RollbarToken}"
   }
 }

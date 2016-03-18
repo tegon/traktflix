@@ -3,6 +3,7 @@
 var WatchEvents = require('./watch-events.js');
 var ContentController = require('./content-controller.js');
 var controller = new ContentController();
+var rollbar = require('../rollbar.js');
 
 var events = new WatchEvents({
   onPlay: controller.onPlay.bind(controller),

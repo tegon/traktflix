@@ -6,6 +6,7 @@ var Router = ReactRouter.Router;
 var Route = ReactRouter.Route;
 var IndexRoute = ReactRouter.IndexRoute;
 var browserHistory = ReactRouter.browserHistory;
+var rollbar = require('../rollbar.js');
 
 var App = require('./components/app.js');
 var LoginButton = require('./components/login-button.js');

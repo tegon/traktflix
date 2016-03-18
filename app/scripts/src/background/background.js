@@ -4,6 +4,7 @@ var Analytics = require('./analytics.js');
 var Oauth = require('../oauth.js');
 var Settings = require('../settings.js');
 var service = analytics.getService('traktflix');
+var rollbar = require('../rollbar.js');
 var tracker = service.getTracker(Settings.analyticsId);
 Analytics.setTracker(tracker);
 
