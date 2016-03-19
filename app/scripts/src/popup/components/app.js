@@ -32,7 +32,7 @@ module.exports = React.createClass({
     this.onTokenFailed(status, response);
   },
   sendToContentScript: function(type, callback) {
-    chrome.tabs.query({ url: '*://*.netflix.com/*' }, function(tabs) {
+    chrome.tabs.query({ url: '*://*.netflix.com/*', active: true }, function(tabs) {
       if (tabs.length > 0) {
         chrome.tabs.sendMessage(tabs[0].id, { type: type }, callback);
       }
