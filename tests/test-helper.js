@@ -21,7 +21,12 @@ window.chrome = {
     sendMessage: sinon.stub(),
     create: sinon.stub()
   },
-  browserAction: { setIcon: sinon.stub() }
+  browserAction: { setIcon: sinon.stub() },
+  extension: {
+    getURL: function(path) {
+      return 'chrome-extension://aabkanfebbckpjbjcelojgljnmeolppf/' + path;
+    }
+  }
 };
 
 sinon.stub(window.chrome.runtime, 'sendMessage', function(data, callback) {

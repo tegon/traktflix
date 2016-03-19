@@ -74,7 +74,10 @@ describe('Search', function() {
       '{ "title": "Ladies Room", "season": 1, "number": 2 }');
     expect(success.callCount).toBe(1);
     expect(success.getCall(0).args).toEqual([{
-      title: 'Ladies Room', season: 1, number: 2
+      title: 'Ladies Room', season: 1, number: 2,
+      show: {
+        title: 'Mad Men', ids: { slug: 'mad-men' }
+      }
     }]);
   });
 
@@ -88,7 +91,10 @@ describe('Search', function() {
       '[{ "season": 1, "number": 1, "title": "Descenso" }, { "season": 1, "number": 2, "title": "The Sword of Simón Bolívar" }]');
     expect(success.callCount).toBe(1);
     expect(success.getCall(0).args).toEqual([{
-      title: 'The Sword of Simón Bolívar', season: 1, number: 2
+      title: 'The Sword of Simón Bolívar', season: 1, number: 2,
+      show: {
+        title: 'Narcos', ids: { slug: 'narcos' }
+      }
     }]);
   });
 
