@@ -73,14 +73,19 @@ export default class NetflixWebAPIUtils {
       } else {
         return;
       }
-      let epTitle = splittedTitle[1].trim().replace('"', '').replace('"', '');
 
-      item = new Item({
-        epTitle: epTitle,
-        title: title,
-        season: season,
-        type: type
-      });
+      if(splittedTitle[1]) {
+        let epTitle = splittedTitle[1].trim().replace('"', '').replace('"', '');
+
+        item = new Item({
+          epTitle: epTitle,
+          title: title,
+          season: season,
+          type: type
+        });
+      } else {
+        return;
+      }
     } else {
       item = new Item({ title: activity.title, type: type });
     }
