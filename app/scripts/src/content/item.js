@@ -7,7 +7,9 @@ var fullTitles = {
   'The Office (U.S.)': 'The Office (US)',
   'The Blind Side': '"The Blind Side"',
   'The Avengers': '"The Avengers"',
-  'The Seven Deadly Sins': '"The Seven Deadly Sins"'
+  'The Seven Deadly Sins': '"The Seven Deadly Sins"',
+  'Young and Hungry': '"Young and Hungry"',
+  'The 100': '"The 100"'
 }
 
 function Item(options) {
