@@ -19,8 +19,10 @@ function Scrobble(options) {
 
 Scrobble.prototype = {
   startProgressTimeout: function() {
-    this.progressChangeInterval = setInterval(function() {
+    this.progressChangeInterval = setTimeout(function() {
       this.onProgressChange();
+      clearTimeout(this.progressChangeInterval);
+      this.startProgressTimeout();
     }.bind(this), 1000);
   },
 
@@ -38,8 +40,23 @@ Scrobble.prototype = {
 
   webScrubber: function() {
     var scrubber = document.querySelector('#scrubber-component .player-scrubber-progress-completed');
+    if (!this.basePercentage || !this.baseTime) {
+      if (scrubber) {
+        this.basePercentage = 100 - parseFloat(scrubber.style.width);
+      }
+      this.baseTime = this.getRemainingTime();
+    }
     if (scrubber) {
-      this.progress = parseFloat(scrubber.style.width);
+      var currentPercentage = 100 - parseFloat(scrubber.style.width);
+      if (currentPercentage != this.basePercentage) {
+        this.basePercentage = currentPercentage;
+        this.baseTime = this.getRemainingTime();
+      }
+
+      var newProgress = 100 - ((this.basePercentage * this.getRemainingTime()) / this.baseTime);
+      if (newProgress > 0) {
+        this.progress = newProgress;
+      }
     }
   },
 
@@ -47,9 +64,16 @@ Scrobble.prototype = {
     var progressElement = document.querySelector('.player-slider progress');
     if (progressElement) {
       var newProgress = parseInt(progressElement.getAttribute('value')) * 100 / parseFloat(progressElement.getAttribute('max'));
-      if (newProgress > 0) {
+      if (newProgress > 0 && !document.querySelector('.player-loading.active')) {
         this.progress = newProgress;
       }
+    }
+  },
+
+  getRemainingTime: function() {
+    var timeLabel = document.querySelector('.player-slider label');
+    if (timeLabel) {
+      return parseInt(timeLabel.textContent.replace(':', '').replace(':', ''));
     }
   },
 
