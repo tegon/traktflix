@@ -1,8 +1,8 @@
-import Settings from './settings';
+var Settings = require('./settings');
 
-import rollbar from 'rollbar-browser';
+var rollbar = require('rollbar-browser');
 
-let config = {
+var config = {
   accessToken: Settings.rollbarToken,
   captureUncaught: true,
   payload: {
@@ -10,6 +10,6 @@ let config = {
   }
 };
 
-const Rollbar = rollbar.init(config);
+var Rollbar = rollbar.init(config);
 window.Rollbar = Rollbar;
-export default Rollbar;
+module.exports = Rollbar;
