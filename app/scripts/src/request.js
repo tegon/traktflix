@@ -12,7 +12,7 @@ Request._send = function _send(options, accessToken) {
   xhr.setRequestHeader('Content-type', 'application/json');
   xhr.setRequestHeader('trakt-api-key', Settings.clientId);
   xhr.setRequestHeader('trakt-api-version', Settings.apiVersion);
-  xhr.timeout = 4000; // increase the timeout for trakt.tv calls
+  xhr.timeout = 10000; // increase the timeout for trakt.tv calls
 
   if (accessToken) {
     xhr.setRequestHeader('Authorization', 'Bearer ' + accessToken);
