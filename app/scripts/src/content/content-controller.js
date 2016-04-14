@@ -3,6 +3,7 @@
 var ItemParser = require('./item-parser.js');
 var Search = require('./search.js');
 var Scrobble = require('./scrobble.js');
+var Rollbar = require('../rollbar.js');
 
 function ContentController() {
   this.item = null;
@@ -32,17 +33,19 @@ ContentController.prototype = {
   onSearchError: function(status, response) {
     this.sendAnalyticsEvent({ name: 'onSearchError', value: status + ' - ' + this.item.title });
     this.showErrorNotification();
-    console.error('traktflix: Search error', status, response, this.item.title);
+    console.log('traktflix: Search error', status, response, this.item.title);
+    Rollbar.warning('traktflix: Search error', { status: status, response: response });
   },
 
   onScrobbleSuccess: function() {
     this.sendAnalyticsEvent({ name: 'Scrobble', value: 'onSuccess' });
   },
 
-  onScrobbleError: function() {
+  onScrobbleError: function(status, response) {
     this.sendAnalyticsEvent({ name: 'Scrobble', value: 'onError' });
     this.showErrorNotification();
-    console.error('traktflix: Scrobble error');
+    console.log('traktflix: Scrobble error');
+    Rollbar.warning('traktflix: Scrobble error', { status: status, response: response });
   },
 
   storeItem: function(item) {

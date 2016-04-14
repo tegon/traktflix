@@ -6,6 +6,7 @@ var Handler = ReactRouter.Handler;
 
 var Header = require('./header.js');
 var Oauth = require('../../oauth.js');
+var Rollbar = require('../../rollbar.js');
 var ChromeStorage = require('../../chrome-storage.js');
 
 module.exports = React.createClass({
@@ -72,7 +73,8 @@ module.exports = React.createClass({
   onTokenFailed: function(status, response) {
     this.setState({ loading: false });
     chrome.runtime.sendMessage({ type: 'sendEvent', name: 'TokenFailed', value: false });
-    console.error('traktflix: Get Token failed', status, response);
+    console.log('traktflix: Get Token failed', status, response);
+    Rollbar.warning('traktflix: Get Token failed', { status: status, response: response });
   },
   render: function() {
     return(

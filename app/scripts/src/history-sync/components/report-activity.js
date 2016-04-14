@@ -8,7 +8,7 @@ export default class ReportActivity extends React.Component {
   }
 
   _sendReport(event) {
-    Rollbar.error('Wrong item on sync history', {
+    Rollbar.warning('Wrong item on sync history', {
       traktId: this.props.activity.trakt.ids.trakt,
       netflixId: this.props.activity.netflix.id,
       correctItemUrl: this.state.correctItemUrl
