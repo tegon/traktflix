@@ -40,6 +40,12 @@ class ActivityStore extends EventEmitter {
     let toggle = _activities.find((a) => a === activity);
     toggle.add = value;
   }
+
+  updateActivity(activity) {
+    let activityToUpdate = _activities.find((a) => a.netflix.id === activity.netflix.id);
+    activityToUpdate.trakt = activity.trakt;
+    activityToUpdate.add = activity.add;
+  }
 }
 
 let instance = new ActivityStore();
@@ -58,7 +64,11 @@ instance.dispatchToken = ViewingActivityAppDispatcher.register((action) => {
       instance.emitChange();
       break;
     case ActionTypes.TOGGLE_ACTIVITY:
-      instance.toggleActivity(action.activity, action.value)
+      instance.toggleActivity(action.activity, action.value);
+      instance.emitChange();
+      break;
+    case ActionTypes.UPDATE_ACTIVITY:
+      instance.updateActivity(action.activity);
       instance.emitChange();
       break;
     case ActionTypes.SYNC_SUCCESS:

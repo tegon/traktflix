@@ -57,29 +57,36 @@ export default class TraktWebAPIUtils {
     return new Promise((resolve, reject) => {
       TraktWebAPIUtils.searchItem(options)
         .then((result) => {
-          Request.send({
-            method: 'GET',
-            url: TraktWebAPIUtils.activityUrl(result.activity),
-            success: function(response) {
-              let include = false;
-              let history = JSON.parse(response)[0];
-              let date;
-
-              if (history && history.watched_at) {
-                date = moment(history.watched_at);
-                include = date.diff(result.date, 'days') == 0;
-              }
-              let trakt = Object.assign(result.activity, { date: date });
-              let netflix = Object.assign(options.item, { date: options.date });
-
-              resolve(Object.assign({ netflix, trakt }, { add: !include }));
-            },
-            error: function(status, response) {
-              reject(status, response);
-            }
-          });
+          TraktWebAPIUtils.getActivityHistory(Object.assign(options, { result: result })).then(resolve).catch(reject);
         })
-        .catch((status, response) => resolve(null));
+        .catch((status, response) => {
+          let netflix = Object.assign(options.item, { date: options.date });
+          resolve(Object.assign({ netflix }, { add: false }));
+        });
+    });
+  }
+
+  static getActivityHistory(options) {
+    return new Promise((resolve, reject) => {
+      Request.send({
+        method: 'GET',
+        url: TraktWebAPIUtils.activityUrl(options.result.activity),
+        success: function(response) {
+          let include = false;
+          let history = JSON.parse(response)[0];
+          let date;
+
+          if (history && history.watched_at) {
+            date = moment(history.watched_at);
+            include = date.diff(options.result.date, 'days') == 0;
+          }
+          let trakt = Object.assign(options.result.activity, { date: date });
+          let netflix = Object.assign(options.item, { date: options.date });
+
+          resolve(Object.assign({ netflix, trakt }, { add: !include }));
+        },
+        error: reject
+      });
     });
   }
 
@@ -105,5 +112,47 @@ export default class TraktWebAPIUtils {
         }
       });
     });
+  }
+
+  static getActivityFromURL(activity, url) {
+    return new Promise((resolve, reject) => {
+      if (!url) { reject(); }
+
+      let pathname = url.replace('https://trakt.tv', '');
+
+      Request.send({
+        method: 'GET',
+        url: `${Settings.apiUri}${pathname}?extended=images`,
+        success: function(response) {
+          let result = JSON.parse(response);
+          let type = activity.netflix.type;
+
+          if (type === 'show') {
+            let slug = pathname.split('/')[2];
+            Request.send({
+              method: 'GET',
+              url: `${Settings.apiUri}/shows/${slug}?extended=images`,
+              success: function(res) {
+                result.show = JSON.parse(res);
+                TraktWebAPIUtils._parseActivityFromURL(activity, result, type)
+                  .then(ActivityActionCreators.updateActivity)
+                  .catch(reject);
+              },
+              error: reject
+            });
+          } else {
+            TraktWebAPIUtils._parseActivityFromURL(activity, result, type)
+              .then(ActivityActionCreators.updateActivity)
+              .catch(reject);
+          }
+        },
+        error: reject
+      });
+    });
+  }
+
+  static _parseActivityFromURL(activity, result, type) {
+    let traktActivity = Object.assign(result, { type: type });
+    return TraktWebAPIUtils.getActivityHistory(Object.assign({ item: activity.netflix }, { result: { activity: traktActivity } }, { date: activity.netflix.date }));
   }
 }

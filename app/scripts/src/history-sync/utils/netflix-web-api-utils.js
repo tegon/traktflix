@@ -40,9 +40,7 @@ export default class NetflixWebAPIUtils {
       url: `${url}&pg=${page}`,
       success: (response) => {
         let activities = JSON.parse(response).viewedItems;
-        let parsedActivities = activities
-          .map(NetflixWebAPIUtils.parseActivity)
-          .filter((activity) => !!activity);
+        let parsedActivities = activities.map(NetflixWebAPIUtils.parseActivity);
 
         Promise.all(parsedActivities)
           .then(ActivityActionCreators.receiveActivities)
@@ -68,31 +66,29 @@ export default class NetflixWebAPIUtils {
       let title = activity.seriesTitle;
       let splittedTitle = activity.title.split(':');
       let season = splittedTitle[0].match(/\d+/g);
+      let epTitle;
+
       if (season) {
         season = parseInt(season[0]);
-      } else {
-        return;
       }
 
-      if(splittedTitle[1]) {
-        let epTitle = splittedTitle[1].trim().replace('"', '').replace('"', '');
-
-        item = new Item({
-          epTitle: epTitle,
-          title: title,
-          season: season,
-          type: type
-        });
-      } else {
-        return;
+      if (splittedTitle[1]) {
+        epTitle = splittedTitle[1].trim().replace('"', '').replace('"', '');
       }
+
+      item = new Item({
+        epTitle: epTitle,
+        title: title,
+        season: season,
+        type: type
+      });
     } else {
       item = new Item({ title: activity.title, type: type });
     }
 
     return new Promise((resolve, reject) => {
       let netflix = Object.assign(item, { id: activity.movieID });
-      TraktWebAPIUtils.getActivity({ item, date }).then(resolve).catch(reject);
+      TraktWebAPIUtils.getActivity({ item, date }).then(resolve).catch(resolve);
     });
   }
 }

@@ -26,6 +26,13 @@ export default class ActivityActionCreators {
     });
   }
 
+  static updateActivity(activity) {
+    ViewingActivityAppDispatcher.dispatch({
+      type: ActionTypes.UPDATE_ACTIVITY,
+      activity: activity
+    });
+  }
+
   static syncSuccess(episodesCount, moviesCount) {
     ViewingActivityAppDispatcher.dispatch({
       type: ActionTypes.SYNC_SUCCESS,
