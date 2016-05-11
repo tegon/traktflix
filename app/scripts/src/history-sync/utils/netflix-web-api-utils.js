@@ -8,6 +8,7 @@ import ActivityActionCreators from '../actions/activity-action-creators';
 
 const AUTH_REGEXP = new RegExp("\"authURL\":\"(.*?)\"");
 const BUILD_IDENTIFIER_REGEXP = new RegExp("\"BUILD_IDENTIFIER\":\"(.*?)\"");
+const VIEWING_ACTIVIY_IDENTIFIER_REGEXP = new RegExp("\"/viewingactivity\":\"(.*?)\"");
 const NETFLIX_HOST = 'https://www.netflix.com';
 const NETFLIX_API_HOST = `${NETFLIX_HOST}/api/shakti`;
 
@@ -20,13 +21,17 @@ export default class NetflixWebAPIUtils {
     return BUILD_IDENTIFIER_REGEXP.exec(response)[1];
   }
 
+  static extractViewingActivityIdentifier(response) {
+    return VIEWING_ACTIVIY_IDENTIFIER_REGEXP.exec(response)[1];
+  }
+
   static activateAPI() {
     return new Promise((resolve, reject) => {
       Request.send({
         method: 'GET',
         url: `${NETFLIX_HOST}/Activate`,
         success: function(response) {
-          let url = `${NETFLIX_API_HOST}/${NetflixWebAPIUtils.extractBuildIndentifier(response)}/viewingactivity?authURL=${NetflixWebAPIUtils.extractAuthURL(response)}`;
+          let url = `${NETFLIX_API_HOST}/viewingactivity/${NetflixWebAPIUtils.extractViewingActivityIdentifier(response)}?authURL=${NetflixWebAPIUtils.extractAuthURL(response)}`;
           resolve(url);
         },
         error: reject
