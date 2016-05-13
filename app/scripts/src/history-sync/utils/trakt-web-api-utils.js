@@ -35,10 +35,10 @@ export default class TraktWebAPIUtils {
   static activitiesPayload(activities) {
     let activitiesToAdd = activities.filter((activity) => activity.add);
     let movies = activitiesToAdd
-      .filter((activity) => activity.trakt.type === 'movie')
+      .filter((activity) => activity.trakt && activity.trakt.type === 'movie')
       .map(TraktWebAPIUtils.activityPayload);
     let episodes = activitiesToAdd
-      .filter((activity) => activity.trakt.type === 'show')
+      .filter((activity) => activity.trakt && activity.trakt.type === 'show')
       .map(TraktWebAPIUtils.activityPayload);
 
     return { movies: movies, episodes: episodes };

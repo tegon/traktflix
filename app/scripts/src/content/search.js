@@ -47,7 +47,7 @@ Search.prototype = {
     var episode;
 
     for (var i = 0; i < episodes.length; i++) {
-      if (this.item.epTitle && episodes[i].title.toLowerCase() === this.item.epTitle.toLowerCase()) {
+      if (this.item.epTitle && episodes[i].title && episodes[i].title.toLowerCase() === this.item.epTitle.toLowerCase()) {
         episode = episodes[i];
         break;
       }
