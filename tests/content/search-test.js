@@ -61,7 +61,8 @@ describe('Search', function() {
     this.requests[0].respond(400, { 'Content-Type': 'application/json' },
       '{ "errors": "Bad Request" }');
     expect(error.callCount).toBe(1);
-    expect(error.getCall(0).args).toEqual([400, '{ "errors": "Bad Request" }']);
+    expect(error.getCall(0).args).toEqual([400, '{ "errors": "Bad Request" }',
+      { method: 'GET', url: 'https://api-v2launch.trakt.tv/search?type=movie&query=Rocky', params: undefined }]);
   });
 
   it('findEpisode returns first search result', function() {
@@ -107,7 +108,8 @@ describe('Search', function() {
     this.requests[1].respond(200, { 'Content-Type': 'application/json' },
       '[{ "season": 1, "number": 1, "title": "Descenso" }, { "season": 1, "number": 3, "title": "The Men of Always" }]');
     expect(error.callCount).toBe(1);
-    expect(error.getCall(0).args).toEqual([404, 'Episode not found.']);
+    expect(error.getCall(0).args).toEqual([404, 'Episode not found.',
+      { show: { show: { title: 'Narcos', ids: {slug: 'narcos'} } }, item: { type: 'show', season: 1, title: 'Narcos', epTitle: 'The Sword of Simón Bolívar' } }]);
   });
 
   it('findEpisode returns error callback', function() {
@@ -119,7 +121,8 @@ describe('Search', function() {
     this.requests[1].respond(400, { 'Content-Type': 'application/json' },
       '{ "errors": "Bad Request" }');
     expect(error.callCount).toBe(1);
-    expect(error.getCall(0).args).toEqual([400, '{ "errors": "Bad Request" }']);
+    expect(error.getCall(0).args).toEqual([400, '{ "errors": "Bad Request" }',
+      { url: 'https://api-v2launch.trakt.tv/shows/mad-men/seasons/1/episodes/1?extended=images', method: 'GET', params: undefined }]);
   });
 
   it('findEpisode returns error callback on second request', function() {
@@ -128,7 +131,8 @@ describe('Search', function() {
     this.requests[0].respond(400, { 'Content-Type': 'application/json' },
       '{ "errors": "Bad Request" }');
     expect(error.callCount).toBe(1);
-    expect(error.getCall(0).args).toEqual([400, '{ "errors": "Bad Request" }']);
+    expect(error.getCall(0).args).toEqual([400, '{ "errors": "Bad Request" }',
+      { url: 'https://api-v2launch.trakt.tv/search?type=show&query=Mad%20Men', method: 'GET', params: undefined }]);
   });
 
   it('when item type is show, find calls findEpisode', function() {

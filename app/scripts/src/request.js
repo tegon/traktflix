@@ -22,10 +22,12 @@ Request._send = function _send(options, accessToken) {
     if (this.status >= 200 && this.status < 400) {
       options.success.call(this, this.response);
     } else {
-      options.error.call(this, this.status, this.responseText);
+      options.error.call(this, this.status, this.responseText, {url: options.url, method: options.method, params: options.params});
     }
   };
-  xhr.onerror = options.error;
+  xhr.onerror = function(event) {
+    options.error.call(this, this.status, this.responseText, {url: options.url, method: options.method, params: options.params});
+  };
 
   xhr.send(JSON.stringify(options.params));
 };

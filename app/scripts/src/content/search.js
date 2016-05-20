@@ -36,8 +36,8 @@ Search.prototype = {
           options.success.call(this, data);
         }
       },
-      error: function(status, response) {
-        options.error.call(this, status, response);
+      error: function(status, response, opts) {
+        options.error.call(this, status, response, opts);
       }
     });
   },
@@ -56,7 +56,7 @@ Search.prototype = {
     if (episode) {
       options.success.call(this, Object.assign(episode, show));
     } else {
-      options.error.call(this, 404, 'Episode not found.');
+      options.error.call(this, 404, 'Episode not found.', {show: show, item: this.item});
     }
   },
 
@@ -73,13 +73,13 @@ Search.prototype = {
               this.findEpisodeByTitle(response, resp, options);
             }
           }.bind(this),
-          error: function(st, resp) {
-            options.error.call(this, st, resp);
+          error: function(st, resp, opts) {
+            options.error.call(this, st, resp, opts);
           }
         });
       }.bind(this),
-      error: function(status, response) {
-        options.error.call(this, status, response);
+      error: function(status, response, opts) {
+        options.error.call(this, status, response, opts);
       }
     });
   },
