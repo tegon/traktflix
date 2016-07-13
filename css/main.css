@@ -113,7 +113,10 @@ a {
 }
 
 #limitations {
-  background-color: rgba(111, 111, 111, 0.65);
+  border-bottom-width: 1px;
+  border-color: rgba(111, 111, 111, 0.65);
+  border-style: solid;
+  border-top-width: 1px;
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -132,14 +135,6 @@ a {
   margin: 20px 0;
 }
 
-#limitations a {
-  color: #FFF;
-}
-
-#limitations a:hover {
-  color: rgb(206, 206, 206);
-}
-
 #privacy-policy {
   display: -webkit-box;
   display: -ms-flexbox;
@@ -154,15 +149,16 @@ a {
           align-items: center;
 }
 
-#privacy-policy p {
+#privacy-policy .description {
   line-height: 25px;
+  margin: 20px 0;
 }
 
-#privacy-policy a, #contact a {
+#privacy-policy a, #contact a, #limitations a {
   color: rgb(244,67,54);
 }
 
-#privacy-policy a:hover, #contact a:hover {
+#privacy-policy a:hover, #contact a:hover, #limitations a:hover {
   color: rgb(202, 14, 0);
 }
 
