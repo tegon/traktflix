@@ -55,6 +55,7 @@ instance.dispatchToken = ViewingActivityAppDispatcher.register((action) => {
     case ActionTypes.RECEIVE_ACTIVITIES:
       _activities = action.activities;
       _page++
+      _message = undefined;
       instance.emitChange();
       break;
     case ActionTypes.RECEIVE_ACTIVITIES_FAILED:
@@ -65,10 +66,12 @@ instance.dispatchToken = ViewingActivityAppDispatcher.register((action) => {
       break;
     case ActionTypes.TOGGLE_ACTIVITY:
       instance.toggleActivity(action.activity, action.value);
+      _message = undefined;
       instance.emitChange();
       break;
     case ActionTypes.UPDATE_ACTIVITY:
       instance.updateActivity(action.activity);
+      _message = undefined;
       instance.emitChange();
       break;
     case ActionTypes.SYNC_SUCCESS:

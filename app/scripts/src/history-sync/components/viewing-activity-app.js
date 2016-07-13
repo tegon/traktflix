@@ -51,6 +51,11 @@ export default class ViewingActivityApp extends React.Component {
     NetflixWebAPIUtils.getActivities(this.state.page);
   }
 
+  _onToggleAll(event) {
+    let inputs = Array.from(document.querySelectorAll('.activity-item-switch'));
+    inputs.map(input => input.checked === event.target.checked ? null : input.click());
+  }
+
   showSnackbar() {
     let snackbar = document.querySelector('.mdl-js-snackbar');
     snackbar.MaterialSnackbar.showSnackbar({ message: this.state.message });
@@ -68,6 +73,12 @@ export default class ViewingActivityApp extends React.Component {
     } else if (this.state.activities.length) {
       content = (
         <div>
+          <span className='mdl-list__item-secondary-action'>
+            <label className='mdl-switch mdl-js-switch mdl-js-ripple-effect' htmlFor='toggle-all'>
+              <input type='checkbox' id='toggle-all' className='mdl-switch__input' onChange={this._onToggleAll.bind(this)} />
+              <span className='mdl-switch__label'>Select all</span>
+            </label>
+          </span>
           <ActivityList activities={this.state.activities} />
           <div style={{textAlign: 'center'}}>
             <button onClick={this._onSyncClick.bind(this)} className='mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect'>

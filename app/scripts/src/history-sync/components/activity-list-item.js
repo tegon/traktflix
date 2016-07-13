@@ -42,6 +42,7 @@ export default class ActivityListItem extends React.Component {
     }
 
     let thumb = traktImage && traktImage.thumb ? traktImage.thumb : 'https://trakt.tv/assets/placeholders/thumb/poster-2d5709c1b640929ca1ab60137044b152.png';
+    let formId = `${netflix.id}--add`;
 
     return(
       <li className='mdl-list__item mdl-list__item--three-line'>
@@ -58,8 +59,8 @@ export default class ActivityListItem extends React.Component {
           </span>
         </span>
         <span className='mdl-list__item-secondary-action'>
-          <label className='mdl-switch mdl-js-switch mdl-js-ripple-effect' htmlFor={netflix.id}>
-            <input type='checkbox' id={netflix.id} className='mdl-switch__input' checked={activity.add} onChange={this._onChange.bind(this)} />
+          <label className='mdl-switch mdl-js-switch mdl-js-ripple-effect' htmlFor={formId}>
+            <input type='checkbox' id={formId} className='mdl-switch__input activity-item-switch' checked={activity.add} onChange={this._onChange.bind(this)} />
           </label>
         </span>
       </li>
