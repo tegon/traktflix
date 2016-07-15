@@ -96,9 +96,6 @@ a {
   -webkit-box-align: center;
       -ms-flex-align: center;
           align-items: center;
-  -webkit-box-flex: 0.2;
-      -ms-flex: 0.2;
-          flex: 0.2;
   text-align: center;
   margin: 30px;
 }
@@ -149,6 +146,19 @@ a {
           align-items: center;
 }
 
+#privacy-policy .info {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+}
+
 #privacy-policy .description {
   line-height: 25px;
   margin: 20px 0;
@@ -180,4 +190,5 @@ a {
 
 #contact p {
   line-height: 35px;
+  text-align: center;
 }
