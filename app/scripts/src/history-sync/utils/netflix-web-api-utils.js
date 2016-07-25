@@ -8,7 +8,7 @@ import ActivityActionCreators from '../actions/activity-action-creators';
 
 const AUTH_REGEXP = new RegExp("\"authURL\":\"(.*?)\"");
 const BUILD_IDENTIFIER_REGEXP = new RegExp("\"BUILD_IDENTIFIER\":\"(.*?)\"");
-const VIEWING_ACTIVIY_IDENTIFIER_REGEXP = new RegExp("\"/viewingactivity\":\"(.*?)\"");
+const VIEWING_ACTIVIY_IDENTIFIER_REGEXP = new RegExp("viewingactivity\":\"(.*?)\"");
 const NETFLIX_HOST = 'https://www.netflix.com';
 const NETFLIX_API_HOST = `${NETFLIX_HOST}/api/shakti`;
 
