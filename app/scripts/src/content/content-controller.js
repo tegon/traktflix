@@ -108,7 +108,7 @@ ContentController.prototype = {
 
   reportError: function(type, status, response, options) {
     if (status === 404) {
-      this.showErrorNotification("Oh snap! We couldn't found what you're watching in Trakt.tv. Plase leave a report with the title of the item.");
+      this.showErrorNotification("Oh snap! We couldn't find what you're watching in Trakt.tv. Please leave a report with the title of the item.");
     } else if (status === 0) {
       // status 0 usually means an response without CORS
       // It could be a 401, so we check if the user has an access_token saved
