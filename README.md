@@ -26,7 +26,7 @@ Every time you click to play something on Netflix, it will send the scrobble to 
 Unfortunately Netflix doesn't provide a public API, so the movie or espisode info is extracted from the HTML of the player.
 
 ###Limitations
-This extension you only work with Netflix HTML player and new layout. If you are in the [old layout](http://www.netflix.com/WiHome), please open the [new one](http://www.netflix.com/browse). 
+This extension you only work with Netflix HTML player and new layout. If you are in the [old layout](http://www.netflix.com/WiHome), please open the [new one](http://www.netflix.com/browse).
 See this link for more info: https://help.netflix.com/en/node/23742
 
 ###Problems
@@ -72,5 +72,12 @@ To run tests
 ```bash
 npm test
 ```
+
+###Credits
+![TMDB API](tmdb-api-logo.png)
+This product uses the TMDb API but is not endorsed or certified by TMDb.
+
+![Trakt.tv API](trakt-api-logo.png)
+This product uses the Trakt.tv API.
 
 [LICENSE](LICENSE)
