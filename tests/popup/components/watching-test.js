@@ -12,7 +12,7 @@ describe('Watching', function() {
 
   it('Card div must have thumb in background style', function() {
     var card = TestUtils.findRenderedDOMComponentWithClass(watching, 'mdl-card mdl-shadow--2dp watching-card-thumb');
-    expect(card.getDOMNode().style['background-image']).toContain('http://images.foo/poster');
+    expect(card.getDOMNode().style['background-image']).toContain('https://trakt.tv/assets/placeholders/thumb/poster-2d5709c1b640929ca1ab60137044b152.png');
   });
 
   it('Has the correct html classes', function() {
@@ -38,6 +38,6 @@ describe('Watching', function() {
     var item = { title: 'Item title', images: { screenshot: { thumb: 'http://images.foo/screenshot' } } };
     var watching = TestUtils.renderIntoDocument(<Watching item={item} />);
     var card = TestUtils.findRenderedDOMComponentWithClass(watching, 'mdl-card mdl-shadow--2dp watching-card-thumb');
-    expect(card.getDOMNode().style['background-image']).toContain('http://images.foo/screenshot');
+    expect(card.getDOMNode().style['background-image']).toContain('https://trakt.tv/assets/placeholders/thumb/poster-2d5709c1b640929ca1ab60137044b152.png');
   });
 });
