@@ -6,5 +6,6 @@ module.exports = {
   clientSecret: '@@clientSecret',
   apiVersion: 2,
   analyticsId: '@@analyticsId',
-  rollbarToken: '@@rollbarToken'
+  rollbarToken: '@@rollbarToken',
+  tmdbApiKey: '@@tmdbApiKey'
 };

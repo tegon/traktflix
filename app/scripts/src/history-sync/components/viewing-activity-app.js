@@ -4,6 +4,7 @@ import ActivityList from './activity-list';
 import ActivityStore from '../stores/activity-store';
 import TraktWebAPIUtils from '../utils/trakt-web-api-utils';
 import NetflixWebAPIUtils from '../utils/netflix-web-api-utils';
+import TmdbImageContainer from '../../tmdb-image-container.js';
 
 export default class ViewingActivityApp extends React.Component {
   getStateFromStores() {
@@ -79,7 +80,9 @@ export default class ViewingActivityApp extends React.Component {
               <span className='mdl-switch__label'>Select all</span>
             </label>
           </span>
-          <ActivityList activities={this.state.activities} />
+          <TmdbImageContainer>
+            <ActivityList activities={this.state.activities} />
+          </TmdbImageContainer>
           <div style={{textAlign: 'center'}}>
             <button onClick={this._onSyncClick.bind(this)} className='mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect'>
               Sync now

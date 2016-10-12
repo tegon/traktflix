@@ -3,6 +3,7 @@ import React from 'react';
 import ActivityActionCreators from '../actions/activity-action-creators';
 import TraktURLForm from './trakt-url-form';
 import TraktWebAPIUtils from '../utils/trakt-web-api-utils';
+import TmdbImage from '../../tmdb-image';
 
 export default class ActivityListItem extends React.Component {
   constructor() {
@@ -41,13 +42,17 @@ export default class ActivityListItem extends React.Component {
       traktTitle = trakt.show ? `${trakt.show.title}: ${trakt.title}` : trakt.title;
     }
 
-    let thumb = traktImage && traktImage.thumb ? traktImage.thumb : 'https://trakt.tv/assets/placeholders/thumb/poster-2d5709c1b640929ca1ab60137044b152.png';
     let formId = `${netflix.id}--add`;
 
     return(
       <li className='mdl-list__item mdl-list__item--three-line'>
         <span className='mdl-list__item-primary-content'>
-          <div style={{backgroundImage: `url(${thumb})`, backgroundSize: 'cover'}} className='mdl-list__item-avatar'></div>
+          <TmdbImage
+            className='mdl-list__item-avatar'
+            item={trakt}
+            imageHost={this.props.imageHost}
+            imageWidth={this.props.imageWidth}
+          />
           <span><a href={netflixUrl} target='_blank'>Netflix title: {netflixTitle}</a></span>
           <span> / </span>
           <span><a href={traktUrl} target='_blank'>Trakt.tv title: {traktTitle}</a></span>

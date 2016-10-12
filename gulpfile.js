@@ -25,7 +25,8 @@ var replacePatterns = {
         { match: 'clientId', replacement: config[options.env].clientId },
         { match: 'clientSecret', replacement: config[options.env].clientSecret },
         { match: 'analyticsId', replacement: config[options.env].analyticsId },
-        { match: 'rollbarToken', replacement: config[options.env].rollbarToken }
+        { match: 'rollbarToken', replacement: config[options.env].rollbarToken },
+        { match: 'tmdbApiKey', replacement: config[options.env].tmdbApiKey }
     ]
 };
 

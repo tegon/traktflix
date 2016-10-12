@@ -3,12 +3,14 @@
     "clientId": "{TraktClientId}",
     "clientSecret": "{TraktClientSecret}",
     "analyticsId": "{GoogleAnalyticsId}",
-    "rollbarToken": "{RollbarToken}"
+    "rollbarToken": "{RollbarToken}",
+    "tmdbApiKey": "{TheMovieDatabaseApiKey}"
   },
   "development": {
     "clientId": "{TraktClientId}",
     "clientSecret": "{TraktClientSecret}",
     "analyticsId": "{GoogleAnalyticsId}",
-    "rollbarToken": "{RollbarToken}"
+    "rollbarToken": "{RollbarToken}",
+    "tmdbApiKey": "{TheMovieDatabaseApiKey}"
   }
 }
