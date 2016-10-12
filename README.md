@@ -75,9 +75,11 @@ npm test
 
 ###Credits
 ![TMDB API](tmdb-api-logo.png)
+
 This product uses the TMDb API but is not endorsed or certified by TMDb.
 
 ![Trakt.tv API](trakt-api-logo.png)
+
 This product uses the Trakt.tv API.
 
 [LICENSE](LICENSE)
