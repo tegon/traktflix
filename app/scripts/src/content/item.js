@@ -10,7 +10,8 @@ var fullTitles = {
   'The Seven Deadly Sins': '"The Seven Deadly Sins"',
   'Young and Hungry': '"Young and Hungry"',
   'The 100': '"The 100"',
-  'The House of Cards Trilogy (BBC)': 'The House of Cards'
+  'The House of Cards Trilogy (BBC)': 'The House of Cards',
+  'Shameless (U.S.)': 'Shameless'
 }
 
 function Item(options) {
