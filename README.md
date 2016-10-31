@@ -1,6 +1,8 @@
 ![traktflix](traktflix.png)
 #Trakt.tv and Netflix integration
 
+[![Join the chat at https://gitter.im/tegon/traktflix](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/tegon/traktflix?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 [![Build Status](https://travis-ci.org/tegon/traktflix.svg?branch=master)](https://travis-ci.org/tegon/traktflix)
 [![Coverage Status](https://coveralls.io/repos/tegon/traktflix/badge.svg?branch=master&service=github)](https://coveralls.io/github/tegon/traktflix?branch=master)
 
