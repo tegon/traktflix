@@ -44,7 +44,7 @@ describe('Scrobble', function() {
   });
 
   it('when type is movie, item is wrapped inside movie', function() {
-    expect(scrobbleMovie.item).toEqual({ movie: { foo: 'bar' } });
+    expect(scrobbleMovie.item).toEqual({ movie: { foo: 'bar', type: 'movie' } });
   });
 
   it('start scrobble calls success', function() {

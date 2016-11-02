@@ -7,7 +7,9 @@ function Scrobble(options) {
   if (options.type === 'show') {
     this.item = { episode: options.response };
   } else {
-    this.item = { movie: options.response.movie };
+    var movie = options.response.movie || {};
+    movie.type = 'movie';
+    this.item = { movie: movie };
   }
 
   this.onProgressChange();
