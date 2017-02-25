@@ -62,7 +62,7 @@ describe('Search', function() {
       '{ "errors": "Bad Request" }');
     expect(error.callCount).toBe(1);
     expect(error.getCall(0).args).toEqual([400, '{ "errors": "Bad Request" }',
-      { method: 'GET', url: 'https://api-v2launch.trakt.tv/search?type=movie&query=Rocky', params: undefined }]);
+      { method: 'GET', url: 'https://api.trakt.tv/search?type=movie&query=Rocky', params: undefined }]);
   });
 
   it('findEpisode returns first search result', function() {
@@ -122,7 +122,7 @@ describe('Search', function() {
       '{ "errors": "Bad Request" }');
     expect(error.callCount).toBe(1);
     expect(error.getCall(0).args).toEqual([400, '{ "errors": "Bad Request" }',
-      { url: 'https://api-v2launch.trakt.tv/shows/mad-men/seasons/1/episodes/1?extended=images', method: 'GET', params: undefined }]);
+      { url: 'https://api.trakt.tv/shows/mad-men/seasons/1/episodes/1?extended=images', method: 'GET', params: undefined }]);
   });
 
   it('findEpisode returns error callback on second request', function() {
@@ -132,7 +132,7 @@ describe('Search', function() {
       '{ "errors": "Bad Request" }');
     expect(error.callCount).toBe(1);
     expect(error.getCall(0).args).toEqual([400, '{ "errors": "Bad Request" }',
-      { url: 'https://api-v2launch.trakt.tv/search?type=show&query=Mad%20Men', method: 'GET', params: undefined }]);
+      { url: 'https://api.trakt.tv/search?type=show&query=Mad%20Men', method: 'GET', params: undefined }]);
   });
 
   it('when item type is show, find calls findEpisode', function() {
