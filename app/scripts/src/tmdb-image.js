@@ -57,7 +57,11 @@ module.exports = React.createClass({
       this.onItemFailed();
     } else {
       var imageKey = this.props.item.type === 'show' ? 'stills' : 'posters';
-      this.setState({ imageUrl: this.props.imageHost + this.props.imageWidth[this.props.item.type] + response[imageKey][0].file_path });
+      var image = response[imageKey][0];
+
+      if (image) {
+        this.setState({ imageUrl: this.props.imageHost + this.props.imageWidth[this.props.item.type] + image.file_path });
+      }
     }
   },
   onItemFailed: function() {
