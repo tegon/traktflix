@@ -43,8 +43,12 @@ export default class ViewingActivityApp extends React.Component {
   }
 
   _onSyncClick() {
-    this.setState({ loading: true });
-    TraktWebAPIUtils.addActivities(this.state.activities);
+    let confirmationMessage = 'Are you sure you want to proceed? Some items may be wrong or duplicated, it is highly recommended that you review them before.';
+
+    if (confirm(confirmationMessage)) {
+      this.setState({ loading: true });
+      TraktWebAPIUtils.addActivities(this.state.activities);
+    }
   }
 
   _onNextPageClick() {
@@ -83,7 +87,7 @@ export default class ViewingActivityApp extends React.Component {
           <TmdbImageContainer>
             <ActivityList activities={this.state.activities} />
           </TmdbImageContainer>
-          <div style={{textAlign: 'center'}}>
+          <div className='mdl-actions-wrapper'>
             <button onClick={this._onSyncClick.bind(this)} className='mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect'>
               Sync now
             </button>
