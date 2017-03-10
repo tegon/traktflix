@@ -31,7 +31,7 @@ export default class NetflixWebAPIUtils {
         method: 'GET',
         url: `${NETFLIX_HOST}/Activate`,
         success: function(response) {
-          let url = `${NETFLIX_API_HOST}/viewingactivity/${NetflixWebAPIUtils.extractViewingActivityIdentifier(response)}?authURL=${NetflixWebAPIUtils.extractAuthURL(response)}`;
+          let url = `${NETFLIX_API_HOST}/${NetflixWebAPIUtils.extractBuildIndentifier(response)}/viewingactivity?authURL=${NetflixWebAPIUtils.extractAuthURL(response)}`;
           resolve(url);
         },
         error: reject
