@@ -31,8 +31,8 @@ describe('Search', function() {
   });
 
   it('getUrl function', function() {
-    expect(movieSearch.getUrl()).toBe(Settings.apiUri + '/search?type=' + rocky.type +
-      '&query=' + rocky.title);
+    expect(movieSearch.getUrl()).toBe(Settings.apiUri + '/search/' + rocky.type +
+      '?query=' + rocky.title);
   });
 
   it('getEpisodeUrl uses episode number when item has an episode number', function() {
@@ -62,7 +62,7 @@ describe('Search', function() {
       '{ "errors": "Bad Request" }');
     expect(error.callCount).toBe(1);
     expect(error.getCall(0).args).toEqual([400, '{ "errors": "Bad Request" }',
-      { method: 'GET', url: 'https://api.trakt.tv/search?type=movie&query=Rocky', params: undefined }]);
+      { method: 'GET', url: 'https://api.trakt.tv/search/movie?query=Rocky', params: undefined }]);
   });
 
   it('findEpisode returns first search result', function() {
@@ -132,7 +132,7 @@ describe('Search', function() {
       '{ "errors": "Bad Request" }');
     expect(error.callCount).toBe(1);
     expect(error.getCall(0).args).toEqual([400, '{ "errors": "Bad Request" }',
-      { url: 'https://api.trakt.tv/search?type=show&query=Mad%20Men', method: 'GET', params: undefined }]);
+      { url: 'https://api.trakt.tv/search/show?query=Mad%20Men', method: 'GET', params: undefined }]);
   });
 
   it('when item type is show, find calls findEpisode', function() {

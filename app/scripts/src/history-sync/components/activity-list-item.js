@@ -33,11 +33,10 @@ export default class ActivityListItem extends React.Component {
     let netflixTitle = netflix.epTitle ? `${netflix.title}: ${netflix.epTitle}` : netflix.title;
     let netflixUrl = `https://www.netflix.com/watch/${netflix.id}`;
     let trakt = activity.trakt;
-    let traktDate, traktImage, traktUrl, traktTitle;
+    let traktDate, traktUrl, traktTitle;
 
     if (trakt) {
       traktDate = trakt.date ? trakt.date.format('MMMM Do YYYY, h:mm:ss a') : '-';
-      traktImage = trakt.images.poster ? trakt.images.poster : trakt.images.screenshot;
       traktUrl = trakt.season ? `https://trakt.tv/shows/${trakt.show.ids.slug}/seasons/${trakt.season}/episodes/${trakt.number}` : `https://trakt.tv/movies/${trakt.ids.slug}`;
       traktTitle = trakt.show ? `${trakt.show.title}: ${trakt.title}` : trakt.title;
     }
