@@ -72,18 +72,18 @@ export default class TraktWebAPIUtils {
         method: 'GET',
         url: TraktWebAPIUtils.activityUrl(options.result.activity),
         success: function(response) {
-          let include = false;
+          let exclude = false;
           let history = JSON.parse(response)[0];
           let date;
 
           if (history && history.watched_at) {
             date = moment(history.watched_at);
-            include = date.diff(options.result.date, 'days') == 0;
+            exclude = date.diff(options.result.date, 'days') == 0;
           }
           let trakt = Object.assign(options.result.activity, { date: date });
           let netflix = Object.assign(options.item, { date: options.date });
 
-          resolve(Object.assign({ netflix, trakt }, { add: !include }));
+          resolve(Object.assign({ netflix, trakt }, { add: !exclude }));
         },
         error: reject
       });

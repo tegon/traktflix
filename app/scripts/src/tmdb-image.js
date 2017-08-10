@@ -29,8 +29,10 @@ module.exports = React.createClass({
       }
     }
 
-    if (shouldUpdate) {
+    if (this.props.item.ids.tmdb !== null) {
       this.getItemFromTmdb();
+    } else {
+      console.log("There is no tmdb.id for item.", this.props.item);
     }
   },
   getItemFromTmdb: function() {
