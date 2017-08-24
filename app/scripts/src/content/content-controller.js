@@ -117,7 +117,7 @@ ContentController.prototype = {
           this.showErrorNotification("We couldn't talk to Trakt.tv servers. We're trying to fix it, please try again later");
           Rollbar.warning('traktflix: ' + type + ' error', { status: status, response: response, options: options });
         } else {
-          this.showErrorNotification("Looks like you're not logged in. Plase open the extension and login with your Trakt.tv account");
+          this.showErrorNotification("Looks like you're not logged in. Please open the extension and login with your Trakt.tv account");
         }
       }.bind(this));
     } else {
