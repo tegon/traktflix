@@ -5,21 +5,23 @@ var Item = require('./item.js');
 function ItemParser() {}
 
 ItemParser.isReady = function checkPage() {
-  var scrubber = document.querySelector('.player-scrubber-progress-completed');
+  var scrubber = document.querySelector('.PlayerControls--control-element.progress-control');
   return scrubber !== null;
 };
 
 ItemParser.parse = function parse(callback) {
   var item;
-  var playerStatus = document.querySelectorAll('.player-status span');
-  var type = playerStatus.length > 1 ? 'show' : 'movie';
-  var mainTitle = playerStatus[0].textContent;
+  var playerStatus = document.querySelector('.video-title .ellipsize-text');
+  var type = playerStatus.children.length > 1 ? 'show' : 'movie';
+  var mainTitle;
 
   if (type === 'show') {
-    var episode = playerStatus[1].textContent.match(/\d+/g);
+    mainTitle = playerStatus.querySelector('h4').textContent;
+    var episodeInfo = playerStatus.querySelectorAll('span');
+    var episode = episodeInfo[0].textContent.match(/\d+/g);
     var season = episode[0];
     var number = episode[1];
-    var title = playerStatus[2].textContent;
+    var title = episodeInfo[1].textContent;
 
     item = new Item({
       epTitle: title,
@@ -29,6 +31,7 @@ ItemParser.parse = function parse(callback) {
       type: type
     });
   } else {
+    mainTitle = playerStatus.textContent;
     item = new Item({ title: mainTitle, type: type });
   }
 
