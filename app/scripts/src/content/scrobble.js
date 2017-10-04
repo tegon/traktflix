@@ -33,15 +33,11 @@ Scrobble.prototype = {
   },
 
   onProgressChange: function() {
-    if (document.querySelector('.player-slider progress')) {
-      this.castScrubber();
-    } else {
-      this.webScrubber();
-    }
+    this.webScrubber();
   },
 
   webScrubber: function() {
-    var scrubber = document.querySelector('#scrubber-component .player-scrubber-progress-completed');
+    var scrubber = document.querySelector('.scrubber-bar .current-progress');
     if (!this.basePercentage || !this.baseTime) {
       if (scrubber) {
         this.basePercentage = 100 - parseFloat(scrubber.style.width);
@@ -62,18 +58,8 @@ Scrobble.prototype = {
     }
   },
 
-  castScrubber: function() {
-    var progressElement = document.querySelector('.player-slider progress');
-    if (progressElement) {
-      var newProgress = parseInt(progressElement.getAttribute('value')) * 100 / parseFloat(progressElement.getAttribute('max'));
-      if (newProgress > 0 && !document.querySelector('.player-loading.active')) {
-        this.progress = newProgress;
-      }
-    }
-  },
-
   getRemainingTime: function() {
-    var timeLabel = document.querySelector('.player-slider label');
+    var timeLabel = document.querySelector('time');
     if (timeLabel) {
       return parseInt(timeLabel.textContent.replace(':', '').replace(':', ''));
     }
