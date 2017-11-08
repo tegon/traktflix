@@ -32,14 +32,14 @@ Automatically scrobble TV show episodes and movies you are watching to Trakt.tv!
 
 ### Why do I need this extension?
 Trakt.tv has a [lot of plugins](http://trakt.tv/downloads) to automatically scrobble the movies and episodes you watch from your media center.
-But i found nothing to integrate with Netflix, so i created this extension.
+But I found nothing to integrate with Netflix, so I created this extension.
 Every time you click to play something on Netflix, it will send the scrobble to Trakt.tv. Cool, isn't it?
 
 ### How does traktflix work?
-Unfortunately Netflix doesn't provide a public API, so the movie or espisode info is extracted from the HTML of the player.
+Unfortunately Netflix doesn't provide a public API, so the movie or episode info is extracted from the HTML of the player.
 
 ### Limitations
-This extension you only work with Netflix HTML player and new layout. If you are in the [old layout](http://www.netflix.com/WiHome), please open the [new one](http://www.netflix.com/browse).
+This extension only works with Netflix HTML player and new layout. If you are in the [old layout](http://www.netflix.com/WiHome), please open the [new one](http://www.netflix.com/browse).
 See this link for more info: https://help.netflix.com/en/node/23742
 
 ### Problems
