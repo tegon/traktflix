@@ -11,7 +11,8 @@ var fullTitles = {
   'Young and Hungry': '"Young and Hungry"',
   'The 100': '"The 100"',
   'The House of Cards Trilogy (BBC)': 'The House of Cards',
-  'Shameless (U.S.)': 'Shameless'
+  'Shameless (U.S.)': 'Shameless',
+  'Dynasty': 'Dynasty reboot'
 }
 
 function Item(options) {
