@@ -31,7 +31,7 @@ export default class NetflixWebAPIUtils {
         method: 'GET',
         url: `${NETFLIX_HOST}/Activate`,
         success: function(response) {
-          let url = `${NETFLIX_API_HOST}/${NetflixWebAPIUtils.extractBuildIndentifier(response)}/viewingactivity?authURL=${NetflixWebAPIUtils.extractAuthURL(response)}`;
+          let url = `${NETFLIX_API_HOST}/${NetflixWebAPIUtils.extractBuildIndentifier(response)}/viewingactivity?languages=en-US&authURL=${NetflixWebAPIUtils.extractAuthURL(response)}`;
           resolve(url);
         },
         error: reject
@@ -65,7 +65,7 @@ export default class NetflixWebAPIUtils {
   static parseActivity(activity) {
     let date = moment(activity.date);
     let item;
-    let type = activity.series == undefined ? 'movie' : 'show';
+    let type = activity.series === undefined ? 'movie' : 'show';
 
     if (type === 'show') {
       let title = activity.seriesTitle;
@@ -91,8 +91,8 @@ export default class NetflixWebAPIUtils {
       item = new Item({ title: activity.title, type: type });
     }
 
-    return new Promise((resolve, reject) => {
-      let netflix = Object.assign(item, { id: activity.movieID });
+    return new Promise((resolve) => {
+      Object.assign(item, { id: activity.movieID });
       TraktWebAPIUtils.getActivity({ item, date }).then(resolve).catch(resolve);
     });
   }

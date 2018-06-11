@@ -1,5 +1,4 @@
 import React from 'react';
-import rollbar from '../rollbar';
 
 import ViewingActivityApp from './components/viewing-activity-app';
 import NetflixWebAPIUtils from './utils/netflix-web-api-utils';
