@@ -73,6 +73,10 @@ export default class NetflixWebAPIUtils {
       let season = splittedTitle[0].match(/\d+/g);
       let epTitle;
 
+      if (season === null) {
+        season = '1';
+      }
+      
       if (season) {
         season = parseInt(season[0]);
       }
