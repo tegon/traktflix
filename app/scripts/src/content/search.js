@@ -42,12 +42,19 @@ Search.prototype = {
     });
   },
 
+  formatEpisodeTitle: function (string) {
+    return string
+      .toLowerCase()
+      .replace(/(^|\s)(a|an|the)(\s)/g, `$1$3`)
+      .replace(/\s/g, ``);
+  },
+
   findEpisodeByTitle: function(show, response, options) {
     var episodes = JSON.parse(response);
     var episode;
 
     for (var i = 0; i < episodes.length; i++) {
-      if (this.item.epTitle && episodes[i].title && episodes[i].title.toLowerCase() === this.item.epTitle.toLowerCase()) {
+      if (this.item.epTitle && episodes[i].title && this.formatEpisodeTitle(episodes[i].title) === this.formatEpisodeTitle(this.item.epTitle)) {
         episode = episodes[i];
         break;
       }

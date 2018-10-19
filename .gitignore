@@ -12,6 +12,5 @@ build
 *.crx
 *.pem
 coverage
-app.zip
 config.json
 .idea/

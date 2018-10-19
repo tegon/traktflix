@@ -69,16 +69,11 @@ export default class NetflixWebAPIUtils {
 
     if (type === 'show') {
       let title = activity.seriesTitle;
-      let splittedTitle = activity.title.split(':');
-      let season = splittedTitle[0].match(/\d+/g);
-      let epTitle;
+      let season = activity.seasonDescriptor.match(/\d+/g);
+      let epTitle = activity.episodeTitle.trim();
 
       if (season) {
         season = parseInt(season[0]);
-      }
-
-      if (splittedTitle[1]) {
-        epTitle = splittedTitle[1].trim().replace('"', '').replace('"', '');
       }
 
       item = new Item({

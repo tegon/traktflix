@@ -9,20 +9,37 @@ var tracker = service.getTracker(Settings.analyticsId);
 Analytics.setTracker(tracker);
 
 chrome.runtime.onInstalled.addListener(function() {
-  chrome.declarativeContent.onPageChanged.removeRules(undefined, function() {
-    chrome.declarativeContent.onPageChanged.addRules([{
-      conditions: [
-        new chrome.declarativeContent.PageStateMatcher({
-          pageUrl: { hostSuffix: 'netflix.com' }
-        })
-      ],
-      actions: [new chrome.declarativeContent.ShowPageAction()]
-    }]);
-  });
+  if (chrome.declarativeContent) {
+    chrome.declarativeContent.onPageChanged.removeRules(undefined, function () {
+      chrome.declarativeContent.onPageChanged.addRules([{
+        conditions: [
+          new chrome.declarativeContent.PageStateMatcher({
+            pageUrl: {hostSuffix: 'netflix.com'}
+          })
+        ],
+        actions: [new chrome.declarativeContent.ShowPageAction()]
+      }]);
+    });
+  } else {
+    chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
+      if (typeof changeInfo.status === `undefined`) {
+        return;
+      }
+      if (changeInfo.status === 'complete' && tab.url.match(/^https?:\/\/(www\.)?netflix\.com/)) {
+        chrome.pageAction.show(tabId);
+      } else {
+        chrome.pageAction.hide(tabId);
+      }
+    });
+  }
 });
 
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
   switch(request.type) {
+    case 'authorize':
+      Oauth.authorize(null, request.url);
+      return true;
+      break;
     case 'setActiveIcon':
       chrome.pageAction.setIcon({
         tabId: sender.tab.id,

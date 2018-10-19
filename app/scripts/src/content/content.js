@@ -18,3 +18,7 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     sendResponse(controller.getCurrentItem());
   }
 });
+
+if (location.href.match(/\/Activate\?code=/)) {
+  chrome.runtime.sendMessage({ type: 'authorize', url: location.href });
+}

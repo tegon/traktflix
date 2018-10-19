@@ -3,6 +3,8 @@
 var Settings = require('./settings.js');
 var Request = require('./request.js');
 var ChromeStorage = require('./chrome-storage.js');
+var _sendResponse = null;
+var _authorizationWindow = null;
 
 function Oauth() {};
 
@@ -35,20 +37,26 @@ Oauth.requestToken = function requestToken(params, sendResponse) {
   });
 };
 
-Oauth.authorize = function authorize(sendResponse) {
-  chrome.identity.launchWebAuthFlow({ url: Oauth.getAuthorizeUrl(), interactive: true },
-    function(redirectUrl) {
-      var params = {
-        code: Oauth.getCode(redirectUrl),
-        client_id: Settings.clientId,
-        client_secret: Settings.clientSecret,
-        redirect_uri: Settings.redirectUri,
-        grant_type: 'authorization_code'
-      };
+Oauth.authorize = function authorize(sendResponse, redirectUrl) {
+  if (redirectUrl) {
+    var params = {
+      code: Oauth.getCode(redirectUrl),
+      client_id: Settings.clientId,
+      client_secret: Settings.clientSecret,
+      redirect_uri: Settings.redirectUri,
+      grant_type: 'authorization_code'
+    };
 
-      Oauth.requestToken(params, sendResponse);
-    }
-  );
+    Oauth.requestToken(params, obj => {
+      _sendResponse(obj);
+      chrome.windows.remove(_authorizationWindow.id);
+    });
+  } else {
+    _sendResponse = sendResponse;
+    chrome.windows.create({url: Oauth.getAuthorizeUrl()}, function (window) {
+      _authorizationWindow = window;
+    });
+  }
 };
 
 Oauth.requestRefreshToken = function requestRefreshToken(refreshToken, sendResponse) {
