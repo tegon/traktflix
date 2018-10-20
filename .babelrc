@@ -1,0 +1,17 @@
+{
+  "env": {
+    "production": {
+      "presets": [
+        "minify"
+      ]
+    }
+  },
+  "presets": [
+    "@babel/preset-flow"
+  ],
+  "plugins": [
+    ["@babel/plugin-transform-runtime", {
+      "regenerator": true
+    }]
+  ]
+}

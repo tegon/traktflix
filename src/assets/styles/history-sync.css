@@ -1,0 +1,41 @@
+.mdl-list {
+  margin-bottom: 50px;
+}
+
+#viewing-activity-app .mdl-list__item--three-line {
+  height: 150px;
+}
+
+#viewing-options-app .mdl-list__item--three-line {
+  height: auto;
+}
+
+.mdl-list__item--three-line .mdl-list__item-primary-content {
+  height: auto;
+}
+
+.mdl-list__item-avatar {
+  height: 100px;
+  width: 100px;
+}
+
+#viewing-activity-app .mdl-button--raised, #viewing-options-app .mdl-button--raised {
+  margin: 0 20px;
+}
+
+.mdl-textfield--floating-label {
+  margin: 0 10px;
+  width: 300px;
+}
+
+.mdl-actions-wrapper {
+  background: white;
+  border-top: 1px solid rgba(214, 206, 206, 0.71);
+  bottom: 0;
+  height: 40px;
+  padding: 20px 0;
+  position: fixed;
+  text-align: center;
+  width: 98%;
+  z-index: 3;
+}

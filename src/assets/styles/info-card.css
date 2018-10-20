@@ -1,0 +1,14 @@
+.info-card.mdl-card {
+  width: 380px;
+  height: 230px;
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.info-card > .mdl-card__actions {
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.info-card > .mdl-card__title,
+.info-card > .mdl-card__actions > .mdl-button {
+  color: #fff;
+}
