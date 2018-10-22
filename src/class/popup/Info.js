@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import ErrorBoundary from '../ErrorBoundary';
 
 class Info extends React.Component {
   constructor(props) {
@@ -15,18 +16,20 @@ class Info extends React.Component {
     chrome.runtime.sendMessage({type: `sendAppView`, view: `Info`});
 
     return (
-      <div className='mdl-card mdl-shadow--2dp info-card'>
-        <div className='mdl-card__title mdl-card--expand'>
-          <h4>{message}</h4>
+      <ErrorBoundary>
+        <div className='mdl-card mdl-shadow--2dp info-card'>
+          <div className='mdl-card__title mdl-card--expand'>
+            <h4>{message}</h4>
+          </div>
+          {this.props.children}
         </div>
-        {this.props.children}
-      </div>
+      </ErrorBoundary>
     );
   }
 }
 
 Info.propTypes = {
-  children: PropTypes.object,
+  children: PropTypes.node,
   messages: PropTypes.array.isRequired
 };
 

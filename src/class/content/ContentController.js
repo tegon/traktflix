@@ -2,14 +2,14 @@ import ChromeStorage from '../ChromeStorage';
 import ItemParser from '../ItemParser';
 import Rollbar from '../Rollbar';
 import Search from '../Search';
-import Scrobble from '../Scrobble';
+import Scrobble from './Scrobble';
 
 export default class ContentController {
   constructor() {
     this.item = null;
     /**
-   * @type {Scrobble}
-   */
+     * @type {Scrobble}
+     */
     this.scrobble = undefined;
 
     if (location.href.match(/watch/)) {
@@ -26,6 +26,7 @@ export default class ContentController {
       error: this.onScrobbleError.bind(this)
     });
     this.setActiveIcon();
+    // noinspection JSIgnoredPromiseFromCall
     this.scrobble.start();
     this.sendAnalyticsEvent({name: `Scrobble`, value: `start`});
   }
@@ -61,19 +62,21 @@ export default class ContentController {
     }
   }
 
-  async onPlay() {
+  onPlay() {
     if (this.item === null && this.scrobble === undefined) {
       ItemParser.start(this.storeItem.bind(this));
     } else {
       this.setActiveIcon();
+      // noinspection JSIgnoredPromiseFromCall
       this.scrobble.start();
-      this.sendAnalyticsEvent({name: `Scrobble`, value: `start`})
+      this.sendAnalyticsEvent({name: `Scrobble`, value: `start`});
     }
   }
 
   onPause() {
     if (typeof this.scrobble !== `undefined`) {
       this.setInactiveIcon();
+      // noinspection JSIgnoredPromiseFromCall
       this.scrobble.pause();
       this.sendAnalyticsEvent({name: `Scrobble`, value: `pause`});
     }
@@ -82,6 +85,7 @@ export default class ContentController {
   onStop() {
     if (typeof this.scrobble !== `undefined`) {
       this.setInactiveIcon();
+      // noinspection JSIgnoredPromiseFromCall
       this.scrobble.stop();
       this.sendAnalyticsEvent({name: `Scrobble`, value: `stop`});
     }
@@ -109,20 +113,30 @@ export default class ContentController {
   async reportError(type, status, response, options) {
     const _this = this;
     if (status === 404) {
-      this.showErrorNotification(`Oh snap! We couldn't find what you're watching in Trakt.tv. Please leave a report with the title of the item.`);
+      this.showErrorNotification(chrome.i18n.getMessage(`errorNotificationNotFound`));
     } else if (status === 0) {
       // status 0 usually means an response without CORS
       // It could be a 401, so we check if the user has an access_token saved
       const data = await ChromeStorage.get(null);
       if (data.data && data.data.access_token) {
-        _this.showErrorNotification(`We couldn't talk to Trakt.tv servers. We're trying to fix it, please try again later`);
-        Rollbar.init().then(() => Rollbar.warning(`traktflix: ${type} error`, {status: status, response: response, options: options}));
+        _this.showErrorNotification(chrome.i18n.getMessage(`errorNotificationServers`));
+        await Rollbar.init();
+        Rollbar.warning(`traktflix: ${type} error`, {
+          status: status,
+          response: response,
+          options: options
+        });
       } else {
-        _this.showErrorNotification(`Looks like you're not logged in. Please open the extension and login with your Trakt.tv account`);
+        _this.showErrorNotification(chrome.i18n.getMessage(`errorNotificationLogin`));
       }
     } else {
-      this.showErrorNotification(`We couldn't talk to Trakt.tv servers. We're trying to fix it, please try again later`);
-      Rollbar.init().then(() => Rollbar.warning(`traktflix: ${type} error`, {status: status, response: response, options: options}));
+      this.showErrorNotification(chrome.i18n.getMessage(`errorNotificationServers`));
+      await Rollbar.init();
+      Rollbar.warning(`traktflix: ${type} error`, {
+        status: status,
+        response: response,
+        options: options
+      });
     }
   }
 

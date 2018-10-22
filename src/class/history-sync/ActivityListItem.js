@@ -8,7 +8,7 @@ import TmdbImage from '../tmdb/TmdbImage';
 class ActivityListItem extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { showTraktURLForm: false };
+    this.state = {showTraktURLForm: false};
   }
 
   componentDidMount() {
@@ -20,7 +20,7 @@ class ActivityListItem extends React.Component {
   }
 
   _onShowTraktURLForm() {
-    this.setState({ showTraktURLForm: true });
+    this.setState({showTraktURLForm: true});
   }
 
   _onSubmitTraktURL(activity, url) {
@@ -43,7 +43,7 @@ class ActivityListItem extends React.Component {
 
     let formId = `${netflix.id}--add`;
 
-    return(
+    return (
       <li className='mdl-list__item mdl-list__item--three-line'>
         <span className='mdl-list__item-primary-content'>
           <TmdbImage
@@ -52,19 +52,24 @@ class ActivityListItem extends React.Component {
             imageHost={this.props.imageHost}
             imageWidth={this.props.imageWidth}
           />
-          <span><a href={netflixUrl} target='noopener noreferrer _blank'>Netflix title: {netflixTitle}</a></span>
+          <span><a href={netflixUrl}
+                   target='noopener noreferrer _blank'>{chrome.i18n.getMessage(`netflixTitle`)}: {netflixTitle}</a></span>
           <span> / </span>
-          <span><a href={traktUrl} target='noopener noreferrer _blank'>Trakt.tv title: {traktTitle}</a></span>
+          <span><a href={traktUrl}
+                   target='noopener noreferrer _blank'>{chrome.i18n.getMessage(`traktTitle`)}: {traktTitle}</a></span>
           <span className='mdl-list__item-text-body'>
-            Netflix date: {netflix.date.format('MMMM Do YYYY, h:mm:ss a')} / Trakt.tv date: {traktDate}
-            <br />
-            Is this wrong or incomplete? <a className='paste-trakt-url' onClick={this._onShowTraktURLForm.bind(this)}>Paste Trakt.tv URL</a>
-            <TraktURLForm activity={activity} show={this.state.showTraktURLForm} onSubmit={this._onSubmitTraktURL.bind(this)} />
+            {chrome.i18n.getMessage(`netflixDate`)}: {netflix.date.format('MMMM Do YYYY, h:mm:ss a')} / {chrome.i18n.getMessage(`traktDate`)}: {traktDate}
+            <br/>
+            {chrome.i18n.getMessage(`isThisWrong`)} <a className='paste-trakt-url'
+                                                       onClick={this._onShowTraktURLForm.bind(this)}>{chrome.i18n.getMessage(`pasteTraktUrl`)}</a>
+            <TraktURLForm activity={activity} show={this.state.showTraktURLForm}
+                          onSubmit={this._onSubmitTraktURL.bind(this)}/>
           </span>
         </span>
         <span className='mdl-list__item-secondary-action'>
           <label className='mdl-switch mdl-js-switch mdl-js-ripple-effect' htmlFor={formId}>
-            <input type='checkbox' id={formId} className='mdl-switch__input activity-item-switch' checked={activity.add} onChange={this._onChange.bind(this)} />
+            <input type='checkbox' id={formId} className='mdl-switch__input activity-item-switch' checked={activity.add}
+                   onChange={this._onChange.bind(this)}/>
           </label>
         </span>
       </li>

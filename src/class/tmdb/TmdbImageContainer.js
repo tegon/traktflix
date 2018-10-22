@@ -1,6 +1,7 @@
 import Settings from '../../settings';
 import React from 'react';
 import PropTypes from 'prop-types';
+import ErrorBoundary from '../ErrorBoundary';
 
 class TmdbImageContainer extends React.Component {
   constructor(props) {
@@ -37,24 +38,26 @@ class TmdbImageContainer extends React.Component {
   onConfigLoaded(response) {
     this.setState({
       imageHost: response.images.secure_base_url,
-      imageWidth: { show: response.images.still_sizes[2], movie: response.images.poster_sizes[2] }
+      imageWidth: {show: response.images.still_sizes[2], movie: response.images.poster_sizes[2]}
     });
   }
 
   render() {
-    return(
-      <div>
-        {this.props.children && React.cloneElement(this.props.children, {
-          imageHost: this.state.imageHost,
-          imageWidth: this.state.imageWidth
-        })}
-      </div>
+    return (
+      <ErrorBoundary>
+        <div>
+          {this.props.children && React.cloneElement(this.props.children, {
+            imageHost: this.state.imageHost,
+            imageWidth: this.state.imageWidth
+          })}
+        </div>
+      </ErrorBoundary>
     );
   }
 }
 
 TmdbImageContainer.propTypes = {
-  children: PropTypes.object
+  children: PropTypes.node
 };
 
 export default TmdbImageContainer;

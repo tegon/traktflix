@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import ErrorBoundary from '../ErrorBoundary';
 import Loading from './Loading';
 
 class LoginButton extends React.Component {
@@ -9,7 +10,7 @@ class LoginButton extends React.Component {
 
   handleClick(e) {
     this.props.onLoginClicked(e);
-    chrome.runtime.sendMessage({ type: `launchAuthorize` }, this.oauthCallback.bind(this));
+    chrome.runtime.sendMessage({type: `launchAuthorize`}, this.oauthCallback.bind(this));
   }
 
   oauthCallback(options) {
@@ -20,16 +21,27 @@ class LoginButton extends React.Component {
     }
   }
 
-  render() {
-    chrome.runtime.sendMessage({ type: `sendAppView`, view: `Login` });
+  getButtonStyle() {
+    if (this.props.loading) {
+      return {display: 'none'};
+    } else {
+      return {};
+    }
+  }
 
-    return(
-      <div className='login-wrapper'>
-        <Loading show={this.props.loading} />
-        <button onClick={this.handleClick.bind(this)} className='mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect'>
-          Login with Trakt.tv
-        </button>
-      </div>
+  render() {
+    chrome.runtime.sendMessage({type: `sendAppView`, view: `Login`});
+
+    return (
+      <ErrorBoundary>
+        <div className='login-wrapper'>
+          <Loading show={this.props.loading}/>
+          <button style={this.getButtonStyle()} onClick={this.handleClick.bind(this)}
+                  className='mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect'>
+            {chrome.i18n.getMessage(`login`)}
+          </button>
+        </div>
+      </ErrorBoundary>
     );
   }
 }

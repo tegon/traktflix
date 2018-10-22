@@ -13,7 +13,7 @@ class ActivityList extends React.Component {
   render() {
     const {activities, imageHost, imageWidth} = this.props;
     const items = activities.map((activity, index) => {
-      return(
+      return (
         <ActivityListItem
           activity={activity}
           key={index}
@@ -24,7 +24,7 @@ class ActivityList extends React.Component {
       );
     });
 
-    return(
+    return (
       <ul className='mdl-list'>
         {items}
       </ul>

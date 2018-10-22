@@ -47,7 +47,7 @@ class ActivityStore extends EventEmitter {
 
 const activityStore = new ActivityStore();
 activityStore.dispatchToken = ViewingActivityAppDispatcher.register((action) => {
-  switch(action.type) {
+  switch (action.type) {
     case ActionTypes.RECEIVE_ACTIVITIES:
       _activities = action.activities;
       _page += 1;
@@ -55,7 +55,6 @@ activityStore.dispatchToken = ViewingActivityAppDispatcher.register((action) => 
       activityStore.emitChange();
       break;
     case ActionTypes.RECEIVE_ACTIVITIES_FAILED:
-      console.log(action);
       Rollbar.init().then(() => Rollbar.error(action));
       _message = action;
       activityStore.emitChange();
@@ -71,11 +70,11 @@ activityStore.dispatchToken = ViewingActivityAppDispatcher.register((action) => 
       activityStore.emitChange();
       break;
     case ActionTypes.SYNC_SUCCESS:
-      _message = `Episodes added: ${action.episodesCount}, Movies added: ${action.moviesCount}`;
+      _message = `${chrome.i18n.getMessage(`episodesAdded`)}: ${action.episodesCount}, ${chrome.i18n.getMessage(`moviesAdded`)}: ${action.moviesCount}`;
       activityStore.emitChange();
       break;
     case ActionTypes.SYNC_FAILED:
-      _message = `Sync failed :(. We will work on a solution soon.`;
+      _message = chrome.i18n.getMessage(`syncFailed`);
       activityStore.emitChange();
       break;
   }

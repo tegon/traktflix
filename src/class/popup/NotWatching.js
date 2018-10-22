@@ -6,6 +6,6 @@ const messages = Messages.notWatchingMessages;
 
 export default class NotWatching extends React.Component {
   render() {
-    return(<Info messages={messages} />);
+    return (<Info messages={messages}/>);
   }
 }

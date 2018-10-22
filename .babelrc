@@ -2,16 +2,37 @@
   "env": {
     "production": {
       "presets": [
-        "minify"
+        ["minify",
+          {
+            "builtIns": false
+          }
+        ]
+      ]
+    },
+    "test": {
+      "plugins": [
+        [
+          "istanbul",
+          {
+            "include": [
+              "src/**/*.js"
+            ]
+          }
+        ]
       ]
     }
   },
-  "presets": [
-    "@babel/preset-flow"
-  ],
   "plugins": [
-    ["@babel/plugin-transform-runtime", {
-      "regenerator": true
-    }]
+    [
+      "@babel/plugin-transform-runtime",
+      {
+        "regenerator": true
+      }
+    ]
+  ],
+  "presets": [
+    "@babel/preset-env",
+    "@babel/preset-flow",
+    "@babel/preset-react"
   ]
 }

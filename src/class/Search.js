@@ -21,7 +21,7 @@ export default class Search {
 
   findItem(options) {
     // noinspection JSIgnoredPromiseFromCall
-    Request.send({
+    return Request.send({
       method: `GET`,
       url: this.getUrl(),
       success: function (response) {
@@ -62,8 +62,10 @@ export default class Search {
   }
 
   findEpisode(options) {
+    let resolve;
+    const secondPromise = new Promise(_resolve => resolve = _resolve);
     const _this = this;
-    this.findItem({
+    return [this.findItem({
       success: function (response) {
         // noinspection JSIgnoredPromiseFromCall
         Request.send({
@@ -79,12 +81,13 @@ export default class Search {
           error: function (st, resp, opts) {
             options.error.call(this, st, resp, opts);
           }
-        });
+        }).then(resolve);
       }.bind(this),
       error: function (status, response, opts) {
         options.error.call(this, status, response, opts);
+        resolve();
       }
-    });
+    }), secondPromise];
   }
 
   find(options) {

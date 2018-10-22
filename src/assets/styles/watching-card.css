@@ -1,8 +1,8 @@
 .watching-card-thumb.mdl-card {
   width: 380px;
   height: 230px;
-    background: no-repeat center center;
-    background-size: cover
+  background: no-repeat center center;
+  background-size: cover
 }
 
 .watching-card-thumb > .mdl-card__actions {

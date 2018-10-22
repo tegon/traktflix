@@ -2,9 +2,8 @@
   outline: none;
 }
 
-body {
+.app-container {
   width: 400px;
-  height: 300px;
 }
 
 .mdl-layout__header-row {

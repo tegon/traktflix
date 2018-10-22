@@ -1,0 +1,16 @@
+import './images/background.jpg';
+import './images/traktflix-icon-16.png';
+import './images/traktflix-icon-19.png';
+import './images/traktflix-icon-38.png';
+import './images/traktflix-icon-128.png';
+import './images/traktflix-icon-selected-19.png';
+import './images/traktflix-icon-selected-38.png';
+import './styles/material.min.css';
+import './styles/fonts.css';
+import './styles/history-card.css';
+import './styles/history-sync.css';
+import './styles/info-card.css';
+import './styles/layout.css';
+import './styles/loading.css';
+import './styles/login.css';
+import './styles/watching-card.css';

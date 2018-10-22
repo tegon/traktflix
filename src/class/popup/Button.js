@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import ErrorBoundary from '../ErrorBoundary';
 
 class Button extends React.Component {
   constructor(props) {
@@ -12,9 +13,12 @@ class Button extends React.Component {
 
   render() {
     return (
-      <button onClick={this.handleClick.bind(this)} className='mdl-button mdl-js-button mdl-button--primary'>
-        {this.props.text}
-      </button>
+      <ErrorBoundary>
+        <button onClick={this.handleClick.bind(this)}
+                className='mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect'>
+          {this.props.text}
+        </button>
+      </ErrorBoundary>
     );
   }
 }

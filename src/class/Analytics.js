@@ -8,13 +8,13 @@ class Analytics {
   }
 
   sendAppView(view) {
-    if (this.tracker !== undefined) {
+    if (typeof this.tracker !== `undefined`) {
       this.tracker.sendAppView(view);
     }
   }
 
   sendEvent(name, value) {
-    if (this.tracker !== undefined) {
+    if (typeof this.tracker !== `undefined`) {
       this.tracker.sendEvent(name, value);
     }
   }

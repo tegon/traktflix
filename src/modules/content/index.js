@@ -2,6 +2,7 @@ import ContentController from '../../class/content/ContentController';
 import EventWatcher from '../../class/content/EventWatcher';
 import Rollbar from '../../class/Rollbar';
 
+// noinspection JSIgnoredPromiseFromCall
 Rollbar.init();
 const controller = new ContentController();
 const eventWatcher = new EventWatcher({

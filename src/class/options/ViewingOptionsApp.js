@@ -1,18 +1,33 @@
 import ChromeStorage from '../ChromeStorage';
 import React from 'react';
 import PropTypes from 'prop-types';
+import OptionsActionCreators from './OptionsActionCreators';
 import OptionsList from './OptionsList';
+import OptionsStore from './OptionsStore';
 import 'material-design-lite';
 
 /* global componentHandler */
 
- class ViewingOptionsApp extends React.Component {
+class ViewingOptionsApp extends React.Component {
+  getStateFromStores() {
+    return {
+      options: OptionsStore.getAll(),
+      message: OptionsStore.getMessage()
+    };
+  }
+
   constructor(props) {
     super(props);
-    this.state = {
-      message: null,
-      options: this.props.options
-    };
+    const state = this.getStateFromStores();
+    this.state = Object.assign(state, {loading: state.options.length === 0});
+  }
+
+  componentDidMount() {
+    OptionsStore.addChangeListener(this._onChange.bind(this));
+  }
+
+  componentWillUnmount() {
+    OptionsStore.removeChangeListener(this._onChange.bind(this));
   }
 
   componentDidUpdate() {
@@ -22,46 +37,76 @@ import 'material-design-lite';
     }
   }
 
+  _onChange() {
+    const state = this.getStateFromStores();
+    this.setState(Object.assign(state, {loading: false}));
+  }
+
   async _onSaveClick() {
-    const options = {};
-    for (const option of this.state.options) {
-      options[option.id] = option.value;
+    try {
+      const options = {};
+      for (const option of this.state.options) {
+        options[option.id] = option.add;
+      }
+      await ChromeStorage.set({options});
+      OptionsActionCreators.saveSuccess();
+    } catch (error) {
+      OptionsActionCreators.saveFailed(error);
     }
-    await ChromeStorage.set({options});
-    this.setState({ message: `Options saved.`});
   }
 
   async _onClearClick() {
-    const confirmationMessage = `Are you sure you want to clear your storage? This will reset all of the options to their default values and clear all of your data (you will have to login again).`;
-    if (confirm(confirmationMessage)) {
-      await ChromeStorage.clear();
-      this.setState({ message: `Storage cleared.`});
+    try {
+      const confirmationMessage = chrome.i18n.getMessage(`confirmClear`);
+      if (confirm(confirmationMessage)) {
+        await ChromeStorage.clear();
+      }
+      OptionsActionCreators.clearSuccess();
+    } catch (error) {
+      OptionsActionCreators.clearFailed(error);
     }
   }
 
   showSnackbar() {
     const snackbar = document.querySelector('.mdl-js-snackbar');
-    snackbar.MaterialSnackbar.showSnackbar({ message: this.state.message });
+    snackbar.MaterialSnackbar.showSnackbar({message: this.state.message});
   }
 
   render() {
-    return(
-      <div>
+    let content;
+    if (this.state.loading) {
+      content = (
+        <div style={{textAlign: 'center', marginTop: 25}}>
+          <div className='mdl-spinner mdl-spinner--single-color mdl-js-spinner is-active'/>
+        </div>
+      );
+    } else if (this.state.options.length) {
+      content = (
         <div>
-          <OptionsList options={this.state.options} />
+          <OptionsList options={this.state.options}/>
           <div className='mdl-actions-wrapper'>
-            <button onClick={this._onSaveClick.bind(this)} className='mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect'>
-              Save
+            <button onClick={this._onSaveClick.bind(this)}
+                    className='mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect'>
+              {chrome.i18n.getMessage(`save`)}
             </button>
 
-            <button onClick={this._onClearClick.bind(this)} className='mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect'>
-              Clear Storage
+            <button onClick={this._onClearClick.bind(this)}
+                    className='mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect'>
+              {chrome.i18n.getMessage(`clearStorage`)}
             </button>
           </div>
         </div>
+      );
+    } else {
+      content = (<div><h4>{chrome.i18n.getMessage(`failedOptions`)}</h4></div>);
+    }
+
+    return (
+      <div>
+        {content}
         <div aria-live='assertive' aria-atomic='true' aria-relevant='text' className='mdl-snackbar mdl-js-snackbar'>
-            <div className='mdl-snackbar__text'/>
-            <button type='button' className='mdl-snackbar__action'/>
+          <div className='mdl-snackbar__text'/>
+          <button type='button' className='mdl-snackbar__action'/>
         </div>
       </div>
     );

@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import ErrorBoundary from '../ErrorBoundary';
 
 class Loading extends React.Component {
   constructor(props) {
@@ -8,18 +9,20 @@ class Loading extends React.Component {
 
   getSpinnerStyle() {
     if (this.props.show) {
-      return { display: 'block' };
+      return {};
     } else {
-      return { display: 'none' };
+      return {display: 'none'};
     }
   }
 
   render() {
-    return(
-      <div className='spinner-wrapper' style={this.getSpinnerStyle()}>
-        <div className='mdl-spinner mdl-spinner--single-color mdl-js-spinner is-active' />
-      </div>
-    )
+    return (
+      <ErrorBoundary>
+        <div className='spinner-wrapper' style={this.getSpinnerStyle()}>
+          <div className='mdl-spinner mdl-spinner--single-color mdl-js-spinner is-active'/>
+        </div>
+      </ErrorBoundary>
+    );
   }
 }
 

@@ -24,7 +24,7 @@ export default class NetflixWebAPIUtils {
       Request.send({
         method: 'GET',
         url: `${NETFLIX_HOST}/Activate`,
-        success: function(response) {
+        success: function (response) {
           const url = `${NETFLIX_API_HOST}/${NetflixWebAPIUtils.extractBuildIdentifier(response)}/viewingactivity?authURL=${NetflixWebAPIUtils.extractAuthURL(response)}`;
           resolve(url);
         },
@@ -40,8 +40,8 @@ export default class NetflixWebAPIUtils {
       url: `${url}&pg=${page}`,
       success: (response) => {
         /**
-     * @property {[]} viewedItems
-     */
+         * @property {[]} viewedItems
+         */
         const activities = JSON.parse(response).viewedItems;
         const parsedActivities = activities.map(NetflixWebAPIUtils.parseActivity.bind(NetflixWebAPIUtils));
 
@@ -84,10 +84,11 @@ export default class NetflixWebAPIUtils {
         type: type
       });
     } else {
-      item = new Item({ title: activity.title, type: type });
+      item = new Item({title: activity.title, type: type});
     }
     return new Promise((resolve, reject) => {
-      TraktWebAPIUtils.getActivity({ item, date }).then(resolve).catch(reject);
+      Object.assign(item, {id: activity.movieID});
+      TraktWebAPIUtils.getActivity({item, date}).then(resolve).catch(reject);
     });
   }
 }

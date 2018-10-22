@@ -1,24 +1,33 @@
 {
   "env": {
     "browser": true,
-    "greasemonkey": true,
     "es6": true,
-    "jquery": true,
-    "webextensions": true,
-    "node": true
+    "jasmine": true,
+    "node": true,
+    "webextensions": true
   },
   "extends": [
     "eslint:recommended",
-  "plugin:react/recommended"
-],
+    "plugin:react/recommended"
+  ],
   "parser": "babel-eslint",
   "parserOptions": {
     "ecmaVersion": 9,
     "sourceType": "module"
   },
+  "plugins": [
+    "jasmine",
+    "sinon"
+  ],
   "rules": {
-    "no-empty": "off",
     "no-console": "off",
-    "no-constant-condition": ["error", { "checkLoops": false }],
-    "no-fallthrough": "off"}
+    "no-constant-condition": [
+      "error",
+      {
+        "checkLoops": false
+      }
+    ],
+    "no-empty": "off",
+    "no-fallthrough": "off"
+  }
 }

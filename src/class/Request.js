@@ -35,7 +35,8 @@ class Request {
   }
 
   send(options) {
-    this._send(options);
+    // noinspection JSIgnoredPromiseFromCall
+    return this._send(options);
   }
 }
 

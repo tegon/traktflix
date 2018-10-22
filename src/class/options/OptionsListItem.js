@@ -1,12 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import OptionsActionCreators from './OptionsActionCreators';
 
 class OptionsListItem extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {
-      value: this.props.option.value
-    };
   }
 
   componentDidMount() {
@@ -14,14 +12,12 @@ class OptionsListItem extends React.Component {
   }
 
   _onChange(event) {
-    const value = event.target.checked;
-    this.props.option.value = value;
-    this.setState({value});
+    OptionsActionCreators.toggleOption(this.props.option, event.target.checked);
   }
 
   render() {
     const option = this.props.option;
-    return(
+    return (
       <li className='mdl-list__item mdl-list__item--three-line'>
         <span className='mdl-list__item-primary-content'>
           <span>{option.name}</span>
@@ -32,7 +28,8 @@ class OptionsListItem extends React.Component {
         </span>
         <span className='mdl-list__item-secondary-action'>
           <label className='mdl-switch mdl-js-switch mdl-js-ripple-effect'>
-            <input type='checkbox' className='mdl-switch__input activity-item-switch' checked={this.state.value} onChange={this._onChange.bind(this)} />
+            <input type='checkbox' className='mdl-switch__input activity-item-switch' checked={option.add}
+                   onChange={this._onChange.bind(this)}/>
           </label>
         </span>
       </li>

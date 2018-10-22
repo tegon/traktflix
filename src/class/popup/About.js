@@ -9,7 +9,7 @@ export default class About extends React.Component {
   render() {
     return (
       <Info messages={messages}>
-        <Button url={'https://github.com/gsrafael01/traktflix'} text={'Read more'}/>
+        <Button url={'https://github.com/gsrafael01/traktflix'} text={chrome.i18n.getMessage(`readMore`)}/>
       </Info>
     );
   }

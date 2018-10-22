@@ -18,24 +18,25 @@ const service = analytics.getService(`traktflix`);
  */
 service.getConfig()
   .addCallback(
-  /**
-   * @param {Object} config
-   * @property {Function} setTrackingPermitted
-   */
-  async config => {
-    const data = await ChromeStorage.get(`options`);
-    const permitted = !!(data.options && data.options.allowGoogleAnalytics);
-    config.setTrackingPermitted(permitted);
-    if (permitted) {
-      const tracker = service.getTracker(Settings.analyticsId);
-      Analytics.setTracker(tracker);
-    }
-  });
+    /**
+     * @param {Object} config
+     * @property {Function} setTrackingPermitted
+     */
+    async config => {
+      const data = await ChromeStorage.get(`options`);
+      const permitted = !!(data.options && data.options.allowGoogleAnalytics);
+      config.setTrackingPermitted(permitted);
+      if (permitted) {
+        const tracker = service.getTracker(Settings.analyticsId);
+        Analytics.setTracker(tracker);
+      }
+    });
+// noinspection JSIgnoredPromiseFromCall
 Rollbar.init();
 
 chrome.runtime.onInstalled.addListener(() => {
   if (chrome.declarativeContent) {
-    chrome.declarativeContent.onPageChanged.removeRules(undefined,  () => {
+    chrome.declarativeContent.onPageChanged.removeRules(undefined, () => {
       chrome.declarativeContent.onPageChanged.addRules([{
         conditions: [
           new chrome.declarativeContent.PageStateMatcher({
@@ -59,8 +60,8 @@ chrome.runtime.onInstalled.addListener(() => {
   }
 });
 
-chrome.runtime.onMessage.addListener((request, sender, sendResponse) =>{
-  switch(request.type) {
+chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+  switch (request.type) {
     case `authorize`:
       // noinspection JSIgnoredPromiseFromCall
       Oauth.authorize(null, request.url);
@@ -68,13 +69,13 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) =>{
     case `setActiveIcon`:
       chrome.pageAction.setIcon({
         tabId: sender.tab.id,
-        path: chrome.runtime.getManifest().page_action.selected_icon
+        path: chrome.extension.getURL(`img/traktflix-icon-selected-38.png`)
       });
       break;
     case `setInactiveIcon`:
       chrome.pageAction.setIcon({
         tabId: sender.tab.id,
-        path: chrome.runtime.getManifest().page_action.default_icon
+        path: chrome.extension.getURL(`img/traktflix-icon-38.png`)
       });
       break;
     case `launchAuthorize`:
@@ -111,7 +112,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) =>{
       chrome.notifications.create({
         type: `basic`,
         iconUrl: `images/traktflix-icon-128.png`,
-        title: `An error has occurred :(`,
+        title: chrome.i18n.getMessage(`errorNotification`),
         message: request.message
       });
       break;

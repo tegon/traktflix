@@ -1,11 +1,13 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import Rollbar from '../../class/Rollbar';
-import OptionsStore from '../../class/options/OptionsStore';
 import ViewingOptionsApp from '../../class/options/ViewingOptionsApp';
-import '../../assets/styles';
+import OptionsUtils from '../../class/options/OptionsUtils';
+import '../../assets';
 
+// noinspection JSIgnoredPromiseFromCall
 Rollbar.init();
-OptionsStore.getValues().then(options => {
-  ReactDOM.render(<ViewingOptionsApp options={options}/>, document.getElementById('viewing-options-app'));
-});
+// noinspection JSIgnoredPromiseFromCall
+OptionsUtils.getOptions();
+ReactDOM.render(<ViewingOptionsApp/>, document.getElementById('viewing-options-app'));
+document.getElementById(`viewing-options-app-title`).textContent = chrome.i18n.getMessage(`options`);

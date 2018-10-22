@@ -4,7 +4,7 @@ const settings = {
   redirectUri: `https://www.netflix.com/Activate`,
   clientId: `@@clientId`,
   clientSecret: `@@clientSecret`,
-  apiVersion: 2,
+  apiVersion: `2`,
   analyticsId: `@@analyticsId`,
   rollbarToken: `@@rollbarToken`,
   tmdbApiKey: `@@tmdbApiKey`

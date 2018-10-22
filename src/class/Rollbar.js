@@ -32,8 +32,11 @@ class Rollbar {
     return this;
   }
 
-  error() {}
-  warning() {}
+  error() {
+  }
+
+  warning() {
+  }
 }
 
 const rollbar = new Rollbar();

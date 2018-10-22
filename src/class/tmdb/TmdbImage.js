@@ -1,6 +1,7 @@
 import Settings from '../../settings';
 import React from 'react';
 import PropTypes from 'prop-types';
+import ErrorBoundary from '../ErrorBoundary';
 
 class TmdbImage extends React.Component {
   constructor(props) {
@@ -11,7 +12,7 @@ class TmdbImage extends React.Component {
   getInitialState() {
     return {
       imageUrl: `https://trakt.tv/assets/placeholders/thumb/poster-2d5709c1b640929ca1ab60137044b152.png`
-    }
+    };
   }
 
   componentDidMount() {
@@ -20,6 +21,16 @@ class TmdbImage extends React.Component {
     }
   }
 
+  /**
+   * @typedef {Object} TmdbProps
+   * @property {String} imageHost
+   * @property {Object} item
+   * @property {Object} item.ids
+   * @property {String|Null} item.ids.tmdb
+   */
+  /**
+   * @param {TmdbProps} prevProps
+   */
   componentDidUpdate(prevProps) {
     let shouldUpdate = false;
     if (!prevProps.item && this.props.item) {
@@ -27,14 +38,14 @@ class TmdbImage extends React.Component {
     } else if (prevProps.item && this.props.item) {
       if (prevProps.imageHost !== this.props.imageHost) {
         shouldUpdate = true;
-      } else if (prevProps.item.ids.tmdb !== this.props.item.ids.tmdb) {
+      } else if (prevProps.item.ids && prevProps.item.ids.tmdb !== this.props.item.ids.tmdb) {
         shouldUpdate = true;
       } else if (prevProps.item.show && this.props.item.show && prevProps.item.show.ids.tmdb !== this.props.item.show.ids.tmdb) {
         shouldUpdate = true;
       }
     }
     if (shouldUpdate) {
-      if (this.props.item.ids.tmdb !== null) {
+      if (this.props.item.ids && this.props.item.ids.tmdb !== null) {
         this.getItemFromTmdb();
       } else {
         console.log(`There is no tmdb.id for item.`, this.props.item);
@@ -48,7 +59,7 @@ class TmdbImage extends React.Component {
 
   getApiUrl() {
     const type = this.props.item.type === `show` ? `tv` : `movie`;
-    let path = this.props.item.ids.tmdb;
+    let path = this.props.item.ids && this.props.item.ids.tmdb;
     if (this.props.item.type === `show`) {
       path = `${this.props.item.show.ids.tmdb}/season/${this.props.item.season}/episode/${this.props.item.number}`;
     }
@@ -73,7 +84,7 @@ class TmdbImage extends React.Component {
       const imageKey = this.props.item.type === `show` ? `stills` : `posters`;
       const image = response[imageKey][0];
       if (image) {
-        this.setState({ imageUrl: `${this.props.imageHost}${this.props.imageWidth[this.props.item.type]}${image.file_path }`});
+        this.setState({imageUrl: `${this.props.imageHost}${this.props.imageWidth[this.props.item.type]}${image.file_path }`});
       }
     }
   }
@@ -90,16 +101,18 @@ class TmdbImage extends React.Component {
   }
 
   render() {
-    return(
-      <div className={this.props.className} style={this.thumbStyle()}>
-        {this.props.children}
-      </div>
+    return (
+      <ErrorBoundary>
+        <div className={this.props.className} style={this.thumbStyle()}>
+          {this.props.children}
+        </div>
+      </ErrorBoundary>
     );
   }
 }
 
 TmdbImage.propTypes = {
-  children: PropTypes.object,
+  children: PropTypes.node,
   className: PropTypes.string,
   imageHost: PropTypes.string,
   imageWidth: PropTypes.object,

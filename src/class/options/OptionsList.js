@@ -13,7 +13,7 @@ class OptionsList extends React.Component {
   render() {
     const {options} = this.props;
     const items = options.map((option, index) => {
-      return(
+      return (
         <OptionsListItem
           option={option}
           key={index}
@@ -22,7 +22,7 @@ class OptionsList extends React.Component {
       );
     });
 
-    return(
+    return (
       <ul className='mdl-list'>
         {items}
       </ul>

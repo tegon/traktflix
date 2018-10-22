@@ -15,8 +15,13 @@ const
   configJson = require(`./config.json`),
   packageJson = require(`./package.json`),
   webpack = require(`webpack`),
+  CleanWebpackPlugin = require(`clean-webpack-plugin`),
+  pathsToClean = [
+    `app/fonts`,
+    `app/img`,
+    `app/js`
+  ],
   BUILD_PATHS = {
-    IMAGES: `app/img`,
     BACKGROUND: `app/js/background`,
     CONTENT: `app/js/content`,
     HISTORY: `app/js/history-sync`,
@@ -33,16 +38,15 @@ const
     },
     css: {
       loader: `css-loader`,
-      options: { minimize: true }
+      options: {minimize: true}
     }
   }
 ;
 
-module.exports = /** @param {Environment} env */ async env => {
+module.exports = /** @param {Environment} env */env => {
   const entry = {
-    [BUILD_PATHS.IMAGES]: [`./src/assets/images/index.js`],
     [BUILD_PATHS.BACKGROUND]: [`./src/modules/background/index.js`],
-    [BUILD_PATHS.CONTENT]: [`./src/modules/content/index.js`] ,
+    [BUILD_PATHS.CONTENT]: [`./src/modules/content/index.js`],
     [BUILD_PATHS.HISTORY]: [`./src/modules/history-sync/index.js`],
     [BUILD_PATHS.OPTIONS]: [`./src/modules/options/index.js`],
     [BUILD_PATHS.POPUP]: [`./src/modules/popup/index.js`],
@@ -63,11 +67,11 @@ module.exports = /** @param {Environment} env */ async env => {
           loader: `string-replace-loader`,
           options: {
             multiple: [
-              { search: `@@clientId`, replace: configJson.development.clientId },
-              { search: `@@clientSecret`, replace: configJson.development.clientSecret },
-              { search: `@@analyticsId`, replace: configJson.development.analyticsId },
-              { search: `@@rollbarToken`, replace: configJson.development.rollbarToken },
-              { search: `@@tmdbApiKey`, replace: configJson.development.tmdbApiKey }
+              {search: `@@clientId`, replace: configJson.development.clientId},
+              {search: `@@clientSecret`, replace: configJson.development.clientSecret},
+              {search: `@@analyticsId`, replace: configJson.development.analyticsId},
+              {search: `@@rollbarToken`, replace: configJson.development.rollbarToken},
+              {search: `@@tmdbApiKey`, replace: configJson.development.tmdbApiKey}
             ]
           }
         },
@@ -101,7 +105,7 @@ module.exports = /** @param {Environment} env */ async env => {
           ]
         },
         {
-          test: /\.js$/,
+          test: /\.jsx?$/,
           exclude: /(node_modules|bower_components)/,
           use: {
             loader: `babel-loader`,
@@ -115,7 +119,10 @@ module.exports = /** @param {Environment} env */ async env => {
         }
       ]
     },
-    watch: env.development && env.watch,
+    plugins: [
+      new CleanWebpackPlugin(pathsToClean)
+    ],
+    watch: !!(env.development && env.watch),
     watchOptions: {
       ignored: /node_modules/,
       poll: 1000,

@@ -9,9 +9,9 @@ class Watching extends React.Component {
   }
 
   render() {
-    chrome.runtime.sendMessage({ type: `sendAppView`, view: `Watching ${this.props.item.title }`});
+    chrome.runtime.sendMessage({type: `sendAppView`, view: `Watching ${this.props.item.title }`});
 
-    return(
+    return (
       <TmdbImageContainer>
         <TmdbImage className='mdl-card mdl-shadow--2dp watching-card-thumb' item={this.props.item}>
           <div className='mdl-card__title mdl-card--expand'/>

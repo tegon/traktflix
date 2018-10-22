@@ -21,6 +21,6 @@ export default class Item {
       this.epTitle = options.epTitle;
       this.season = options.season;
       this.episode = options.episode;
-    }    
+    }
   }
 }

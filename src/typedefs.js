@@ -6,10 +6,15 @@
  * @property {Function} declarativeContent.onPageChanged.removeRules
  * @property {Function} declarativeContent.PageStateMatcher
  * @property {Function} declarativeContent.ShowPageAction
+ * @property {Function} extension.getURL
+ * @property {Object} i18n
+ * @property {Function} i18n.getMessage
  * @property {Object} notifications
  * @property {Object} pageAction
+ * @property {Function} pageAction.setIcon
  * @property {Object} runtime
  * @property {Object} runtime.onInstalled
+ * @property {Function} runtime.sendMessage
  * @property {ChromeManifest} runtime.getManifest
  * @property {Object} tabs
  * @property {Object} tabs.onUpdated
