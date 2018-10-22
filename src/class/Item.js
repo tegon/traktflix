@@ -18,6 +18,7 @@ export default class Item {
     this.title = fullTitles[options.title] || options.title;
     this.type = options.type;
     if (this.type === `show`) {
+      this.isCollection = options.isCollection;
       this.epTitle = options.epTitle;
       this.season = options.season;
       this.episode = options.episode;

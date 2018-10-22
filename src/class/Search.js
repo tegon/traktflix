@@ -13,6 +13,9 @@ export default class Search {
   }
 
   getEpisodeUrl(slug) {
+    if (this.item.isCollection && this.item.epTitle) {
+      return `${this.url}/episode?query=${encodeURIComponent(this.item.epTitle)}`;
+    }
     if (this.item.episode) {
       return `${this.showsUrl}/${slug}/seasons/${this.item.season}/episodes/${this.item.episode}?extended=images`;
     }
@@ -47,8 +50,13 @@ export default class Search {
 
   findEpisodeByTitle(show, response, options) {
     const episodes = JSON.parse(response);
+    console.log(this.item.epTitle);
+    console.log(episodes);
     let foundEpisode = null;
-    for (const episode of episodes) {
+    for (let episode of episodes) {
+      if (episode.type === `episode`) {
+        episode = episode.episode;
+      }
       if (this.item.epTitle && episode.title && this.formatEpisodeTitle(episode.title) === this.formatEpisodeTitle(this.item.epTitle)) {
         foundEpisode = episode;
         break;
@@ -72,7 +80,9 @@ export default class Search {
           method: `GET`,
           url: _this.getEpisodeUrl(response.show.ids.slug),
           success: function (resp) {
-            if (this.item.episode) {
+            if (this.item.isCollection && this.item.epTitle) {
+              _this.findEpisodeByTitle(response, resp, options);
+            } else  if (this.item.episode) {
               options.success.call(this, Object.assign(JSON.parse(resp), response));
             } else {
               _this.findEpisodeByTitle(response, resp, options);

@@ -14,13 +14,15 @@ class ItemParser {
     if (type === `show`) {
       mainTitle = playerStatus.querySelector(`h4`).textContent;
       const episodeInfo = playerStatus.querySelectorAll(`span`);
-      const episode = episodeInfo[0].textContent.match(/\d+/g);
-      const season = episode[0];
-      const number = episode[1];
+      const episode = episodeInfo[0].textContent.match(/([CS])(\d+?):E(\d+?)/);
+      const isCollection = episode[1] === `C`;
+      const season = episode[2];
+      const number = episode[3];
       const title = episodeInfo[1].textContent;
       item = new Item({
         episode: number,
         epTitle: title,
+        isCollection,
         season,
         title: mainTitle,
         type
