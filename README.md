@@ -14,7 +14,7 @@
 
 <p align="center">
   <a href="https://github.com/gsrafael01/traktflix/releases"><img src="https://img.shields.io/github/release/gsrafael01/traktflix.svg" alt="github release"></a>
-  <a href="https://travis-ci.org/gsrafael01/traktflix"><img src="https://img.shields.io/travis/feross/webtorrent/master.svg" alt="travis"></a>
+  <a href="https://travis-ci.com/gsrafael01/traktflix"><img src="https://img.shields.io/travis/feross/webtorrent/master.svg" alt="travis"></a>
   <a href="https://coveralls.io/github/gsrafael01/traktflix?branch=master"><img src="https://coveralls.io/repos/gsrafael01/traktflix/badge.svg?branch=master&service=github" alt="coveralls"></a>
 </p>
 
