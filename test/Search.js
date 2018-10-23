@@ -5,10 +5,12 @@ import Settings from '../src/settings.js';
 
 const success = sinon.spy();
 const error = sinon.spy();
-const rocky = {title: `Rocky`, type: `movie`};
+const rocky = {title: `Rocky`, type: `movie`, year: 2005};
 const movieSearch = new Search({item: rocky});
+const comedians = {type: `show`, season: 1, episode: 1, title: `Comedians in Cars Getting Coffee`, epTitle: `Bill Maher`, isCollection: true};
 const madMen = {type: `show`, season: 1, episode: 1, title: `Mad Men`};
 const narcos = {type: `show`, season: 1, title: `Narcos`, epTitle: `The Sword of Simón Bolívar`};
+const collectionSearch = new Search({item: comedians});
 const episodeSearch = new Search({item: madMen});
 const episodeSearchByTitle = new Search({item: narcos});
 
@@ -40,6 +42,10 @@ describe(`Search`, function () {
     expect(movieSearch.getUrl()).toBe(`${Settings.apiUri}/search/${rocky.type}?query=${rocky.title}`);
   });
 
+  it(`getEpisodeUrl() uses episode URL when item is a collection`, () => {
+    expect(collectionSearch.getEpisodeUrl(`comedians-in-cars-getting-coffee`)).toBe(`${Settings.apiUri}/search/episode?query=${encodeURIComponent(comedians.epTitle)}`);
+  });
+
   it(`getEpisodeUrl() uses episode number when item has an episode number`, () => {
     expect(episodeSearch.getEpisodeUrl(`mad-men`)).toBe(`${Settings.apiUri}/shows/mad-men/seasons/${madMen.season}/episodes/${madMen.episode}?extended=images`);
   });
@@ -49,12 +55,22 @@ describe(`Search`, function () {
   });
 
   it(`findItem() returns first search result`, async done => {
-    server.respondWith(`GET`, `${Settings.apiUri}/search/${rocky.type}?query=${encodeURIComponent(rocky.title)}`, [200, {[`Content-Type`]: `application/json`}, `[{ "movie": { "title": "Rocky" } }, { "movie": { "title": "Rocky II" } }]`]);
+    server.respondWith(`GET`, `${Settings.apiUri}/search/${madMen.type}?query=${encodeURIComponent(madMen.title)}`, [200, {[`Content-Type`]: `application/json`}, `[{ "show": { "title": "Mad Men" } }, { "show": { "title": "Mad Women" } }]`]);
+    await episodeSearch.findItem({success, error});
+    server.respond();
+    expect(error.callCount).toBe(0);
+    expect(success.callCount).toBe(1);
+    expect(success.getCall(0).args).toEqual([{show: {title: `Mad Men`}}]);
+    done();
+  });
+
+  it(`findItem() returns exact match for movies with same title from different years`, async done => {
+    server.respondWith(`GET`, `${Settings.apiUri}/search/${rocky.type}?query=${encodeURIComponent(rocky.title)}`, [200, {[`Content-Type`]: `application/json`}, `[{ "movie": { "title": "Rocky", "year": 2000 } }, { "movie": { "title": "Rocky", "year": 2005 } }]`]);
     await movieSearch.findItem({success, error});
     server.respond();
     expect(error.callCount).toBe(0);
     expect(success.callCount).toBe(1);
-    expect(success.getCall(0).args).toEqual([{movie: {title: `Rocky`}}]);
+    expect(success.getCall(0).args).toEqual([{movie: {title: `Rocky`, year: 2005}}]);
     done();
   });
 

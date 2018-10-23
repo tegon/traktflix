@@ -2,7 +2,7 @@ import React from 'react';
 import ActivityList from './ActivityList';
 import ActivityStore from './ActivityStore';
 import TraktWebAPIUtils from './TraktWebAPIUtils';
-import NetflixWebAPIUtils from './NetflixWebAPIUtils';
+import NetflixApiUtils from '../NetflixApiUtils';
 import TmdbImageContainer from '../tmdb/TmdbImageContainer';
 import 'material-design-lite';
 
@@ -53,7 +53,7 @@ export default class ViewingActivityApp extends React.Component {
 
   _onNextPageClick() {
     this.setState({loading: true});
-    NetflixWebAPIUtils.getActivities(this.state.page);
+    NetflixApiUtils.getActivities(this.state.page);
   }
 
   _onToggleAll(event) {

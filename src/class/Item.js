@@ -17,6 +17,7 @@ export default class Item {
   constructor(options) {
     this.title = fullTitles[options.title] || options.title;
     this.type = options.type;
+    this.year = options.year;
     if (this.type === `show`) {
       this.isCollection = options.isCollection;
       this.epTitle = options.epTitle;

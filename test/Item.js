@@ -1,7 +1,7 @@
 import Item from '../src/class/Item';
 
 const antMan = new Item({
-  title: `Ant-Man`, type: `movie`
+  title: `Ant-Man`, type: `movie`, year: 2015
 });
 const theFlash = new Item({
   episode: 1,
@@ -15,11 +15,13 @@ describe(`Item`, () => {
   it(`creates a new movie`, () => {
     expect(antMan.title).toBe(`Ant-Man`);
     expect(antMan.type).toBe(`movie`);
+    expect(antMan.year).toBe(2015);
   });
 
   it(`creates a new show`, () => {
     expect(theFlash.title).toBe(`The Flash`);
     expect(theFlash.type).toBe(`show`);
+    expect(theFlash.year).toBeUndefined();
     expect(theFlash.epTitle).toBe(`Pilot`);
     expect(theFlash.season).toBe(1);
     expect(theFlash.episode).toBe(1);

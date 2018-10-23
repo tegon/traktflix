@@ -14,8 +14,12 @@
 
 <p align="center">
   <a href="https://github.com/gsrafael01/traktflix/releases"><img src="https://img.shields.io/github/release/gsrafael01/traktflix.svg" alt="github release"></a>
-  <a href="https://travis-ci.com/gsrafael01/traktflix"><img src="https://img.shields.io/travis/feross/webtorrent/master.svg" alt="travis"></a>
+  <a href="https://travis-ci.com/gsrafael01/traktflix"><img src="https://travis-ci.com/gsrafael01/traktflix.svg?branch=master" alt="travis"></a>
   <a href="https://coveralls.io/github/gsrafael01/traktflix?branch=master"><img src="https://coveralls.io/repos/gsrafael01/traktflix/badge.svg?branch=master&service=github" alt="coveralls"></a>
+</p>
+
+<p align=left">
+  <a href="https://addons.mozilla.org/en-US/firefox/addon/traktflix"><img src="https://discourse-paas-production-content.s3.amazonaws.com/original/3X/c/0/c03e12b8fae82e431eabaf0f6e250bfc78504182.png" alt="Get the add-on"></a>
 </p>
 
 ### Table of Contents

@@ -4,7 +4,7 @@ module.exports = config => {
   const configuration = {
     autoWatch: false,
     basePath: '',
-    browsers: [`Chrome`, `Firefox`],
+    browsers: [ `Firefox`],
     client: {
       jasmine: {
         random: false
@@ -21,7 +21,7 @@ module.exports = config => {
     singleRun: true,
     webpack: webpackConfig
   };
-  if (true || process.env.TRAVIS) {
+  if (process.env.TRAVIS) {
     configuration.browsers = [`Firefox`];
     configuration.reporters = [`progress`, `coverage`];
     configuration.coverageReporter = {

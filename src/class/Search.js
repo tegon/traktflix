@@ -24,11 +24,18 @@ export default class Search {
 
   findItem(options) {
     // noinspection JSIgnoredPromiseFromCall
+    const _this = this;
     return Request.send({
       method: `GET`,
       url: this.getUrl(),
       success: function (response) {
-        const data = JSON.parse(response)[0];
+        let data = JSON.parse(response);
+        if (_this.item && _this.item.type === `movie`) {
+          // Get exact match if there are multiple movies with the same name by checking the year.
+          data = data.filter(item => item.movie.title === _this.item.title && item.movie.year === _this.item.year)[0];
+        } else {
+          data = data[0];
+        }
         if (typeof data === `undefined`) {
           options.error.call(this, 404);
         } else {
@@ -50,8 +57,6 @@ export default class Search {
 
   findEpisodeByTitle(show, response, options) {
     const episodes = JSON.parse(response);
-    console.log(this.item.epTitle);
-    console.log(episodes);
     let foundEpisode = null;
     for (let episode of episodes) {
       if (episode.type === `episode`) {
