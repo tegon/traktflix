@@ -12,7 +12,8 @@
       ],
       "matches": [
         "*://*.netflix.com/*"
-      ]
+      ],
+      "run_at": "document_idle"
     }
   ],
   "default_locale": "en",
@@ -37,6 +38,8 @@
     "*://api.trakt.tv/*",
     "*://trakt.tv/*",
     "https://www.google-analytics.com/",
+    "https://script.google.com/",
+    "https://script.googleusercontent.com/",
     "cookies",
     "identity",
     "notifications",
@@ -44,7 +47,7 @@
     "tabs",
     "unlimitedStorage"
   ],
-  "version": "2.0.0",
+  "version": "2.0.1",
   "web_accessible_resources": [
     "img/traktflix-icon-38.png",
     "img/traktflix-icon-selected-38.png",
