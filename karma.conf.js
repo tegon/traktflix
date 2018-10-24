@@ -4,7 +4,7 @@ module.exports = config => {
   const configuration = {
     autoWatch: false,
     basePath: '',
-    browsers: [ `Firefox`],
+    browsers: [`Firefox`],
     client: {
       jasmine: {
         random: false
