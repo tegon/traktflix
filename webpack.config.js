@@ -12,7 +12,7 @@
 const
   fs = require(`fs`),
   path = require(`path`),
-  configJson = process.env.TEST ? require('./config.json.dev') : require(`./config.json`),
+  configJson = process.env.test ? require('./config.json.dev') : require(`./config.json`),
   packageJson = require(`./package.json`),
   webpack = require(`webpack`),
   CleanWebpackPlugin = require(`clean-webpack-plugin`),

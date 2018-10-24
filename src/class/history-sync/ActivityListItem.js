@@ -33,7 +33,9 @@ class ActivityListItem extends React.Component {
     let netflixTitle = netflix.epTitle ? `${netflix.title}: ${netflix.epTitle}` : netflix.title;
     let netflixUrl = `https://www.netflix.com/watch/${netflix.id}`;
     let trakt = activity.trakt;
-    let traktDate, traktUrl, traktTitle;
+    let traktDate = ``;
+    let traktUrl = ``;
+    let traktTitle = ``;
 
     if (trakt) {
       traktDate = trakt.date ? trakt.date.format(`MMMM Do YYYY, h:mm:ss a`) : `-`;
@@ -66,7 +68,10 @@ class ActivityListItem extends React.Component {
                           onSubmit={this._onSubmitTraktURL.bind(this)}/>
           </span>
         </span>
-        <span className='mdl-list__item-secondary-action'>
+        <span className='mdl-list__item-secondary-action' style={{display: activity.alreadyOnTrakt ? 'block' : 'none'}}>
+          {chrome.i18n.getMessage(`alreadySynced`)}
+        </span>
+        <span className='mdl-list__item-secondary-action' style={{display: activity.alreadyOnTrakt ? 'none' : 'block'}}>
           <label className='mdl-switch mdl-js-switch mdl-js-ripple-effect' htmlFor={formId}>
             <input type='checkbox' id={formId} className='mdl-switch__input activity-item-switch' checked={activity.add}
                    onChange={this._onChange.bind(this)}/>

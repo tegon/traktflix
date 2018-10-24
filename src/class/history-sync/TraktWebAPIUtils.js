@@ -53,24 +53,20 @@ export default class TraktWebAPIUtils {
     };
   }
 
-  static getActivity(options) {
-    return new Promise((resolve, reject) => {
-      TraktWebAPIUtils.searchItem(options)
-        .then((result) => {
-          TraktWebAPIUtils.getActivityHistory(Object.assign(options, {result: result})).then(resolve).catch(reject);
-        })
-        .catch(() => {
-          const netflix = Object.assign(options.item, {date: options.date});
-          resolve(Object.assign({netflix}, {add: false}));
-        });
-    });
+  static async getActivity(options) {
+    try {
+      options.result = await TraktWebAPIUtils.searchItem(options);
+      await TraktWebAPIUtils.getActivityHistory(options);
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   static getActivityHistory(options) {
     return new Promise((resolve, reject) => {
       // noinspection JSIgnoredPromiseFromCall
       Request.send({
-        method: 'GET',
+        method: `GET`,
         url: TraktWebAPIUtils.activityUrl(options.result.activity),
         success: function (response) {
           let alreadyOnTrakt = false;
@@ -79,12 +75,11 @@ export default class TraktWebAPIUtils {
 
           if (history && history.watched_at) {
             date = moment(history.watched_at);
-            alreadyOnTrakt = date.diff(options.result.date, `days`) === 0;
+            alreadyOnTrakt = date.diff(options.netflix.date, `days`) === 0;
           }
-          const trakt = Object.assign(options.result.activity, {date: date});
-          const netflix = Object.assign(options.item, {date: options.date});
-
-          resolve(Object.assign({netflix, trakt}, {add: !alreadyOnTrakt}));
+          options.trakt = Object.assign(options.result.activity, {date});
+          options.alreadyOnTrakt = alreadyOnTrakt;
+          resolve();
         },
         error: reject
       });
@@ -92,21 +87,21 @@ export default class TraktWebAPIUtils {
   }
 
   static searchItem(options) {
-    const search = new Search({item: options.item});
+    const search = new Search({item: options.netflix});
     return new Promise((resolve, reject) => {
       search.find({
         success: function (response) {
           let activity = {
-            type: options.item.type
+            type: options.netflix.type
           };
 
-          if (options.item.type === `movie`) {
+          if (options.netflix.type === `movie`) {
             activity = Object.assign(activity, response.movie);
           } else {
             activity = Object.assign(activity, response);
           }
 
-          resolve({activity: activity, date: options.date});
+          resolve({activity});
         },
         error: function (status, response) {
           reject(status, response);
@@ -158,6 +153,6 @@ export default class TraktWebAPIUtils {
 
   static _parseActivityFromURL(activity, result, type) {
     const traktActivity = Object.assign(result, {type: type});
-    return TraktWebAPIUtils.getActivityHistory(Object.assign({item: activity.netflix}, {result: {activity: traktActivity}}, {date: activity.netflix.date}));
+    return TraktWebAPIUtils.getActivityHistory(Object.assign({netflix: activity.netflix}, {result: {activity: traktActivity}}));
   }
 }

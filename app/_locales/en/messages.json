@@ -114,7 +114,7 @@
     "message": "Grab a pillow, a blanket and a movie on Netflix"
   },
   "notWatchingMessage4": {
-    "message": "Two of five doctors says you should be watching something on Netflix right now"
+    "message": "Two of five doctors say you should be watching something on Netflix right now"
   },
   "notWatchingMessage5": {
     "message": "Get yourself some rest, and some movie on Netflix"
@@ -178,5 +178,8 @@
   },
   "failedOptions": {
     "message": "Failed to load the options"
+  },
+  "alreadySynced": {
+    "message": "Already synced"
   }
 }

@@ -178,5 +178,8 @@
   },
   "failedOptions": {
     "message": "Não foi possível carregar as opções"
+  },
+  "alreadySynced": {
+    "message": "Já foi sincronizado"
   }
 }

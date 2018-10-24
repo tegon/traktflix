@@ -21,3 +21,13 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 if (location.href.match(/\/Activate\?code=/)) {
   chrome.runtime.sendMessage({type: `authorize`, url: location.href});
 }
+
+const netflix = window.netflix || (window.wrappedJSObject && window.wrappedJSObject.netflix);
+if (netflix) {
+  const authUrl = netflix.reactContext.models.userInfo.data.authURL;
+  const buildIdentifier = netflix.reactContext.models.serverDefs.data.BUILD_IDENTIFIER;
+  chrome.runtime.sendMessage({type: `setApiDefs`, authUrl, buildIdentifier});
+  if (window.XPCNativeWrapper) {
+    window.XPCNativeWrapper(window.wrappedJSObject.netflix);
+  }
+}

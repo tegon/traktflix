@@ -30,18 +30,27 @@ const netflixApiUtils = {
         resolve();
         return;
       }
-      // noinspection JSIgnoredPromiseFromCall
-      Request.send({
-        method: `GET`,
-        url: `${NETFLIX_HOST}/Activate`,
-        success: response => {
-          this.authUrl = this.extractAuthURL(response);
-          this.buildIdentifier = this.extractBuildIdentifier(response);
+      chrome.runtime.sendMessage({type: `getApiDefs`}, defs => {
+        if (defs.authUrl && defs.buildIdentifier) {
+          this.authUrl = defs.authUrl;
+          this.buildIdentifier = defs.buildIdentifier;
           this.isActivated = true;
           resolve();
-        },
-        error: reject
-      });
+        } else {
+          // noinspection JSIgnoredPromiseFromCall
+          Request.send({
+            method: `GET`,
+            url: `${NETFLIX_HOST}/Activate`,
+            success: response => {
+              this.authUrl = this.extractAuthURL(response);
+              this.buildIdentifier = this.extractBuildIdentifier(response);
+              this.isActivated = true;
+              resolve();
+            },
+            error: reject
+          });
+        }
+      })
     });
   },
 
@@ -50,24 +59,28 @@ const netflixApiUtils = {
     Request.send({
       method: `GET`,
       url: `${NETFLIX_API_HOST}/${this.buildIdentifier}/viewingactivity?authURL=${this.authUrl}&pg=${page}`,
-      success: (response) => {
+      success: async response => {
         /**
          * @property {[]} viewedItems
          */
         const activities = JSON.parse(response).viewedItems;
-        const parsedActivities = activities.map(this.parseActivity.bind(this));
-
-        Promise.all(parsedActivities)
-          .then(ActivityActionCreators.receiveActivities.bind(ActivityActionCreators))
-          .catch(ActivityActionCreators.receiveActivitiesFailed.bind(ActivityActionCreators));
+        const result = (await this.getActivitiesMetadata(activities)).map(this.parseActivity.bind(this));
+        const parsedActivities = result.map(item => item.parsedItem);
+        const promises = result.map(item => item.promise);
+        ActivityActionCreators.receiveActivities(parsedActivities);
+        Promise.all(promises)
+          .then(ActivityActionCreators.finishLoadingTraktData.bind(ActivityActionCreators));
       },
       error: (response, status) => {
+        ActivityActionCreators.receiveActivitiesFailed(response, status);
         console.log(response, status);
       }
     });
   },
 
   getActivities(page = 0) {
+    ActivityActionCreators.resetActivities();
+    ActivityActionCreators.startLoadingTraktData();
     this.activateAPI()
       .then(() => this.listActivities(page));
   },
@@ -76,33 +89,82 @@ const netflixApiUtils = {
    * @param activity
    * @property {string} activity.episodeTitle
    * @property {string} activity.seasonDescriptor
-   * @returns {Promise}
+   * @returns {Object}
    */
   parseActivity(activity) {
-    return new Promise(async (resolve, reject) => {
-      const date = moment(activity.date);
-      let item = await this.getMetadata(activity.movieID);
-      if (!item) {
-        const type = typeof activity.series === `undefined` ? `movie` : `show`;
-        if (type === `show`) {
-          const title = activity.seriesTitle;
-          let season = activity.seasonDescriptor.match(/\d+/g);
-          const epTitle = activity.episodeTitle.trim();
-          if (season) {
-            season = parseInt(season[0]);
-          }
-          item = new Item({
-            epTitle: epTitle,
-            title: title,
-            season: season,
-            type: type
-          });
-        } else {
-          item = new Item({title: activity.title, type: type});
+    const date = moment(activity.date);
+    const type = typeof activity.series === `undefined` ? `movie` : `show`;
+    let itemProps;
+    if (type === `show`) {
+      const title = activity.seriesTitle;
+      const epTitle = activity.episodeTitle.trim();
+      let season = ``;
+      let isCollection = false;
+      const matches = activity.seasonDescriptor.match(/Season\s(\d+)/);
+      if (matches) {
+        season = parseInt(matches[1]);
+      } else {
+        if (activity.season) {
+          season = activity.season;
         }
+        isCollection = true;
       }
-      Object.assign(item, {id: activity.movieID});
-      TraktWebAPIUtils.getActivity({item, date}).then(resolve).catch(reject);
+      itemProps = {
+        epTitle,
+        isCollection,
+        title,
+        season,
+        type
+      };
+      if (activity.episode) {
+        itemProps.episode = activity.episode;
+      }
+    } else {
+      itemProps = {
+        title: activity.title,
+        type
+      };
+      if (activity.year) {
+        itemProps.year = activity.year;
+      }
+    }
+    const item = new Item(itemProps);
+    item.id = activity.movieID;
+    item.date = date;
+    const parsedItem = {
+      add: false,
+      netflix: item
+    };
+    return {parsedItem, promise: TraktWebAPIUtils.getActivity(parsedItem)};
+  },
+
+  getActivitiesMetadata(activities) {
+    return new Promise(resolve => {
+      Request.send({
+        method: `POST`,
+        params: {
+          authURL: this.authUrl,
+          paths: activities.map(activity => [`videos`, activity.movieID, [`releaseYear`, `summary`]])
+        },
+        url: `${NETFLIX_API_HOST}/${this.buildIdentifier}/pathEvaluator`,
+        success: response => {
+          const json = JSON.parse(response);
+          activities = activities.map(activity => {
+            const info = json.value.videos[activity.movieID];
+            if (info) {
+              activity.episode = info.summary.episode;
+              activity.season = info.summary.season;
+              activity.year = info.releaseYear;
+            }
+            return activity;
+          });
+          resolve(activities);
+        },
+        error: (response, status) => {
+          console.log(response, status);
+          resolve(activities);
+        }
+      })
     });
   },
 

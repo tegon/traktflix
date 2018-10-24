@@ -34,6 +34,8 @@ service.getConfig()
 // noinspection JSIgnoredPromiseFromCall
 Rollbar.init();
 
+const defs = {};
+
 chrome.runtime.onInstalled.addListener(() => {
   if (chrome.declarativeContent) {
     chrome.declarativeContent.onPageChanged.removeRules(undefined, () => {
@@ -62,10 +64,19 @@ chrome.runtime.onInstalled.addListener(() => {
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   switch (request.type) {
+    case `getApiDefs`:
+      // noinspection JSIgnoredPromiseFromCall
+      sendResponse(defs);
+      return true;
+    case `setApiDefs`:
+      // noinspection JSIgnoredPromiseFromCall
+      defs.authUrl = request.authUrl;
+      defs.buildIdentifier = request.buildIdentifier;
+      break;
     case `authorize`:
       // noinspection JSIgnoredPromiseFromCall
       Oauth.authorize(null, request.url);
-      return true;
+      break;
     case `setActiveIcon`:
       chrome.pageAction.setIcon({
         tabId: sender.tab.id,

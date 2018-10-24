@@ -2,6 +2,12 @@ import ViewingActivityAppDispatcher from '../../modules/history-sync/viewing-act
 import ActionTypes from '../../modules/history-sync/activity-constants';
 
 export default class ActivityActionCreators {
+  static resetActivities() {
+    ViewingActivityAppDispatcher.dispatch({
+      type: ActionTypes.RESET_ACTIVITIES
+    });
+  }
+
   static receiveActivities(activities) {
     ViewingActivityAppDispatcher.dispatch({
       type: ActionTypes.RECEIVE_ACTIVITIES,
@@ -14,6 +20,18 @@ export default class ActivityActionCreators {
       type: ActionTypes.RECEIVE_ACTIVITIES_FAILED,
       status: status,
       response: response
+    });
+  }
+
+  static startLoadingTraktData() {
+    ViewingActivityAppDispatcher.dispatch({
+      type: ActionTypes.START_LOADING_TRAKT_DATA
+    });
+  }
+
+  static finishLoadingTraktData() {
+    ViewingActivityAppDispatcher.dispatch({
+      type: ActionTypes.FINISH_LOADING_TRAKT_DATA
     });
   }
 

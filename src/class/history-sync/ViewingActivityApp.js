@@ -12,6 +12,8 @@ export default class ViewingActivityApp extends React.Component {
   getStateFromStores() {
     return {
       activities: ActivityStore.getAll(),
+      isLoadingTraktData: ActivityStore.isLoadingTraktData(),
+      loading: ActivityStore.isLoading(),
       message: ActivityStore.getMessage(),
       page: ActivityStore.getPage()
     };
@@ -19,8 +21,7 @@ export default class ViewingActivityApp extends React.Component {
 
   constructor(props) {
     super(props);
-    const state = this.getStateFromStores();
-    this.state = Object.assign(state, {loading: state.activities.length === 0});
+    this.state = this.getStateFromStores();
   }
 
   componentDidMount() {
@@ -39,8 +40,7 @@ export default class ViewingActivityApp extends React.Component {
   }
 
   _onChange() {
-    const state = this.getStateFromStores();
-    this.setState(Object.assign(state, {loading: false}));
+    this.setState(this.getStateFromStores());
   }
 
   _onSyncClick() {
@@ -72,12 +72,15 @@ export default class ViewingActivityApp extends React.Component {
     if (this.state.loading) {
       content = (
         <div style={{textAlign: 'center', marginTop: 25}}>
-          <div className='mdl-spinner mdl-spinner--single-color mdl-js-spinner is-active'/>
+          <div className='mdl-spinner mdl-spinner--single-color mdl-js-spinner is-active is-upgraded'/>
         </div>
       );
     } else if (this.state.activities.length) {
       content = (
         <div>
+          <div style={{display: this.state.isLoadingTraktData ? 'block' : 'none'}}>
+            Loading Trakt data... <div className='mdl-spinner mdl-spinner--single-color mdl-js-spinner is-active'/>
+          </div>
           <span className='mdl-list__item-secondary-action'>
             <label className='mdl-switch mdl-js-switch mdl-js-ripple-effect' htmlFor='toggle-all'>
               <input type='checkbox' id='toggle-all' className='mdl-switch__input'
@@ -89,8 +92,9 @@ export default class ViewingActivityApp extends React.Component {
             <ActivityList activities={this.state.activities}/>
           </TmdbImageContainer>
           <div className='mdl-actions-wrapper'>
-            <button onClick={this._onSyncClick.bind(this)}
-                    className='mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect'>
+            <button onClick={this._onSyncClick.bind(this)} disabled={this.state.isLoadingTraktData}
+                    className='mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect'
+                    title={this.state.isLoadingTraktData ? 'Cannot sync while loading Trakt data' : ''}>
               {chrome.i18n.getMessage(`syncNow`)}
             </button>
 
