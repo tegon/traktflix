@@ -21,6 +21,7 @@ class ChromeStorage {
    * @property {string} data.access_token
    * @property {Boolean} data.auto_sync
    * @property {Object} options
+   * @property {Boolean} options.disableScrobbling
    * @property {Boolean} options.allowGoogleAnalytics
    * @property {Boolean} options.allowRollbar
    * @property {Boolean} options.showNotifications

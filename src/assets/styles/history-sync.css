@@ -3,7 +3,7 @@
 }
 
 #viewing-activity-app .mdl-list__item--three-line {
-  height: 150px;
+  height: auto;
 }
 
 #viewing-options-app .mdl-list__item--three-line {
@@ -38,4 +38,8 @@
   text-align: center;
   width: 98%;
   z-index: 3;
+}
+
+.mdl-list__item--three-line .mdl-list__item-text-body {
+  height: auto;
 }

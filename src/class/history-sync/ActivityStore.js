@@ -58,6 +58,10 @@ class ActivityStore extends EventEmitter {
 const activityStore = new ActivityStore();
 activityStore.dispatchToken = ViewingActivityAppDispatcher.register((action) => {
   switch (action.type) {
+    case ActionTypes.FINISH_LOADING_SUGGESTIONS:
+      _message = undefined;
+      activityStore.emitChange();
+      break;
     case ActionTypes.RESET_ACTIVITIES:
       _activities = [];
       _isLoading = true;
@@ -78,10 +82,12 @@ activityStore.dispatchToken = ViewingActivityAppDispatcher.register((action) => 
       break;
     case ActionTypes.START_LOADING_TRAKT_DATA:
       _isLoadingTraktData = true;
+      _message = undefined;
       activityStore.emitChange();
       break;
     case ActionTypes.FINISH_LOADING_TRAKT_DATA:
       _isLoadingTraktData = false;
+      _message = undefined;
       activityStore.emitChange();
       break;
     case ActionTypes.TOGGLE_ACTIVITY:

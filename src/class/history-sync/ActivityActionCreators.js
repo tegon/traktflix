@@ -2,6 +2,12 @@ import ViewingActivityAppDispatcher from '../../modules/history-sync/viewing-act
 import ActionTypes from '../../modules/history-sync/activity-constants';
 
 export default class ActivityActionCreators {
+  static finishLoadingSuggestions() {
+    ViewingActivityAppDispatcher.dispatch({
+      type: ActionTypes.FINISH_LOADING_SUGGESTIONS
+    });
+  }
+
   static resetActivities() {
     ViewingActivityAppDispatcher.dispatch({
       type: ActionTypes.RESET_ACTIVITIES

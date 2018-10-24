@@ -65,6 +65,12 @@
   "noMoreHistory": {
     "message": "There's no more items in your history. Refresh the page to go to the beginning."
   },
+  "disableScrobblingName": {
+    "message": "Disable scrobbling."
+  },
+  "disableScrobblingDescription": {
+    "message": "With this option enabled, the extension will not automatically scrobble what you're watching. This is useful if you prefer to sync your history later instead of scrobbling in real time."
+  },
   "allowGoogleAnalyticsName": {
     "message": "Allow Google Analytics to collect information about your usage of the extension."
   },
@@ -92,17 +98,29 @@
   "confirmClear": {
     "message": "Are you sure you want to clear your storage? This will reset all of the options to their default values and clear all of your data (you will have to login again)."
   },
+  "confirmClearTraktCache": {
+    "message": "Are you sure you want to clear your Trakt cache? Any items you have corrected will be reset."
+  },
   "clearOptionsSuccess": {
     "message": "Storage cleared."
   },
   "clearOptionsFailed": {
     "message": "Failed to clear storage."
   },
+  "clearTraktCacheSuccess": {
+    "message": "Trakt cache cleared."
+  },
+  "clearTraktCacheFailed": {
+    "message": "Failed to clear Trakt cache."
+  },
   "save": {
     "message": "Save"
   },
   "clearStorage": {
     "message": "Clear storage"
+  },
+  "clearTraktCache": {
+    "message": "Clear Trakt cache"
   },
   "notWatchingMessage1": {
     "message": "You're not watching anything right now :/"
@@ -181,5 +199,11 @@
   },
   "alreadySynced": {
     "message": "Already synced"
+  },
+  "suggestionCount": {
+    "message": "users have corrected this item to"
+  },
+  "useSuggestion": {
+    "message": "Use this suggestion."
   }
 }

@@ -22,8 +22,9 @@ class ViewingOptionsApp extends React.Component {
     this.state = Object.assign(state, {loading: state.options.length === 0});
   }
 
-  componentDidMount() {
+  async componentDidMount() {
     OptionsStore.addChangeListener(this._onChange.bind(this));
+    document.getElementById(`traktCacheSize`).textContent =  await this._getTraktCacheSize();
   }
 
   componentWillUnmount() {
@@ -35,6 +36,20 @@ class ViewingOptionsApp extends React.Component {
     if (this.state.message) {
       this.showSnackbar();
     }
+  }
+
+  async _getTraktCacheSize() {
+    const storage = await ChromeStorage.get(`traktCache`);
+    let size = (JSON.stringify(storage.traktCache) || ``).length;
+    if (size < 1024) {
+      return `${size.toFixed(2)} B`;
+    }
+    size /= 1024;
+    if (size < 1024) {
+      return `${size.toFixed(2)} KB`;
+    }
+    size /= 1024;
+    return `${size.toFixed(2)} MB`;
   }
 
   _onChange() {
@@ -67,6 +82,18 @@ class ViewingOptionsApp extends React.Component {
     }
   }
 
+  async _onClearTraktCacheClick() {
+    try {
+      const confirmationMessage = chrome.i18n.getMessage(`confirmClearTraktCache`);
+      if (confirm(confirmationMessage)) {
+        await ChromeStorage.remove(`traktCache`);
+      }
+      OptionsActionCreators.clearTraktCacheSuccess();
+    } catch (error) {
+      OptionsActionCreators.clearTraktCacheFailed(error);
+    }
+  }
+
   showSnackbar() {
     const snackbar = document.querySelector('.mdl-js-snackbar');
     snackbar.MaterialSnackbar.showSnackbar({message: this.state.message});
@@ -93,6 +120,11 @@ class ViewingOptionsApp extends React.Component {
             <button onClick={this._onClearClick.bind(this)}
                     className='mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect'>
               {chrome.i18n.getMessage(`clearStorage`)}
+            </button>
+
+            <button onClick={this._onClearTraktCacheClick.bind(this)}
+                    className='mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect'>
+              {chrome.i18n.getMessage(`clearTraktCache`)} (<span id='traktCacheSize'/>)
             </button>
           </div>
         </div>

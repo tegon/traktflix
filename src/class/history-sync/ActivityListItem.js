@@ -4,6 +4,7 @@ import ActivityActionCreators from './ActivityActionCreators';
 import TraktURLForm from './TraktURLForm';
 import TraktWebAPIUtils from './TraktWebAPIUtils';
 import TmdbImage from '../tmdb/TmdbImage';
+import Request from "../Request";
 
 class ActivityListItem extends React.Component {
   constructor(props) {
@@ -23,8 +24,24 @@ class ActivityListItem extends React.Component {
     this.setState({showTraktURLForm: true});
   }
 
-  _onSubmitTraktURL(activity, url) {
-    TraktWebAPIUtils.getActivityFromURL(activity, url);
+  async _onUseSuggestion(activity, url) {
+    await TraktWebAPIUtils.getActivityFromURL(activity, url);
+    this.setState({showTraktURLForm: false});
+  }
+
+  async _onSubmitTraktURL(activity, url) {
+    await TraktWebAPIUtils.getActivityFromURL(activity, url);
+    this.setState({showTraktURLForm: false});
+    Request.send({
+      method: `POST`,
+      params: {
+        id: TraktWebAPIUtils._getTraktCacheId(activity),
+        url
+      },
+      url: `https://script.google.com/macros/s/AKfycbxaD_VEcZVv9atICZm00TWvF3XqkwykWtlGE8Ne39EMcjW5m3w/exec`,
+      success: () => {},
+      error: () => {}
+    });
   }
 
   render() {
@@ -45,6 +62,15 @@ class ActivityListItem extends React.Component {
 
     let formId = `${netflix.id}--add`;
 
+    let suggestions = [];
+    if (activity.suggestions && activity.suggestions.length) {
+      for (const [index, suggestion] of activity.suggestions.entries()) {
+        suggestions.push(
+          <span key={index}><br/>{suggestion.count} {chrome.i18n.getMessage(`suggestionCount`)} <a href={`https://trakt.tv/${suggestion.url}`}>{suggestion.url}</a>. <a className='paste-trakt-url' onClick={() => this._onUseSuggestion(activity, suggestion.url)}>{chrome.i18n.getMessage(`useSuggestion`)}</a></span>
+        );
+      }
+    }
+
     return (
       <li className='mdl-list__item mdl-list__item--three-line'>
         <span className='mdl-list__item-primary-content'>
@@ -61,6 +87,7 @@ class ActivityListItem extends React.Component {
                    target='noopener noreferrer _blank'>{chrome.i18n.getMessage(`traktTitle`)}: {traktTitle}</a></span>
           <span className='mdl-list__item-text-body'>
             {chrome.i18n.getMessage(`netflixDate`)}: {netflix.date.format('MMMM Do YYYY, h:mm:ss a')} / {chrome.i18n.getMessage(`traktDate`)}: {traktDate}
+            {suggestions}
             <br/>
             {chrome.i18n.getMessage(`isThisWrong`)} <a className='paste-trakt-url'
                                                        onClick={this._onShowTraktURLForm.bind(this)}>{chrome.i18n.getMessage(`pasteTraktUrl`)}</a>

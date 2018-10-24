@@ -1,5 +1,6 @@
 import moment from 'moment';
 import Settings from '../../settings';
+import ChromeStorage from '../ChromeStorage';
 import Request from '../Request';
 import Search from '../Search';
 import ActivityActionCreators from './ActivityActionCreators';
@@ -53,9 +54,48 @@ export default class TraktWebAPIUtils {
     };
   }
 
+  static _getTraktCacheId(options) {
+    let id;
+    if (options.netflix.type === `show`) {
+      id = `${options.netflix.type}${options.netflix.title}${options.netflix.season || 0}${options.netflix.episode || 0}${options.netflix.epTitle}`;
+    } else {
+      id = `${options.netflix.type}${options.netflix.title}${options.netflix.year || ``}`;
+    }
+    return id
+      .toLowerCase()
+      .replace(/\s/g, ``);
+  }
+
+  static async setTraktCache(options) {
+    const id = TraktWebAPIUtils._getTraktCacheId(options);
+    const storage = await ChromeStorage.get(`traktCache`);
+    if (!storage.traktCache) {
+      storage.traktCache = `{}`;
+    }
+    storage.traktCache = JSON.parse(storage.traktCache);
+    storage.traktCache[id] = options.result.activity;
+    await ChromeStorage.set({traktCache: JSON.stringify(storage.traktCache)});
+  }
+
+  static async getTraktCache(options) {
+    const id = TraktWebAPIUtils._getTraktCacheId(options);
+    const storage = await ChromeStorage.get(`traktCache`);
+    if (!storage.traktCache) {
+      storage.traktCache = `{}`;
+    }
+    storage.traktCache = JSON.parse(storage.traktCache);
+    return storage.traktCache[id];
+  }
+
   static async getActivity(options) {
     try {
-      options.result = await TraktWebAPIUtils.searchItem(options);
+      const cache = await TraktWebAPIUtils.getTraktCache(options);
+      if (cache) {
+        options.result = {activity: cache};
+      } else {
+        options.result = await TraktWebAPIUtils.searchItem(options);
+        await TraktWebAPIUtils.setTraktCache(options);
+      }
       await TraktWebAPIUtils.getActivityHistory(options);
     } catch (error) {
       console.log(error);
@@ -116,12 +156,12 @@ export default class TraktWebAPIUtils {
         reject();
       }
 
-      const pathname = url.replace(`https://trakt.tv`, ``);
+      const pathname = url.replace(/^(https?:\/\/)?(www\.)?trakt\.tv\//, ``);
 
       // noinspection JSIgnoredPromiseFromCall
       Request.send({
         method: `GET`,
-        url: `${Settings.apiUri}${pathname}?extended=images`,
+        url: `${Settings.apiUri}/${pathname}?extended=images`,
         success: function (response) {
           const result = JSON.parse(response);
           const type = activity.netflix.type;
@@ -135,14 +175,20 @@ export default class TraktWebAPIUtils {
               success: function (res) {
                 result.show = JSON.parse(res);
                 TraktWebAPIUtils._parseActivityFromURL(activity, result, type)
-                  .then(ActivityActionCreators.updateActivity.bind(ActivityActionCreators))
+                  .then(options => {
+                    ActivityActionCreators.updateActivity(options);
+                    resolve();
+                  })
                   .catch(reject);
               },
               error: reject
             });
           } else {
             TraktWebAPIUtils._parseActivityFromURL(activity, result, type)
-              .then(ActivityActionCreators.updateActivity.bind(ActivityActionCreators))
+              .then(options => {
+                ActivityActionCreators.updateActivity(options);
+                resolve();
+              })
               .catch(reject);
           }
         },
@@ -151,8 +197,11 @@ export default class TraktWebAPIUtils {
     });
   }
 
-  static _parseActivityFromURL(activity, result, type) {
+  static async  _parseActivityFromURL(activity, result, type) {
     const traktActivity = Object.assign(result, {type: type});
-    return TraktWebAPIUtils.getActivityHistory(Object.assign({netflix: activity.netflix}, {result: {activity: traktActivity}}));
+    const options = Object.assign({netflix: activity.netflix}, {result: {activity: traktActivity}});
+    await TraktWebAPIUtils.setTraktCache(options);
+    await TraktWebAPIUtils.getActivityHistory(options);
+    return options;
   }
 }

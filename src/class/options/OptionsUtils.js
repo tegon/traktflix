@@ -4,6 +4,11 @@ import OptionsActionsCreators from './OptionsActionCreators';
 class OptionsUtils {
   constructor() {
     this.options = [{
+      id: `disableScrobbling`,
+      name: ``,
+      description: ``,
+      value: false
+    }, {
       id: `allowGoogleAnalytics`,
       name: ``,
       description: ``,

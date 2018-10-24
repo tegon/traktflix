@@ -65,6 +65,12 @@
   "noMoreHistory": {
     "message": "Não existem mais itens no seu histórico. Atualize a página para voltar ao início."
   },
+  "disableScrobblingName": {
+    "message": "Desativar scrobbling."
+  },
+  "disableScrobblingDescription": {
+    "message": "Com essa opção ativada, a extensão não realizará scrobble automático do que você está assistindo. Isso é útil se você prefere sincronizar o seu histórico mais tarde ao invés de fazer scrobble em tempo real."
+  },
   "allowGoogleAnalyticsName": {
     "message": "Permitir que o Google Analytics colete informações sobre o seu uso da extensão."
   },
@@ -92,11 +98,20 @@
   "confirmClear": {
     "message": "Tem certeza que deseja limpar o armazenamento? Isso resetará todas as opções para seus valores padrões e limpará todos os seus dados (você precisará entrar com o Trakt.tv novamente)."
   },
+  "confirmClearTraktCache": {
+    "message": "Tem certeza que deseja limpar seu cache do Trakt? Todos os itens que você corrigiu serão resetados."
+  },
   "clearOptionsSuccess": {
     "message": "Armazenamento limpado."
   },
   "clearOptionsFailed": {
     "message": "Ocorreu um erro ao limpar armazenamento."
+  },
+  "clearTraktCacheSuccess": {
+    "message": "Cache do Trakt limpado."
+  },
+  "clearTraktCacheFailed": {
+    "message": "Ocorreu um erro ao limpar o cache do Trakt."
   },
   "save": {
     "message": "Salvar"
@@ -181,5 +196,11 @@
   },
   "alreadySynced": {
     "message": "Já foi sincronizado"
+  },
+  "suggestionCount": {
+    "message": "usuários corrigiram esse item para"
+  },
+  "useSuggestion": {
+    "message": "Usar essa sugestão."
   }
 }

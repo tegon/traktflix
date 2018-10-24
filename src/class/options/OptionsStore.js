@@ -70,6 +70,15 @@ optionsStore.dispatchToken = ViewingOptionsAppDispatcher.register((action) => {
       _message = chrome.i18n.getMessage(`clearOptionsFailed`);
       optionsStore.emitChange();
       break;
+    case ActionTypes.CLEAR_TRAKT_CACHE_SUCCESS:
+      _message = chrome.i18n.getMessage(`clearTraktCacheSuccess`);
+      optionsStore.emitChange();
+      break;
+    case ActionTypes.CLEAR_TRAKT_CACHE_FAILED:
+      Rollbar.init().then(() => Rollbar.error(action));
+      _message = chrome.i18n.getMessage(`clearTraktCacheFailed`);
+      optionsStore.emitChange();
+      break;
   }
 });
 export default optionsStore;

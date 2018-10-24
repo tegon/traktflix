@@ -49,4 +49,17 @@ export default class OptionsActionCreators {
       error
     });
   }
+
+  static clearTraktCacheSuccess() {
+    ViewingOptionsAppDispatcher.dispatch({
+      type: ActionTypes.CLEAR_TRAKT_CACHE_SUCCESS
+    });
+  }
+
+  static clearTraktCacheFailed(error) {
+    ViewingOptionsAppDispatcher.dispatch({
+      type: ActionTypes.CLEAR_TRAKT_CACHE_FAILED,
+      error
+    });
+  }
 }

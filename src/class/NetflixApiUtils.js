@@ -68,6 +68,34 @@ const netflixApiUtils = {
         const parsedActivities = result.map(item => item.parsedItem);
         const promises = result.map(item => item.promise);
         ActivityActionCreators.receiveActivities(parsedActivities);
+        Request.send({
+          method: `GET`,
+          url: `https://script.google.com/macros/s/AKfycbxaD_VEcZVv9atICZm00TWvF3XqkwykWtlGE8Ne39EMcjW5m3w/exec?ids=${encodeURIComponent(JSON.stringify(parsedActivities.map(activity => TraktWebAPIUtils._getTraktCacheId(activity))))}`,
+          success: response => {
+            const json = JSON.parse(response);
+            for (const key in json) {
+              if (!json.hasOwnProperty(key)) {
+                continue;
+              }
+              const activity = parsedActivities.filter(parsedActivity => TraktWebAPIUtils._getTraktCacheId(parsedActivity) === key)[0];
+              if (activity) {
+                activity.suggestions = json[key].sort((a, b) => {
+                  if (a.count > b.count) {
+                    return -1;
+                  }
+                  if (b.count > a.count) {
+                    return 1;
+                  }
+                  return 0;
+                });
+              } else {
+                activity.suggestions = null;
+              }
+            }
+            ActivityActionCreators.finishLoadingSuggestions();
+          },
+          error: () => {}
+        });
         Promise.all(promises)
           .then(ActivityActionCreators.finishLoadingTraktData.bind(ActivityActionCreators));
       },
