@@ -97,7 +97,8 @@ const netflixApiUtils = {
           error: () => {}
         });
         Promise.all(promises)
-          .then(ActivityActionCreators.finishLoadingTraktData.bind(ActivityActionCreators));
+          .then(ActivityActionCreators.finishLoadingTraktData.bind(ActivityActionCreators))
+          .catch(ActivityActionCreators.finishLoadingTraktDataError.bind(ActivityActionCreators));
       },
       error: (response, status) => {
         ActivityActionCreators.receiveActivitiesFailed(response, status);

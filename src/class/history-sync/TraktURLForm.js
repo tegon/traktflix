@@ -21,12 +21,12 @@ class TraktURLForm extends React.Component {
     const content = (
       <div style={{display: display}}>
         <div className='mdl-textfield mdl-js-textfield mdl-textfield--floating-label'>
-          <input className='mdl-textfield__input' type='text' id={formId} onChange={this._onChange.bind(this)}/>
-          <label className='mdl-textfield__label' htmlFor={formId}>{chrome.i18n.getMessage(`pasteTraktUrl2`)}</label>
+          <label className='mdl-textfield__label' htmlFor={formId}>{chrome.i18n.getMessage(this.props.error ? `pasteTraktUrlError` : `pasteTraktUrl2`)}</label>
+          <input className='mdl-textfield__input' type='text' id={formId} onChange={this._onChange.bind(this)} disabled={this.props.click}/>
         </div>
-        <button className='mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect'
+        <button className='mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect' disabled={this.props.click}
                 onClick={this._onSubmit.bind(this)}>
-          {chrome.i18n.getMessage(`updateItem`)}
+          {chrome.i18n.getMessage(this.props.isUpdating || this.props.click ? `updatingItem` : `updateItem`)}
         </button>
       </div>
     );
@@ -36,6 +36,9 @@ class TraktURLForm extends React.Component {
 
 TraktURLForm.propTypes = {
   activity: PropTypes.object,
+  click: PropTypes.bool,
+  error: PropTypes.bool,
+  isUpdating: PropTypes.bool,
   onSubmit: PropTypes.func,
   show: PropTypes.bool
 };

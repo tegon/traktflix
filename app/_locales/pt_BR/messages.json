@@ -47,8 +47,14 @@
   "pasteTraktUrl2": {
     "message": "Cole o endereço do Trakt.tv para o item correto"
   },
+  "pasteTraktUrlError": {
+    "message": "Um erro aconteceu, por favor verifique se você está digitando um endereço válido e tente novamente"
+  },
   "updateItem": {
     "message": "Atualizar item"
+  },
+  "updatingItem": {
+    "message": "Atualizando..."
   },
   "confirmSync": {
     "message": "Tem certeza que deseja prosseguir? Alguns itens podem estar errados ou duplicados, é altamente recomendável revisá-los antes de confirmar."
@@ -118,6 +124,9 @@
   },
   "clearStorage": {
     "message": "Limpar armazenamento"
+  },
+  "clearTraktCache": {
+    "message": "Limpar cache do Trakt"
   },
   "notWatchingMessage1": {
     "message": "Você não está assistindo nada no momento :/"
@@ -202,5 +211,11 @@
   },
   "useSuggestion": {
     "message": "Usar essa sugestão."
+  },
+  "loadingTraktData": {
+    "message": "Carregando dados do Trakt..."
+  },
+  "loadingTraktDataFailed": {
+    "message": "Não foi possível carregar os dados do Trakt."
   }
 }

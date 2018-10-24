@@ -43,3 +43,12 @@
 .mdl-list__item--three-line .mdl-list__item-text-body {
   height: auto;
 }
+
+.loading-trakt, .loading-trakt >*:not(.mdl-spinner)  {
+  height: 50px;
+}
+
+.mdl-textfield__label {
+  position: static;
+  white-space:  normal;
+}

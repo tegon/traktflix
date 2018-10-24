@@ -13,6 +13,7 @@ export default class ViewingActivityApp extends React.Component {
     return {
       activities: ActivityStore.getAll(),
       isLoadingTraktData: ActivityStore.isLoadingTraktData(),
+      isLoadingTraktDataError: ActivityStore.isLoadingTraktDataError(),
       loading: ActivityStore.isLoading(),
       message: ActivityStore.getMessage(),
       page: ActivityStore.getPage()
@@ -78,8 +79,11 @@ export default class ViewingActivityApp extends React.Component {
     } else if (this.state.activities.length) {
       content = (
         <div>
-          <div style={{display: this.state.isLoadingTraktData ? 'block' : 'none'}}>
-            Loading Trakt data... <div className='mdl-spinner mdl-spinner--single-color mdl-js-spinner is-active'/>
+          <div className={'loading-trakt'} style={{display: this.state.isLoadingTraktData ? 'block' : 'none'}}>
+            {chrome.i18n.getMessage(`loadingTraktData`)} <div className='mdl-spinner mdl-spinner--single-color mdl-js-spinner is-active'/>
+          </div>
+          <div style={{display: this.state.isLoadingTraktDataError ? 'block' : 'none'}}>
+            {chrome.i18n.getMessage(`loadingTraktDataFailed`)}
           </div>
           <span className='mdl-list__item-secondary-action'>
             <label className='mdl-switch mdl-js-switch mdl-js-ripple-effect' htmlFor='toggle-all'>

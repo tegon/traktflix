@@ -99,6 +99,7 @@ export default class TraktWebAPIUtils {
       await TraktWebAPIUtils.getActivityHistory(options);
     } catch (error) {
       console.log(error);
+      throw error;
     }
   }
 

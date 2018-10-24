@@ -9,7 +9,7 @@ import Request from "../Request";
 class ActivityListItem extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {showTraktURLForm: false};
+    this.state = {isUpdating: false, showTraktURLForm: false, traktClick: false, traktError: false};
   }
 
   componentDidMount() {
@@ -21,27 +21,32 @@ class ActivityListItem extends React.Component {
   }
 
   _onShowTraktURLForm() {
-    this.setState({showTraktURLForm: true});
+    this.setState({isUpdating: false, showTraktURLForm: true, traktClick: false, traktError: false});
   }
 
   async _onUseSuggestion(activity, url) {
-    await TraktWebAPIUtils.getActivityFromURL(activity, url);
-    this.setState({showTraktURLForm: false});
+    this.setState({showTraktURLForm: true, traktClick: true});
+    this._onSubmitTraktURL(activity, url);
   }
 
   async _onSubmitTraktURL(activity, url) {
-    await TraktWebAPIUtils.getActivityFromURL(activity, url);
-    this.setState({showTraktURLForm: false});
-    Request.send({
-      method: `POST`,
-      params: {
-        id: TraktWebAPIUtils._getTraktCacheId(activity),
-        url
-      },
-      url: `https://script.google.com/macros/s/AKfycbxaD_VEcZVv9atICZm00TWvF3XqkwykWtlGE8Ne39EMcjW5m3w/exec`,
-      success: () => {},
-      error: () => {}
-    });
+    this.setState({isUpdating: true});
+    try {
+      await TraktWebAPIUtils.getActivityFromURL(activity, url);
+      this.setState({showTraktURLForm: false});
+      Request.send({
+        method: `POST`,
+        params: {
+          id: TraktWebAPIUtils._getTraktCacheId(activity),
+          url
+        },
+        url: `https://script.google.com/macros/s/AKfycbxaD_VEcZVv9atICZm00TWvF3XqkwykWtlGE8Ne39EMcjW5m3w/exec`,
+        success: () => {},
+        error: () => {}
+      });
+    } catch (error) {
+      this.setState({isUpdating: false, traktError: true});
+    }
   }
 
   render() {
@@ -91,8 +96,8 @@ class ActivityListItem extends React.Component {
             <br/>
             {chrome.i18n.getMessage(`isThisWrong`)} <a className='paste-trakt-url'
                                                        onClick={this._onShowTraktURLForm.bind(this)}>{chrome.i18n.getMessage(`pasteTraktUrl`)}</a>
-            <TraktURLForm activity={activity} show={this.state.showTraktURLForm}
-                          onSubmit={this._onSubmitTraktURL.bind(this)}/>
+            <TraktURLForm activity={activity} show={this.state.showTraktURLForm} error={this.state.traktError} isUpdating={this.state.isUpdating}
+                          click={this.state.traktClick} onSubmit={this._onSubmitTraktURL.bind(this)}/>
           </span>
         </span>
         <span className='mdl-list__item-secondary-action' style={{display: activity.alreadyOnTrakt ? 'block' : 'none'}}>

@@ -47,8 +47,14 @@
   "pasteTraktUrl2": {
     "message": "Paste the Trakt.tv link to the correct item"
   },
+  "pasteTraktUrlError": {
+    "message": "An error happened, please make sure you are entering a valid URL and try again"
+  },
   "updateItem": {
     "message": "Update item"
+  },
+  "updatingItem": {
+    "message": "Updating..."
   },
   "confirmSync": {
     "message": "Are you sure you want to proceed? Some items may be wrong or duplicated, it is highly recommended that you review them before."
@@ -205,5 +211,11 @@
   },
   "useSuggestion": {
     "message": "Use this suggestion."
+  },
+  "loadingTraktData": {
+    "message": "Loading Trakt data..."
+  },
+  "loadingTraktDataFailed": {
+    "message": "Failed to load Trakt data."
   }
 }
