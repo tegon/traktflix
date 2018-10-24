@@ -59,7 +59,7 @@ In `Javascript (cors) origins:` put `http://www.netflix.com,  moz-extension:// a
 
 Copy the `config.json` example file and change Trakt.tv credentials:
 ```bash
-cp config.json.dev config.json
+cp config.dev.json config.json
 ```
 
 Use [nvm](https://github.com/creationix/nvm) to run in the correct version of node
