@@ -22,7 +22,6 @@ module.exports = config => {
     webpack: webpackConfig
   };
   if (process.env.TRAVIS) {
-    configuration.browsers = [`Firefox`];
     configuration.reporters = [`progress`, `coverage`];
     configuration.coverageReporter = {
       dir: `coverage/`,
