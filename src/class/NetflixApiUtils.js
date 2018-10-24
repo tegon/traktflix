@@ -58,7 +58,7 @@ const netflixApiUtils = {
     // noinspection JSIgnoredPromiseFromCall
     Request.send({
       method: `GET`,
-      url: `${NETFLIX_API_HOST}/${this.buildIdentifier}/viewingactivity?authURL=${this.authUrl}&pg=${page}`,
+      url: `${NETFLIX_API_HOST}/${this.buildIdentifier}/viewingactivity?languages=en-US&authURL=${this.authUrl}&pg=${page}`,
       success: async response => {
         /**
          * @property {[]} viewedItems
@@ -97,8 +97,7 @@ const netflixApiUtils = {
           error: () => {}
         });
         Promise.all(promises)
-          .then(ActivityActionCreators.finishLoadingTraktData.bind(ActivityActionCreators))
-          .catch(ActivityActionCreators.finishLoadingTraktDataError.bind(ActivityActionCreators));
+          .then(ActivityActionCreators.finishLoadingTraktData.bind(ActivityActionCreators));
       },
       error: (response, status) => {
         ActivityActionCreators.receiveActivitiesFailed(response, status);
@@ -175,7 +174,7 @@ const netflixApiUtils = {
           authURL: this.authUrl,
           paths: activities.map(activity => [`videos`, activity.movieID, [`releaseYear`, `summary`]])
         },
-        url: `${NETFLIX_API_HOST}/${this.buildIdentifier}/pathEvaluator`,
+        url: `${NETFLIX_API_HOST}/${this.buildIdentifier}/pathEvaluator?languages=en-US`,
         success: response => {
           const json = JSON.parse(response);
           activities = activities.map(activity => {
@@ -202,7 +201,7 @@ const netflixApiUtils = {
       await this.activateAPI();
       Request.send({
         method: `GET`,
-        url: `${NETFLIX_API_HOST}/${this.buildIdentifier}/metadata?movieid=${id}`,
+        url: `${NETFLIX_API_HOST}/${this.buildIdentifier}/metadata?languages=en-US&movieid=${id}`,
         success: response => {
           resolve(this.parseMetadata(response));
         },

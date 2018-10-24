@@ -217,5 +217,8 @@
   },
   "loadingTraktDataFailed": {
     "message": "Failed to load Trakt data."
+  },
+  "notFoundTrakt": {
+    "message": "Not found on Trakt"
   }
 }

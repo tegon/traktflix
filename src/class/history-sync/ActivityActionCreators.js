@@ -41,12 +41,6 @@ export default class ActivityActionCreators {
     });
   }
 
-  static finishLoadingTraktDataError() {
-    ViewingActivityAppDispatcher.dispatch({
-      type: ActionTypes.FINISH_LOADING_TRAKT_DATA_ERROR
-    });
-  }
-
   static toggleActivity(activity, value) {
     ViewingActivityAppDispatcher.dispatch({
       type: ActionTypes.TOGGLE_ACTIVITY,

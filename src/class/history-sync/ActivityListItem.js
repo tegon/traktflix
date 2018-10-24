@@ -100,10 +100,13 @@ class ActivityListItem extends React.Component {
                           click={this.state.traktClick} onSubmit={this._onSubmitTraktURL.bind(this)}/>
           </span>
         </span>
+        <span className='mdl-list__item-secondary-action' style={{display: !trakt ? 'block' : 'none'}}>
+          {chrome.i18n.getMessage(`notFoundTrakt`)}
+        </span>
         <span className='mdl-list__item-secondary-action' style={{display: activity.alreadyOnTrakt ? 'block' : 'none'}}>
           {chrome.i18n.getMessage(`alreadySynced`)}
         </span>
-        <span className='mdl-list__item-secondary-action' style={{display: activity.alreadyOnTrakt ? 'none' : 'block'}}>
+        <span className='mdl-list__item-secondary-action' style={{display: !trakt || activity.alreadyOnTrakt ? 'none' : 'block'}}>
           <label className='mdl-switch mdl-js-switch mdl-js-ripple-effect' htmlFor={formId}>
             <input type='checkbox' id={formId} className='mdl-switch__input activity-item-switch' checked={activity.add}
                    onChange={this._onChange.bind(this)}/>

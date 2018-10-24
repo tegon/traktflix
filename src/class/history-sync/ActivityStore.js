@@ -8,7 +8,6 @@ let _page = 0;
 let _activities = [];
 let _isLoading = false;
 let _isLoadingTraktData = true;
-let _isLoadingTraktDataError = false;
 let _message = undefined;
 
 class ActivityStore extends EventEmitter {
@@ -34,10 +33,6 @@ class ActivityStore extends EventEmitter {
 
   isLoadingTraktData() {
     return _isLoadingTraktData;
-  }
-
-  isLoadingTraktDataError() {
-    return _isLoadingTraktDataError;
   }
 
   getMessage() {
@@ -91,13 +86,6 @@ activityStore.dispatchToken = ViewingActivityAppDispatcher.register((action) => 
       activityStore.emitChange();
       break;
     case ActionTypes.FINISH_LOADING_TRAKT_DATA:
-      _isLoadingTraktDataError = false;
-      _isLoadingTraktData = false;
-      _message = undefined;
-      activityStore.emitChange();
-      break;
-    case ActionTypes.FINISH_LOADING_TRAKT_DATA_ERROR:
-      _isLoadingTraktDataError = true;
       _isLoadingTraktData = false;
       _message = undefined;
       activityStore.emitChange();

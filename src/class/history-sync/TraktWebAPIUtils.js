@@ -34,12 +34,12 @@ export default class TraktWebAPIUtils {
   }
 
   static activitiesPayload(activities) {
-    const activitiesToAdd = activities.filter((activity) => activity.add);
+    const activitiesToAdd = activities.filter(activity => activity.add);
     const movies = activitiesToAdd
-      .filter((activity) => activity.trakt && activity.trakt.type === `movie`)
+      .filter(activity => activity.trakt && activity.trakt.type === `movie`)
       .map(TraktWebAPIUtils.activityPayload.bind(TraktWebAPIUtils));
     const episodes = activitiesToAdd
-      .filter((activity) => activity.trakt && activity.trakt.type === `show`)
+      .filter(activity => activity.trakt && activity.trakt.type === `show`)
       .map(TraktWebAPIUtils.activityPayload.bind(TraktWebAPIUtils));
 
     return {movies: movies, episodes: episodes};
@@ -99,7 +99,6 @@ export default class TraktWebAPIUtils {
       await TraktWebAPIUtils.getActivityHistory(options);
     } catch (error) {
       console.log(error);
-      throw error;
     }
   }
 
