@@ -1,48 +1,50 @@
 import Item from '../src/class/Item';
 
-const antMan = new Item({
-  title: `Ant-Man`, type: `movie`, year: 2015
-});
-const theFlash = new Item({
-  episode: 1,
-  epTitle: `Pilot`,
-  season: 1,
-  title: `The Flash`,
-  type: `show`
-});
-
 describe(`Item`, () => {
-  it(`creates a new movie`, () => {
-    expect(antMan.title).toBe(`Ant-Man`);
-    expect(antMan.type).toBe(`movie`);
-    expect(antMan.year).toBe(2015);
-  });
-
   it(`creates a new show`, () => {
-    expect(theFlash.title).toBe(`The Flash`);
-    expect(theFlash.type).toBe(`show`);
-    expect(theFlash.year).toBeUndefined();
-    expect(theFlash.epTitle).toBe(`Pilot`);
-    expect(theFlash.season).toBe(1);
-    expect(theFlash.episode).toBe(1);
+    const theFlash = new Item({
+      episode: 1,
+      epTitle: `Pilot`,
+      season: 1,
+      title: `The Flash`,
+      type: `show`
+    });
+    expect(theFlash.episode).to.equal(1);
+    expect(theFlash.epTitle).to.equal(`Pilot`);
+    expect(theFlash.isCollection).to.be.undefined;
+    expect(theFlash.season).to.equal(1);
+    expect(theFlash.title).to.equal(`The Flash`);
+    expect(theFlash.type).to.equal(`show`);
+    expect(theFlash.year).to.be.undefined;
   });
 
-  it(`returns the full title`, () => {
+  it(`creates a new movie`, () => {
+    const antMan = new Item({
+      title: `Ant-Man`,
+      type: `movie`,
+      year: 2015
+    });
+    expect(antMan.title).to.equal(`Ant-Man`);
+    expect(antMan.type).to.equal(`movie`);
+    expect(antMan.year).to.equal(2015);
+  });
+
+  it(`returns the correct title`, () => {
     const starWars = new Item({
       episode: 1,
       epTitle: `Ambush`,
+      season: 1,
       title: `Star Wars: The Clone Wars`,
-      type: `show`,
-      season: 1
+      type: `show`
     });
     const theOffice = new Item({
       episode: 1,
       epTitle: `Pilot`,
+      season: 1,
       title: `The Office (U.S.)`,
-      type: `show`,
-      season: 1
+      type: `show`
     });
-    expect(starWars.title).toBe(`"Star Wars: The Clone Wars"`);
-    expect(theOffice.title).toBe(`The Office (US)`);
+    expect(starWars.title).to.equal(`"Star Wars: The Clone Wars"`);
+    expect(theOffice.title).to.equal(`The Office (US)`);
   });
 });

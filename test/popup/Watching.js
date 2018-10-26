@@ -1,62 +1,51 @@
+import {mount} from '../../test-helpers/EnzymeHelper';
 import chrome from 'sinon-chrome/extensions';
 import React from 'react';
-import TestUtils from 'react-dom/test-utils';
 import Watching from '../../src/class/popup/Watching';
 
 global.chrome = chrome;
 
-const itemPoster = {title: `Item title`, images: {poster: {thumb: `http://images.foo/screenshot`}}};
-const watchingPoster = TestUtils.renderIntoDocument(
-  <Watching item={itemPoster}/>
-);
-const itemScreenshot = {title: `Item title`, images: {background: {thumb: `http://images.foo/screenshot`}}};
-const watchingScreenshot = TestUtils.renderIntoDocument(
-  <Watching item={itemScreenshot}/>
+const item = {title: `Test`};
+const component = mount(
+  <Watching item={item}/>
 );
 
 describe(`Watching`, () => {
-  beforeAll(() => {
+  before(() => {
     global.chrome = chrome;
   });
 
-  it(`text content equals props.item.title`, () => {
-    const span = TestUtils.findRenderedDOMComponentWithTag(watchingPoster, `span`);
-    expect(itemPoster.title).toContain(span.textContent);
-  });
-
-  it(`card div must have thumb in background style`, () => {
-    const card = TestUtils.findRenderedDOMComponentWithClass(watchingPoster, `mdl-card mdl-shadow--2dp watching-card-thumb`);
-    expect(card.style[`background-image`]).toContain(`https://trakt.tv/assets/placeholders/thumb/poster-2d5709c1b640929ca1ab60137044b152.png`);
-  });
-
-  it(`when item does not have a poster image, screenshot is used`, () => {
-    const card = TestUtils.findRenderedDOMComponentWithClass(watchingScreenshot, `mdl-card mdl-shadow--2dp watching-card-thumb`);
-    expect(card.style[`background-image`]).toContain(`https://trakt.tv/assets/placeholders/thumb/poster-2d5709c1b640929ca1ab60137044b152.png`);
-  });
-
-  it(`has the correct html classes`, () => {
-    const card = TestUtils.findRenderedDOMComponentWithClass(watchingPoster, `mdl-card mdl-shadow--2dp watching-card-thumb`);
-    const cardTitle = TestUtils.findRenderedDOMComponentWithClass(watchingPoster, `mdl-card__title mdl-card--expand`);
-    const cardActions = TestUtils.findRenderedDOMComponentWithClass(watchingPoster, `mdl-card__actions`);
-    const thumbTitle = TestUtils.findRenderedDOMComponentWithClass(watchingPoster, `watching-card-thumb__title`);
-    expect(card.className).toBe(`mdl-card mdl-shadow--2dp watching-card-thumb`);
-    expect(cardTitle.className).toBe(`mdl-card__title mdl-card--expand`);
-    expect(cardActions.className).toBe(`mdl-card__actions`);
-    expect(thumbTitle.className).toBe(`watching-card-thumb__title`);
+  after(() => {
+    component.unmount();
+    chrome.flush();
+    delete global.chrome;
   });
 
   it(`sends analytics appView`, () => {
-    expect(chrome.runtime.sendMessage.callCount).toEqual(2);
-    expect(chrome.runtime.sendMessage.getCall(0).args).toEqual([{
-      type: `sendAppView`, view: `Watching ${itemPoster.title}`
-    }]);
-    expect(chrome.runtime.sendMessage.getCall(1).args).toEqual([{
-      type: `sendAppView`, view: `Watching ${itemScreenshot.title}`
+    expect(chrome.runtime.sendMessage.callCount).to.equal(1);
+    expect(chrome.runtime.sendMessage.args[0]).to.deep.equal([{
+      type: `sendAppView`, view: `Watching ${item.title}`
     }]);
   });
 
-  afterAll(() => {
-    chrome.flush();
-    delete global.chrome;
+  it(`has the correct html classes`, () => {
+    const card = component.find(`.mdl-card.mdl-shadow--2dp.watching-card-thumb`).hostNodes();
+    const cardTitle = component.find(`.mdl-card__title.mdl-card--expand`);
+    const cardActions = component.find(`.mdl-card__actions`);
+    const thumbTitle = component.find(`.watching-card-thumb__title`);
+    expect(card.hasClass(`mdl-card mdl-shadow--2dp watching-card-thumb`)).to.be.true;
+    expect(cardTitle.hasClass(`mdl-card__title mdl-card--expand`)).to.be.true;
+    expect(cardActions.hasClass(`mdl-card__actions`)).to.be.true;
+    expect(thumbTitle.hasClass(`watching-card-thumb__title`)).to.be.true;
+  });
+
+  it(`text content equals props.item.title`, () => {
+    const span = component.find(`span`);
+    expect(span.text()).to.equal(item.title);
+  });
+
+  it(`card div must have thumb in background style`, () => {
+    const card = component.find(`.mdl-card.mdl-shadow--2dp.watching-card-thumb`).hostNodes();
+    expect(card.getDOMNode().style.backgroundImage).to.equal(`url("https://trakt.tv/assets/placeholders/thumb/poster-2d5709c1b640929ca1ab60137044b152.png")`);
   });
 });

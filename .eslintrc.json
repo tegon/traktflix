@@ -2,7 +2,7 @@
   "env": {
     "browser": true,
     "es6": true,
-    "jasmine": true,
+    "mocha": true,
     "node": true,
     "webextensions": true
   },
@@ -10,13 +10,16 @@
     "eslint:recommended",
     "plugin:react/recommended"
   ],
+  "globals": {
+    "expect": false
+  },
   "parser": "babel-eslint",
   "parserOptions": {
     "ecmaVersion": 9,
     "sourceType": "module"
   },
   "plugins": [
-    "jasmine",
+    "mocha",
     "sinon"
   ],
   "rules": {

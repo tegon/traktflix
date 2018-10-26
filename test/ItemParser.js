@@ -1,46 +1,79 @@
 import sinon from 'sinon';
 import ItemParser from '../src/class/ItemParser';
-
-const callback = sinon.spy();
+import NetflixApiUtils from '../src/class/NetflixApiUtils';
 
 describe(`ItemParser`, () => {
-  beforeEach(() => {
-    callback.resetHistory();
+  before(() => {
+    sinon.spy(ItemParser, `isReady`);
   });
 
-  it(`isReady() returns true when URL indicates the user is watching something`, () => {
+  afterEach(() => {
+    ItemParser.isReady.resetHistory();
+  });
+
+  after(() => {
+    ItemParser.isReady.restore();
+  });
+
+  it(`isReady() returns true when the URL indicates that the user is watching something`, () => {
+    const url = `/watch/12345678`;
+    sinon.stub(ItemParser, `getLocation`).returns(url);
+    expect(ItemParser.isReady()).to.be.true;
+    expect(ItemParser.getLocation.callCount).to.equal(1);
+    expect(ItemParser.getLocation.returnValues[0]).to.equal(url);
+    ItemParser.getLocation.restore();
+  });
+
+  it(`isReady() returns false when the URL indicates that the user is not watching something`, () => {
+    const url = `/browse`;
+    sinon.stub(ItemParser, `getLocation`).returns(url);
+    expect(ItemParser.isReady()).to.be.false;
+    expect(ItemParser.getLocation.callCount).to.equal(1);
+    expect(ItemParser.getLocation.returnValues[0]).to.equal(url);
+    ItemParser.getLocation.restore();
+  });
+
+  it(`start() resolves immediately`, async () => {
     sinon.stub(ItemParser, `getLocation`).returns(`/watch/12345678`);
-    expect(ItemParser.isReady()).toBeTruthy();
+    sinon.stub(NetflixApiUtils, `getMetadata`).withArgs(`12345678`).resolves(`Test`);
+    const result = await ItemParser.start();
+    expect(ItemParser.isReady.callCount).to.equal(1);
+    expect(ItemParser.isReady.returnValues[0]).to.be.true;
+    expect(NetflixApiUtils.getMetadata.callCount).to.equal(1);
+    expect(NetflixApiUtils.getMetadata.args[0]).to.deep.equal([`12345678`]);
+    expect(result).to.equal(`Test`);
+    NetflixApiUtils.getMetadata.restore();
     ItemParser.getLocation.restore();
   });
 
-  it(`isReady() returns false when URL indicates the user is not watching something`, () => {
-    sinon.stub(ItemParser, `getLocation`).returns(`/browse`);
-    expect(ItemParser.isReady()).toBeFalsy();
-    ItemParser.getLocation.restore();
-  });
-
-  it(`start() waits until the URL changes`, done => {
-    sinon.stub(ItemParser, `getLocation`).returns(`/browse`);
-    ItemParser.start(callback);
-    ItemParser.getLocation.restore();
-    sinon.stub(ItemParser, `parse`).callsFake(callback => callback());
-    sinon.stub(ItemParser, `getLocation`).returns(`/watch/12345678`);
+  it(`start() waits until the URL changes`, async () => {
+    const stub = sinon.stub(ItemParser, `getLocation`);
+    stub.returns(`/browse`);
+    sinon.stub(NetflixApiUtils, `getMetadata`).withArgs(`12345678`).resolves(`Test`);
     setTimeout(() => {
-      expect(ItemParser.isReady()).toBeTruthy();
-      expect(callback.callCount).toBe(1);
-      ItemParser.getLocation.restore();
-      ItemParser.parse.restore();
-      done();
+      stub.returns(`/watch/12345678`);
     }, 500);
+    const result = await ItemParser.start();
+    expect(ItemParser.isReady.callCount).to.equal(2);
+    expect(ItemParser.isReady.returnValues[0]).to.be.false;
+    expect(ItemParser.isReady.returnValues[1]).to.be.true;
+    expect(NetflixApiUtils.getMetadata.callCount).to.equal(1);
+    expect(NetflixApiUtils.getMetadata.args[0]).to.deep.equal([`12345678`]);
+    expect(result).to.equal(`Test`);
+    NetflixApiUtils.getMetadata.restore();
+    ItemParser.getLocation.restore();
   });
 
-  it(`start() does not find a matching URL after timeout`, done => {
+  it(`start() does not detect a URL change after timeout`, done => {
     sinon.stub(ItemParser, `getLocation`).returns(`/browse`);
-    ItemParser.start(callback);
+    sinon.stub(NetflixApiUtils, `getMetadata`);
+    ItemParser.start();
     setTimeout(() => {
-      expect(ItemParser.isReady()).toBeFalsy();
-      expect(callback.callCount).toBe(0);
+      expect(ItemParser.isReady.callCount).to.equal(2);
+      expect(ItemParser.isReady.returnValues[0]).to.be.false;
+      expect(ItemParser.isReady.returnValues[1]).to.be.false;
+      expect(NetflixApiUtils.getMetadata.callCount).to.equal(0);
+      NetflixApiUtils.getMetadata.restore();
       ItemParser.getLocation.restore();
       done();
     }, 500);

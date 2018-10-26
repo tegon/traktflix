@@ -1,6 +1,6 @@
 // This was necessary to prioritize Star Wars: The Clone Wars (2008) over Star Wars: Clone Wars (2003).
-// I left this object because it could be useful for other movies/shows 
-const fullTitles = {
+// I left this object because it could be useful for other movies/shows.
+const correctTitles = {
   [`Star Wars: The Clone Wars`]: `"Star Wars: The Clone Wars"`,
   [`The Office (U.S.)`]: `The Office (US)`,
   [`The Blind Side`]: `"The Blind Side"`,
@@ -15,7 +15,7 @@ const fullTitles = {
 
 export default class Item {
   constructor(options) {
-    this.title = fullTitles[options.title] || options.title;
+    this.title = correctTitles[options.title] || options.title;
     this.type = options.type;
     this.year = options.year;
     if (this.type === `show`) {

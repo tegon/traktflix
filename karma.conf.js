@@ -14,7 +14,7 @@ module.exports = config => {
     files: [
       `test/**/*.js`
     ],
-    frameworks: [`jasmine`],
+    frameworks: [`mocha`, `chai`],
     preprocessors: {
       [`test/**/*.js`]: [`webpack`]
     },

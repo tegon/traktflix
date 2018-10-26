@@ -19,20 +19,11 @@ export default class Scrobble {
     this.startProgressTimeout();
   }
 
-  startProgressTimeout() {
-    this.progressChangeInterval = setTimeout(() => {
-      this.onProgressChange();
-      clearTimeout(this.progressChangeInterval);
-      this.startProgressTimeout();
-    }, 1000);
-  }
-
-  stopProgressTimeout() {
-    clearInterval(this.progressChangeInterval);
-  }
-
-  onProgressChange() {
-    this.webScrubber();
+  getRemainingTime() {
+    const timeLabel = document.querySelector(`time`);
+    if (timeLabel) {
+      return parseInt(timeLabel.textContent.replace(`:`, ``).replace(`:`, ``));
+    }
   }
 
   webScrubber() {
@@ -43,91 +34,29 @@ export default class Scrobble {
       }
       this.baseTime = this.getRemainingTime();
     }
-    if (!scrubber) {
-      return;
-    }
-    const currentPercentage = 100 - parseFloat(scrubber.style.width);
-    if (currentPercentage !== this.basePercentage) {
-      this.basePercentage = currentPercentage;
-      this.baseTime = this.getRemainingTime();
-    }
-    const newProgress = 100 - ((this.basePercentage * this.getRemainingTime()) / this.baseTime);
-    if (newProgress > 0) {
-      this.progress = newProgress;
-    }
-  }
-
-  getRemainingTime() {
-    const timeLabel = document.querySelector(`time`);
-    if (timeLabel) {
-      return parseInt(timeLabel.textContent.replace(`:`, ``).replace(`:`, ``));
-    }
-  }
-
-  _sendScrobble(options) {
-    let resolve;
-    const secondPromise = new Promise(_resolve => resolve = _resolve);
-    const params = this.item;
-    params.progress = this.progress;
-    // noinspection JSIgnoredPromiseFromCall
-    return [Request.send({
-      method: `POST`,
-      url: `${this.url}${options.path}`,
-      params,
-      success: async () => {
-        await this.getItemInfo(options.path, true);
-        this.success();
-        resolve();
-      },
-      error: async () => {
-        await this.getItemInfo(options.path);
-        this.error();
-        resolve();
+    if (scrubber) {
+      const currentPercentage = 100 - parseFloat(scrubber.style.width);
+      if (currentPercentage !== this.basePercentage) {
+        this.basePercentage = currentPercentage;
+        this.baseTime = this.getRemainingTime();
       }
-    }), secondPromise];
-  }
-
-  async getItemInfo(path, success) {
-    if (!this.item) {
-      return;
-    }
-    const title = (this.item.episode && `${this.item.episode.show.title} - ${this.item.episode.title}`) || (this.item.movie && this.item.movie.title);
-    if (!title) {
-      return;
-    }
-    const data = await ChromeStorage.get(`options`);
-    if (data.options && data.options.showNotifications) {
-      if (success) {
-        let message = ``;
-        switch (path) {
-          case `/start`:
-            message = chrome.i18n.getMessage(`scrobbleStarted`);
-            break;
-          case `/pause`:
-            message = chrome.i18n.getMessage(`scrobblePaused`);
-            break;
-          case `/stop`:
-            message = chrome.i18n.getMessage(`scrobbleStopped`);
-            break;
-        }
-        this.showNotification(`traktflix: ${title}`, message);
-      } else {
-        this.showErrorNotification(`${chrome.i18n.getMessage(`couldNotScrobble`)} ${title}`);
+      const newProgress = 100 - ((this.basePercentage * this.getRemainingTime()) / this.baseTime);
+      if (newProgress > 0) {
+        this.progress = newProgress;
       }
     }
   }
 
-  start() {
-    return this._sendScrobble({path: `/start`});
+  onProgressChange() {
+    this.webScrubber();
   }
 
-  pause() {
-    return this._sendScrobble({path: `/pause`});
-  }
-
-  stop() {
-    this.stopProgressTimeout();
-    return this._sendScrobble({path: `/stop`});
+  startProgressTimeout() {
+    this.progressChangeInterval = setTimeout(() => {
+      this.onProgressChange();
+      clearTimeout(this.progressChangeInterval);
+      this.startProgressTimeout();
+    }, 1000);
   }
 
   showNotification(title, message) {
@@ -136,5 +65,69 @@ export default class Scrobble {
 
   showErrorNotification(message) {
     chrome.runtime.sendMessage({type: `showErrorNotification`, message});
+  }
+
+  async getItemInfo(path, success) {
+    if (this.item) {
+      const title = (this.item.episode && `${this.item.episode.show.title} - ${this.item.episode.title}`) || (this.item.movie && this.item.movie.title);
+      if (title) {
+        const data = await ChromeStorage.get(`options`);
+        if (data.options && data.options.showNotifications) {
+          if (success) {
+            let message = ``;
+            switch (path) {
+              case `/start`:
+                message = chrome.i18n.getMessage(`scrobbleStarted`);
+                break;
+              case `/pause`:
+                message = chrome.i18n.getMessage(`scrobblePaused`);
+                break;
+              case `/stop`:
+                message = chrome.i18n.getMessage(`scrobbleStopped`);
+                break;
+            }
+            this.showNotification(`traktflix: ${title}`, message);
+          } else {
+            this.showErrorNotification(`${chrome.i18n.getMessage(`couldNotScrobble`)} ${title}`);
+          }
+        }
+      }
+    }
+  }
+
+  stopProgressTimeout() {
+    clearInterval(this.progressChangeInterval);
+  }
+
+  _sendScrobble(options) {
+    const params = this.item;
+    params.progress = this.progress;
+    // noinspection JSIgnoredPromiseFromCall
+    Request.send({
+      method: `POST`,
+      url: `${this.url}${options.path}`,
+      params,
+      success: async () => {
+        await this.getItemInfo(options.path, true);
+        this.success();
+      },
+      error: async () => {
+        await this.getItemInfo(options.path);
+        this.error();
+      }
+    });
+  }
+
+  start() {
+    this._sendScrobble({path: `/start`});
+  }
+
+  pause() {
+    this._sendScrobble({path: `/pause`});
+  }
+
+  stop() {
+    this._sendScrobble({path: `/stop`});
+    this.stopProgressTimeout();
   }
 }

@@ -7,8 +7,8 @@ const value = `Bar`;
 
 describe(`Analytics`, () => {
   it(`does not throw error when tracker is not set`, () => {
-    expect(Analytics.sendAppView(view)).toBe(undefined);
-    expect(Analytics.sendEvent(name, value)).toBe(undefined);
+    expect(Analytics.sendAppView(view)).to.be.undefined;
+    expect(Analytics.sendEvent(name, value)).to.be.undefined;
   });
 
   it(`setTracker() sets the tracker`, () => {
@@ -17,18 +17,18 @@ describe(`Analytics`, () => {
       sendEvent: sinon.stub()
     };
     Analytics.setTracker(tracker);
-    expect(Analytics.tracker).toBe(tracker);
+    expect(Analytics.tracker).to.equal(tracker);
   });
 
   it(`sendAppView() sends app view`, () => {
     Analytics.sendAppView(view);
-    expect(Analytics.tracker.sendAppView.callCount).toBe(1);
-    expect(Analytics.tracker.sendAppView.getCall(0).args).toEqual([view]);
+    expect(Analytics.tracker.sendAppView.callCount).to.equal(1);
+    expect(Analytics.tracker.sendAppView.args[0]).to.deep.equal([view]);
   });
 
   it(`sendEvent() sends event`, () => {
     Analytics.sendEvent(name, value);
-    expect(Analytics.tracker.sendEvent.callCount).toBe(1);
-    expect(Analytics.tracker.sendEvent.getCall(0).args).toEqual([name, value]);
+    expect(Analytics.tracker.sendEvent.callCount).to.equal(1);
+    expect(Analytics.tracker.sendEvent.args[0]).to.deep.equal([name, value]);
   });
 });

@@ -1,29 +1,34 @@
+import {mount} from '../../test-helpers/EnzymeHelper';
 import React from 'react';
-import TestUtils from 'react-dom/test-utils';
 import Loading from '../../src/class/popup/Loading';
 
-const loadingTrue = TestUtils.renderIntoDocument(
+const componentTrue = mount(
   <Loading show={true}/>
 );
-const loadingFalse = TestUtils.renderIntoDocument(
+const componentFalse = mount(
   <Loading show={false}/>
 );
 
 describe(`Loading`, () => {
-  it(`.spinner-wrapper has display: empty style when props.show is true`, () => {
-    const spinnerWrapper = TestUtils.findRenderedDOMComponentWithClass(loadingTrue, `spinner-wrapper`);
-    expect(spinnerWrapper.style[`display`]).toBe(``);
-  });
-
-  it(`.spinner-wrapper has display: none style when props.show is false`, () => {
-    const spinnerWrapper = TestUtils.findRenderedDOMComponentWithClass(loadingFalse, 'spinner-wrapper');
-    expect(spinnerWrapper.style[`display`]).toBe(`none`);
+  after(() => {
+    componentTrue.unmount();
+    componentFalse.unmount();
   });
 
   it(`has the correct html classes`, () => {
-    const spinnerWrapper = TestUtils.findRenderedDOMComponentWithClass(loadingTrue, `spinner-wrapper`);
-    const spinner = TestUtils.findRenderedDOMComponentWithClass(loadingTrue, `mdl-spinner mdl-spinner--single-color mdl-js-spinner is-active`);
-    expect(spinnerWrapper.className).toBe(`spinner-wrapper`);
-    expect(spinner.className).toBe(`mdl-spinner mdl-spinner--single-color mdl-js-spinner is-active`);
+    const spinnerWrapper = componentTrue.find(`.spinner-wrapper`);
+    const spinner = componentTrue.find(`.mdl-spinner.mdl-spinner--single-color.mdl-js-spinner.is-active`);
+    expect(spinnerWrapper.hasClass(`spinner-wrapper`)).to.be.true;
+    expect(spinner.hasClass(`mdl-spinner mdl-spinner--single-color mdl-js-spinner is-active`)).to.be.true;
+  });
+
+  it(`.spinner-wrapper has display: empty style when props.show is true`, () => {
+    const spinnerWrapper = componentTrue.find(`.spinner-wrapper`);
+    expect(spinnerWrapper.getDOMNode().style.display).to.equal(``);
+  });
+
+  it(`.spinner-wrapper has display: none style when props.show is false`, () => {
+    const spinnerWrapper = componentFalse.find(`.spinner-wrapper`);
+    expect(spinnerWrapper.getDOMNode().style.display).to.equal(`none`);
   });
 });

@@ -1,208 +1,262 @@
-import chrome from 'sinon-chrome/extensions';
 import sinon from 'sinon';
+import chrome from 'sinon-chrome/extensions';
 import Search from '../src/class/Search';
 import Settings from '../src/settings.js';
 
-const success = sinon.spy();
-const error = sinon.spy();
-const rocky = {title: `Rocky`, type: `movie`, year: 2005};
+const rocky = {
+  title: `Rocky`,
+  type: `movie`,
+  year: 2005
+};
+const madMen = {
+  episode: 1,
+  season: 1,
+  title: `Mad Men`,
+  type: `show`
+};
+const narcos = {
+  epTitle: `The Sword of Simón Bolívar`,
+  season: 1,
+  title: `Narcos`,
+  type: `show`
+};
+const comedians = {
+  episode: 1,
+  epTitle: `Zach Galifianakis: From The Third Reich To You`,
+  isCollection: true,
+  season: 1,
+  title: `Comedians in Cars Getting Coffee`,
+  type: `show`
+};
 const movieSearch = new Search({item: rocky});
-const comedians = {type: `show`, season: 1, episode: 1, title: `Comedians in Cars Getting Coffee`, epTitle: `Bill Maher`, isCollection: true};
-const madMen = {type: `show`, season: 1, episode: 1, title: `Mad Men`};
-const narcos = {type: `show`, season: 1, title: `Narcos`, epTitle: `The Sword of Simón Bolívar`};
-const collectionSearch = new Search({item: comedians});
 const episodeSearch = new Search({item: madMen});
 const episodeSearchByTitle = new Search({item: narcos});
+const collectionSearch = new Search({item: comedians});
 
 let server = null;
 
-describe(`Search`, function () {
-  beforeAll(() => {
+describe(`Search`, () => {
+  before(() => {
     global.chrome = chrome;
     chrome.storage.local.get.withArgs(`data`).yields({data: {access_token: `12345abcde`}});
   });
 
   beforeEach(() => {
     server = sinon.fakeServer.create();
+    server.autoRespond = true;
   });
 
   afterEach(() => {
     server.restore();
-    success.resetHistory();
-    error.resetHistory();
+  });
+
+  after(() => {
+    chrome.flush();
+    delete global.chrome;
   });
 
   it(`constructor() sets properties`, () => {
-    expect(movieSearch.item).toBe(rocky);
-    expect(movieSearch.url).toBe(`${Settings.apiUri}/search`);
-    expect(movieSearch.showsUrl).toBe(`${Settings.apiUri}/shows`);
+    expect(movieSearch.item).to.equal(rocky);
+    expect(movieSearch.url).to.equal(`${Settings.apiUri}/search`);
+    expect(movieSearch.showsUrl).to.equal(`${Settings.apiUri}/shows`);
   });
 
   it(`getUrl() returns search url`, () => {
-    expect(movieSearch.getUrl()).toBe(`${Settings.apiUri}/search/${rocky.type}?query=${rocky.title}`);
+    expect(movieSearch.getUrl()).to.equal(`${Settings.apiUri}/search/${rocky.type}?query=${rocky.title}`);
+  });
+
+  it(`findItem() returns first search result`, done => {
+    server.respondWith(`GET`, `${Settings.apiUri}/search/${madMen.type}?query=${encodeURIComponent(madMen.title)}`, [200, {[`Content-Type`]: `application/json`}, `[{ "show": { "title": "Mad Men" } }, { "show": { "title": "Mad Women" } }]`]);
+    const success = response => {
+      expect(response).to.deep.equal({show: {title: `Mad Men`}});
+      done();
+    };
+    const error = () => {
+      done.fail();
+    };
+    episodeSearch.findItem({success, error});
+  });
+
+  it(`findItem() returns exact match for movies with same title from different years`, done => {
+    server.respondWith(`GET`, `${Settings.apiUri}/search/${rocky.type}?query=${encodeURIComponent(rocky.title)}`, [200, {[`Content-Type`]: `application/json`}, `[{ "movie": { "title": "Rocky", "year": 2000 } }, { "movie": { "title": "Rocky", "year": 2005 } }]`]);
+    const success = response => {
+      expect(response).to.deep.equal({movie: {title: `Rocky`, year: 2005}});
+      done();
+    };
+    const error = () => {
+      done.fail();
+    };
+    movieSearch.findItem({success, error});
+  });
+
+  it(`findItem() returns error callback when data is undefined`, done => {
+    server.respondWith(`GET`, `${Settings.apiUri}/search/${rocky.type}?query=${encodeURIComponent(rocky.title)}`, [200, {[`Content-Type`]: `application/json`}, `[]`]);
+    const success = () => {
+      done.fail();
+    };
+    const error = status => {
+      expect(status).to.equal(404);
+      done();
+    };
+    movieSearch.findItem({success, error});
+  });
+
+  it(`findItem() returns error callback`, done => {
+    server.respondWith(`GET`, `${Settings.apiUri}/search/${rocky.type}?query=${encodeURIComponent(rocky.title)}`, [400, {[`Content-Type`]: `application/json`}, `{ "errors": "Bad Request" }`]);
+    const success = () => {
+      done.fail();
+    };
+    const error = (status, response, opts) => {
+      expect(status).to.equal(400);
+      expect(response).to.equal(`{ "errors": "Bad Request" }`);
+      expect(opts).to.deep.equal({method: `GET`, url: `https://api.trakt.tv/search/movie?query=Rocky`, params: undefined});
+      done();
+    };
+    movieSearch.findItem({success, error});
   });
 
   it(`getEpisodeUrl() uses episode URL when item is a collection`, () => {
-    expect(collectionSearch.getEpisodeUrl(`comedians-in-cars-getting-coffee`)).toBe(`${Settings.apiUri}/search/episode?query=${encodeURIComponent(comedians.epTitle)}`);
+    expect(collectionSearch.getEpisodeUrl(`comedians-in-cars-getting-coffee`)).to.equal(`${Settings.apiUri}/search/episode?query=${encodeURIComponent(comedians.epTitle)}`);
   });
 
-  it(`getEpisodeUrl() uses episode number when item has an episode number`, () => {
-    expect(episodeSearch.getEpisodeUrl(`mad-men`)).toBe(`${Settings.apiUri}/shows/mad-men/seasons/${madMen.season}/episodes/${madMen.episode}?extended=images`);
+  it(`getEpisodeUrl() uses episode number when item has one`, () => {
+    expect(episodeSearch.getEpisodeUrl(`mad-men`)).to.equal(`${Settings.apiUri}/shows/mad-men/seasons/${madMen.season}/episodes/${madMen.episode}?extended=images`);
   });
 
   it(`getEpisodeUrl() gets all episodes when item does not have an episode number`, () => {
-    expect(episodeSearchByTitle.getEpisodeUrl(`narcos`)).toBe(`${Settings.apiUri}/shows/narcos/seasons/${madMen.season}?extended=images`);
-  });
-
-  it(`findItem() returns first search result`, async done => {
-    server.respondWith(`GET`, `${Settings.apiUri}/search/${madMen.type}?query=${encodeURIComponent(madMen.title)}`, [200, {[`Content-Type`]: `application/json`}, `[{ "show": { "title": "Mad Men" } }, { "show": { "title": "Mad Women" } }]`]);
-    await episodeSearch.findItem({success, error});
-    server.respond();
-    expect(error.callCount).toBe(0);
-    expect(success.callCount).toBe(1);
-    expect(success.getCall(0).args).toEqual([{show: {title: `Mad Men`}}]);
-    done();
-  });
-
-  it(`findItem() returns exact match for movies with same title from different years`, async done => {
-    server.respondWith(`GET`, `${Settings.apiUri}/search/${rocky.type}?query=${encodeURIComponent(rocky.title)}`, [200, {[`Content-Type`]: `application/json`}, `[{ "movie": { "title": "Rocky", "year": 2000 } }, { "movie": { "title": "Rocky", "year": 2005 } }]`]);
-    await movieSearch.findItem({success, error});
-    server.respond();
-    expect(error.callCount).toBe(0);
-    expect(success.callCount).toBe(1);
-    expect(success.getCall(0).args).toEqual([{movie: {title: `Rocky`, year: 2005}}]);
-    done();
-  });
-
-  it(`findItem() returns error callback when data is undefined`, async done => {
-    server.respondWith(`GET`, `${Settings.apiUri}/search/${rocky.type}?query=${encodeURIComponent(rocky.title)}`, [200, {[`Content-Type`]: `application/json`}, `[]`]);
-    await movieSearch.findItem({success, error});
-    server.respond();
-    expect(success.callCount).toBe(0);
-    expect(error.callCount).toBe(1);
-    expect(error.getCall(0).args).toEqual([404]);
-    done();
-  });
-
-  it(`findItem() returns error callback`, async done => {
-    server.respondWith(`GET`, `${Settings.apiUri}/search/${rocky.type}?query=${encodeURIComponent(rocky.title)}`, [400, {[`Content-Type`]: `application/json`}, `{ "errors": "Bad Request" }`]);
-    await movieSearch.findItem({success, error});
-    server.respond();
-    expect(success.callCount).toBe(0);
-    expect(error.callCount).toBe(1);
-    expect(error.getCall(0).args).toEqual([400, `{ "errors": "Bad Request" }`,
-      {method: `GET`, url: `https://api.trakt.tv/search/movie?query=Rocky`, params: undefined}]);
-    done();
+    expect(episodeSearchByTitle.getEpisodeUrl(`narcos`)).to.equal(`${Settings.apiUri}/shows/narcos/seasons/${narcos.season}?extended=images`);
   });
 
   it(`formatEpisodeTitle() formats title`, () => {
-    expect(episodeSearchByTitle.formatEpisodeTitle(narcos.epTitle)).toBe(`swordofsimónbolívar`);
+    expect(episodeSearchByTitle.formatEpisodeTitle(narcos.epTitle)).to.equal(`swordofsimónbolívar`);
   });
 
-  it(`findEpisode() returns first search result`, async done => {
+  it(`findEpisode() returns first search result`, done => {
     server.respondWith(`GET`, `${Settings.apiUri}/search/${madMen.type}?query=${encodeURIComponent(madMen.title)}`, [200, {[`Content-Type`]: `application/json`}, `[{ "show": { "title": "Mad Men", "ids": { "slug": "mad-men" } } }]`]);
     server.respondWith(`GET`, `${Settings.apiUri}/shows/mad-men/seasons/${madMen.season}/episodes/${madMen.episode}?extended=images`, [200, {[`Content-Type`]: `application/json`}, `{ "title": "Ladies Room", "season": 1, "number": 2 }`]);
-    const [promise1, promise2] = episodeSearch.findEpisode({success, error});
-    await promise1;
-    server.respond();
-    await promise2;
-    server.respond();
-    expect(error.callCount).toBe(0);
-    expect(success.callCount).toBe(1);
-    expect(success.getCall(0).args).toEqual([{
-      title: `Ladies Room`, season: 1, number: 2,
-      show: {
-        title: `Mad Men`, ids: {slug: `mad-men`}
-      }
-    }]);
-    done();
+    const success = response => {
+      expect(response).to.deep.equal({
+        title: `Ladies Room`, season: 1, number: 2,
+        show: {
+          title: `Mad Men`, ids: {slug: `mad-men`}
+        }
+      });
+      done();
+    };
+    const error = () => {
+      done.fail();
+    };
+    episodeSearch.findEpisode({success, error});
   });
 
-  it(`findEpisode() returns first search result with same title`, async done => {
+  it(`findEpisode() returns first search result with same title when item is a collection`, done => {
+    server.respondWith(`GET`, `${Settings.apiUri}/search/${comedians.type}?query=${encodeURIComponent(comedians.title)}`, [200, {[`Content-Type`]: `application/json`}, `[{ "show": { "title": "Comedians in Cars Getting Coffee", "ids": { "slug": "comedians-in-cars-getting-coffee" } } }]`]);
+    server.respondWith(`GET`, `${Settings.apiUri}/search/episode?query=${encodeURIComponent(comedians.epTitle)}`, [200, {[`Content-Type`]: `application/json`}, `[{ "type": "episode", "episode": { "season": 10, "number": 1, "title": "Zach Galifianakis: From The Third Reich To You" } }]`]);
+    const success = response => {
+      expect(response).to.deep.equal({
+        title: `Zach Galifianakis: From The Third Reich To You`, season: 10, number: 1,
+        show: {
+          title: `Comedians in Cars Getting Coffee`, ids: {slug: `comedians-in-cars-getting-coffee`}
+        }
+      });
+      done();
+    };
+    const error = () => {
+      done.fail();
+    };
+    collectionSearch.findEpisode({success, error});
+  });
+
+  it(`findEpisode() returns first search result with same title`, done => {
     server.respondWith(`GET`, `${Settings.apiUri}/search/${narcos.type}?query=${encodeURIComponent(narcos.title)}`, [200, {[`Content-Type`]: `application/json`}, `[{ "show": { "title": "Narcos", "ids": { "slug": "narcos" } } }]`]);
     server.respondWith(`GET`, `${Settings.apiUri}/shows/narcos/seasons/${narcos.season}?extended=images`, [200, {[`Content-Type`]: `application/json`}, `[{ "season": 1, "number": 1, "title": "Descenso" }, { "season": 1, "number": 2, "title": "The Sword of Simón Bolívar" }]`]);
-    const [promise1, promise2] = episodeSearchByTitle.findEpisode({success, error});
-    await promise1;
-    server.respond();
-    await promise2;
-    server.respond();
-    expect(error.callCount).toBe(0);
-    expect(success.callCount).toBe(1);
-    expect(success.getCall(0).args).toEqual([{
-      title: `The Sword of Simón Bolívar`, season: 1, number: 2,
-      show: {
-        title: `Narcos`, ids: {slug: `narcos`}
-      }
-    }]);
-    done();
+    const success = response => {
+      expect(response).to.deep.equal({
+        title: `The Sword of Simón Bolívar`, season: 1, number: 2,
+        show: {
+          title: `Narcos`, ids: {slug: `narcos`}
+        }
+      });
+      done();
+    };
+    const error = () => {
+      done.fail();
+    };
+    episodeSearchByTitle.findEpisode({success, error});
   });
 
-  it(`findEpisode() returns error callback when an episode with same title was not found`, async done => {
+  it(`findEpisode() returns error callback when an episode with same title was not found`, done => {
     server.respondWith(`GET`, `${Settings.apiUri}/search/${narcos.type}?query=${encodeURIComponent(narcos.title)}`, [200, {[`Content-Type`]: `application/json`}, `[{ "show": { "title": "Narcos", "ids": { "slug": "narcos" } } }]`]);
     server.respondWith(`GET`, `${Settings.apiUri}/shows/narcos/seasons/${narcos.season}?extended=images`, [200, {[`Content-Type`]: `application/json`}, `[{ "season": 1, "number": 1, "title": "Descenso" }, { "season": 1, "number": 3, "title": "The Men of Always" }]`]);
-    const [promise1, promise2] = episodeSearchByTitle.findEpisode({success, error});
-    await promise1;
-    server.respond();
-    await promise2;
-    server.respond();
-    expect(success.callCount).toBe(0);
-    expect(error.callCount).toBe(1);
-    expect(error.getCall(0).args).toEqual([404, `Episode not found.`,
-      {
+    const success = () => {
+      done.fail();
+    };
+    const error = (status, error, response) => {
+      expect(status).to.equal(404);
+      expect(error).to.equal(`Episode not found.`);
+      expect(response).to.deep.equal({
         show: {show: {title: `Narcos`, ids: {slug: `narcos`}}},
         item: {type: `show`, season: 1, title: `Narcos`, epTitle: `The Sword of Simón Bolívar`}
-      }]);
-    done();
+      });
+      done();
+    };
+    episodeSearchByTitle.findEpisode({success, error});
   });
 
-  it(`findEpisode() returns error callback`, async done => {
+  it(`findEpisode() returns error callback on first request`, done => {
+    server.respondWith(`GET`, `${Settings.apiUri}/search/${madMen.type}?query=${encodeURIComponent(madMen.title)}`, [400, {[`Content-Type`]: `application/json`}, `{ "errors": "Bad Request" }`]);
+    const success = () => {
+      done.fail();
+    };
+    const error = (status, error, response) => {
+      expect(status).to.equal(400);
+      expect(error).to.equal(`{ "errors": "Bad Request" }`);
+      expect(response).to.deep.equal({
+        url: `https://api.trakt.tv/search/show?query=Mad%20Men`,
+        method: `GET`,
+        params: undefined
+      });
+      done();
+    };
+    episodeSearch.findEpisode({success, error});
+  });
+
+  it(`findEpisode() returns error callback on second request`, done => {
     server.respondWith(`GET`, `${Settings.apiUri}/search/${madMen.type}?query=${encodeURIComponent(madMen.title)}`, [200, {[`Content-Type`]: `application/json`}, `[{ "show": { "title": "Mad Men", "ids": { "slug": "mad-men" } } }]`]);
     server.respondWith(`GET`, `${Settings.apiUri}/shows/mad-men/seasons/${madMen.season}/episodes/${madMen.episode}?extended=images`, [400, {[`Content-Type`]: `application/json`}, `{ "errors": "Bad Request" }`]);
-    const [promise1, promise2] = episodeSearch.findEpisode({success, error});
-    await promise1;
-    server.respond();
-    await promise2;
-    server.respond();
-    expect(success.callCount).toBe(0);
-    expect(error.callCount).toBe(1);
-    expect(error.getCall(0).args).toEqual([400, `{ "errors": "Bad Request" }`,
-      {
+    const success = () => {
+      done.fail();
+    };
+    const error = (status, error, response) => {
+      expect(status).to.equal(400);
+      expect(error).to.equal(`{ "errors": "Bad Request" }`);
+      expect(response).to.deep.equal({
         url: `https://api.trakt.tv/shows/mad-men/seasons/1/episodes/1?extended=images`,
         method: `GET`,
         params: undefined
-      }]);
-    done();
-  });
-
-  it(`findEpisode() returns error callback on second request`, async done => {
-    server.respondWith(`GET`, `${Settings.apiUri}/search/${madMen.type}?query=${encodeURIComponent(madMen.title)}`, [400, {[`Content-Type`]: `application/json`}, `{ "errors": "Bad Request" }`]);
-    const [promise1, promise2] = episodeSearch.findEpisode({success, error});
-    await promise1;
-    server.respond();
-    await promise2;
-    expect(success.callCount).toBe(0);
-    expect(error.callCount).toBe(1);
-    expect(error.getCall(0).args).toEqual([400, `{ "errors": "Bad Request" }`,
-      {url: `https://api.trakt.tv/search/show?query=Mad%20Men`, method: `GET`, params: undefined}]);
-    done();
+      });
+      done();
+    };
+    episodeSearch.findEpisode({success, error});
   });
 
   it(`find() calls findEpisode() when item type is show`, () => {
-    episodeSearch.findEpisode = sinon.spy();
+    sinon.stub(episodeSearch, `findEpisode`);
+    const success = () => {};
+    const error = () => {};
     episodeSearch.find({success, error});
-    expect(episodeSearch.findEpisode.callCount).toBe(1);
-    expect(episodeSearch.findEpisode.getCall(0).args).toEqual([{success, error}]);
+    expect(episodeSearch.findEpisode.callCount).to.equal(1);
+    expect(episodeSearch.findEpisode.args[0]).to.deep.equal([{success, error}]);
+    episodeSearch.findEpisode.restore();
   });
 
   it(`find() calls findItem() when item type is movie`, () => {
-    movieSearch.findItem = sinon.spy();
+    sinon.stub(movieSearch, `findItem`);
+    const success = () => {};
+    const error = () => {};
     movieSearch.find({success, error});
-    expect(movieSearch.findItem.callCount).toBe(1);
-    expect(movieSearch.findItem.getCall(0).args).toEqual([{success, error}]);
-  });
-
-  afterAll(() => {
-    chrome.flush();
-    delete global.chrome;
+    expect(movieSearch.findItem.callCount).to.equal(1);
+    expect(movieSearch.findItem.args[0]).to.deep.equal([{success, error}]);
+    movieSearch.findItem.restore();
   });
 });

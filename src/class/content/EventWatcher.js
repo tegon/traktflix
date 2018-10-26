@@ -6,21 +6,22 @@ export default class EventWatcher {
     this.url = location.href;
   }
 
-  startListeners() {
-    this.addStopListener();
-    this.addUrlChangeListener();
-  }
-
-  stopListeners() {
-    this.removeStopListener();
-    this.removeUrlChangeListener();
-  }
-
   addStopListener() {
     window.onbeforeunload = window.onunload = () => {
       this.onStop();
       this.stopListeners();
     };
+  }
+
+  onUrlChange(oldUrl, newUrl) {
+    if (/watch/.test(oldUrl) && /watch/.test(newUrl)) {
+      this.onStop();
+      this.onPlay();
+    } else if (/watch/.test(oldUrl) && !/watch/.test(newUrl)) {
+      this.onStop();
+    } else if (!/watch/.test(oldUrl) && /watch/.test(newUrl)) {
+      this.onPlay();
+    }
   }
 
   addUrlChangeListener() {
@@ -35,15 +36,9 @@ export default class EventWatcher {
     }.bind(this), 500);
   }
 
-  onUrlChange(oldUrl, newUrl) {
-    if (/watch/.test(oldUrl) && /watch/.test(newUrl)) {
-      this.onStop();
-      this.onPlay();
-    } else if (/watch/.test(oldUrl) && !/watch/.test(newUrl)) {
-      this.onStop();
-    } else if (!/watch/.test(oldUrl) && /watch/.test(newUrl)) {
-      this.onPlay();
-    }
+  startListeners() {
+    this.addStopListener();
+    this.addUrlChangeListener();
   }
 
   removeStopListener() {
@@ -53,5 +48,10 @@ export default class EventWatcher {
 
   removeUrlChangeListener() {
     clearInterval(this.urlChangeInterval);
+  }
+
+  stopListeners() {
+    this.removeStopListener();
+    this.removeUrlChangeListener();
   }
 }

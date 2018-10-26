@@ -11,33 +11,26 @@ class ItemParser {
   }
 
   isReady() {
+    let isReady = false;
     const matches = this.getLocation().match(/watch\/(\d+)/);
     if (matches) {
       this.id = matches[1];
-      return true;
+      isReady = true;
     }
-    return false;
+    return isReady;
   }
 
-  parse(callback) {
-    NetflixApiUtils.getMetadata(this.id)
-      .then(callback);
-  }
-
-  start(callback) {
-    let readyTimeout;
+  async checkIsReady(resolve) {
     if (this.isReady()) {
-      this.parse(callback);
+      const data = await NetflixApiUtils.getMetadata(this.id);
+      resolve(data);
     } else {
-      readyTimeout = setTimeout(() => {
-        if (this.isReady()) {
-          clearTimeout(readyTimeout);
-          this.parse(callback);
-        } else {
-          this.start(callback);
-        }
-      }, 500);
+      setTimeout(this.checkIsReady.bind(this), 500, resolve);
     }
+  }
+
+  start() {
+    return new Promise(resolve => this.checkIsReady(resolve));
   }
 }
 

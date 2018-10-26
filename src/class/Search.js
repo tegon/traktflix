@@ -12,20 +12,10 @@ export default class Search {
     return `${this.url}/${this.item.type}?query=${encodeURIComponent(this.item.title)}`;
   }
 
-  getEpisodeUrl(slug) {
-    if (this.item.isCollection && this.item.epTitle) {
-      return `${this.url}/episode?query=${encodeURIComponent(this.item.epTitle)}`;
-    }
-    if (this.item.episode) {
-      return `${this.showsUrl}/${slug}/seasons/${this.item.season}/episodes/${this.item.episode}?extended=images`;
-    }
-    return `${this.showsUrl}/${slug}/seasons/${this.item.season}?extended=images`;
-  }
-
   findItem(options) {
     // noinspection JSIgnoredPromiseFromCall
     const _this = this;
-    return Request.send({
+    Request.send({
       method: `GET`,
       url: this.getUrl(),
       success: function (response) {
@@ -46,6 +36,18 @@ export default class Search {
         options.error.call(this, status, response, opts);
       }
     });
+  }
+
+  getEpisodeUrl(slug) {
+    let url;
+    if (this.item.isCollection && this.item.epTitle) {
+      url = `${this.url}/episode?query=${encodeURIComponent(this.item.epTitle)}`;
+    } else if (this.item.episode) {
+      url = `${this.showsUrl}/${slug}/seasons/${this.item.season}/episodes/${this.item.episode}?extended=images`;
+    } else {
+      url = `${this.showsUrl}/${slug}/seasons/${this.item.season}?extended=images`;
+    }
+    return url;
   }
 
   formatEpisodeTitle(title) {
@@ -75,34 +77,29 @@ export default class Search {
   }
 
   findEpisode(options) {
-    let resolve;
-    const secondPromise = new Promise(_resolve => resolve = _resolve);
     const _this = this;
-    return [this.findItem({
+    this.findItem({
       success: function (response) {
         // noinspection JSIgnoredPromiseFromCall
         Request.send({
           method: `GET`,
           url: _this.getEpisodeUrl(response.show.ids.slug),
           success: function (resp) {
-            if (this.item.isCollection && this.item.epTitle) {
+            if ((this.item.isCollection && this.item.epTitle) || !this.item.episode) {
               _this.findEpisodeByTitle(response, resp, options);
-            } else  if (this.item.episode) {
-              options.success.call(this, Object.assign(JSON.parse(resp), response));
             } else {
-              _this.findEpisodeByTitle(response, resp, options);
+              options.success.call(this, Object.assign(JSON.parse(resp), response));
             }
           }.bind(this),
           error: function (st, resp, opts) {
             options.error.call(this, st, resp, opts);
           }
-        }).then(resolve);
+        });
       }.bind(this),
       error: function (status, response, opts) {
         options.error.call(this, status, response, opts);
-        resolve();
       }
-    }), secondPromise];
+    });
   }
 
   find(options) {

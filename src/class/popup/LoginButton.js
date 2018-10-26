@@ -22,11 +22,11 @@ class LoginButton extends React.Component {
   }
 
   getButtonStyle() {
+    let style = {};
     if (this.props.loading) {
-      return {display: 'none'};
-    } else {
-      return {};
+      style.display = `none`;
     }
+    return style;
   }
 
   render() {

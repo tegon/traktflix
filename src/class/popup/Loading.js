@@ -8,11 +8,11 @@ class Loading extends React.Component {
   }
 
   getSpinnerStyle() {
-    if (this.props.show) {
-      return {};
-    } else {
-      return {display: 'none'};
+    let style = {};
+    if (!this.props.show) {
+      style.display = `none`;
     }
+    return style;
   }
 
   render() {

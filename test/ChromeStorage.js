@@ -1,144 +1,99 @@
-import chrome from 'sinon-chrome/extensions';
 import sinon from 'sinon';
+import chrome from 'sinon-chrome/extensions';
 import ChromeStorage from '../src/class/ChromeStorage';
 
-const callback = sinon.spy();
 const key = `foo`;
 const value = {
   foo: `bar`
 };
 
 describe(`ChromeStorage`, () => {
-  beforeAll(() => {
+  before(() => {
     global.chrome = chrome;
   });
 
   afterEach(() => {
     chrome.flush();
-    callback.resetHistory();
+  });
+
+  after(() => {
+    chrome.flush();
+    delete global.chrome;
   });
 
   describe(`when chrome.tabs is defined`, () => {
     it(`.isAvailable() returns true`, () => {
-      expect(ChromeStorage.isAvailable()).toBe(true);
+      expect(ChromeStorage.isAvailable()).to.be.true;
     });
 
-    it(`set() calls chrome.storage.local.set()`, async done => {
+    it(`set() calls chrome.storage.local.set()`, async () => {
       chrome.storage.local.set.withArgs(value).yields();
-      const promise = ChromeStorage.set(value);
-      promise.then(callback);
-      await Promise.all([promise]);
-      expect(callback.callCount).toBe(1);
-      expect(callback.getCall(0).args).toEqual([undefined]);
-      expect(chrome.storage.local.set.callCount).toBe(1);
-      expect(chrome.storage.local.set.getCall(0).args.length).toBe(2);
-      expect(chrome.storage.local.set.getCall(0).args[0]).toEqual(value);
-      done();
+      const result = await ChromeStorage.set(value);
+      expect(chrome.storage.local.set.callCount).to.equal(1);
+      expect(result).to.be.undefined;
     });
 
-    it(`get() calls chrome.storage.local.get()`, async done => {
+    it(`get() calls chrome.storage.local.get()`, async () => {
       chrome.storage.local.get.withArgs(key).yields(value);
-      const promise = ChromeStorage.get(key);
-      promise.then(callback);
-      await Promise.all([promise]);
-      expect(callback.callCount).toBe(1);
-      expect(callback.getCall(0).args).toEqual([value]);
-      expect(chrome.storage.local.get.callCount).toBe(1);
-      expect(chrome.storage.local.get.getCall(0).args.length).toBe(2);
-      expect(chrome.storage.local.get.getCall(0).args[0]).toBe(key);
-      done();
+      const result = await ChromeStorage.get(key);
+      expect(chrome.storage.local.get.callCount).to.equal(1);
+      expect(result).to.equal(value);
     });
 
-    it(`remove() calls chrome.storage.local.remove()`, async done => {
+    it(`remove() calls chrome.storage.local.remove()`, async () => {
       chrome.storage.local.remove.withArgs(key).yields();
-      const promise = ChromeStorage.remove(key);
-      promise.then(callback);
-      await Promise.all([promise]);
-      expect(callback.callCount).toBe(1);
-      expect(callback.getCall(0).args).toEqual([undefined]);
-      expect(chrome.storage.local.remove.callCount).toBe(1);
-      expect(chrome.storage.local.remove.getCall(0).args.length).toBe(2);
-      expect(chrome.storage.local.remove.getCall(0).args[0]).toBe(key);
-      done();
+      const result = await ChromeStorage.remove(key);
+      expect(chrome.storage.local.remove.callCount).to.equal(1);
+      expect(result).to.be.undefined;
     });
 
-    it(`clear() calls chrome.storage.local.clear()`, async done => {
+    it(`clear() calls chrome.storage.local.clear()`, async () => {
       chrome.storage.local.clear.yields();
-      const promise = ChromeStorage.clear();
-      promise.then(callback);
-      await Promise.all([promise]);
-      expect(callback.callCount).toBe(1);
-      expect(callback.getCall(0).args).toEqual([undefined]);
-      expect(chrome.storage.local.clear.callCount).toBe(1);
-      expect(chrome.storage.local.clear.getCall(0).args.length).toBe(1);
-      done();
+      const result = await ChromeStorage.clear();
+      expect(chrome.storage.local.clear.callCount).to.equal(1);
+      expect(result).to.be.undefined;
     });
   });
 
   describe(`when chrome.tabs is not defined`, () => {
-    beforeEach(() => {
-      sinon.stub(ChromeStorage, `isAvailable`).callsFake(() => false);
+    before(() => {
+      sinon.stub(ChromeStorage, `isAvailable`).returns(false);
     });
 
-    afterEach(() => {
+    after(() => {
       ChromeStorage.isAvailable.restore();
     });
 
     it(`isAvailable() returns false`, () => {
-      expect(ChromeStorage.isAvailable()).toBe(false);
+      expect(ChromeStorage.isAvailable()).to.be.false;
     });
 
-    it(`set() calls chrome.runtime.sendMessage()`, async done => {
+    it(`set() calls chrome.runtime.sendMessage()`, async () => {
       chrome.runtime.sendMessage.withArgs({type: `setStorageValue`, value}).yields();
-      const promise = ChromeStorage.set(value);
-      promise.then(callback);
-      await Promise.all([promise]);
-      expect(callback.callCount).toBe(1);
-      expect(callback.getCall(0).args).toEqual([undefined]);
-      expect(chrome.runtime.sendMessage.callCount).toBe(1);
-      expect(chrome.runtime.sendMessage.getCall(0).args[0]).toEqual({type: `setStorageValue`, value});
-      done();
+      const result = await ChromeStorage.set(value);
+      expect(chrome.runtime.sendMessage.callCount).to.equal(1);
+      expect(result).to.be.undefined;
     });
 
-    it(`get() calls chrome.runtime.sendMessage()`, async done => {
+    it(`get() calls chrome.runtime.sendMessage()`, async () => {
       chrome.runtime.sendMessage.withArgs({key, type: `getStorageValue`}).yields(value);
-      const promise = ChromeStorage.get(key);
-      promise.then(callback);
-      await Promise.all([promise]);
-      expect(callback.callCount).toBe(1);
-      expect(callback.getCall(0).args).toEqual([value]);
-      expect(chrome.runtime.sendMessage.callCount).toBe(1);
-      expect(chrome.runtime.sendMessage.getCall(0).args[0]).toEqual({key, type: `getStorageValue`});
-      done();
+      const result = await ChromeStorage.get(key);
+      expect(chrome.runtime.sendMessage.callCount).to.equal(1);
+      expect(result).to.equal(value);
     });
 
-    it(`remove() calls chrome.runtime.sendMessage()`, async done => {
+    it(`remove() calls chrome.runtime.sendMessage()`, async () => {
       chrome.runtime.sendMessage.withArgs({key, type: `removeStorageValue`}).yields();
-      const promise = ChromeStorage.remove(key);
-      promise.then(callback);
-      await Promise.all([promise]);
-      expect(callback.callCount).toBe(1);
-      expect(callback.getCall(0).args).toEqual([undefined]);
-      expect(chrome.runtime.sendMessage.callCount).toBe(1);
-      expect(chrome.runtime.sendMessage.getCall(0).args[0]).toEqual({key, type: `removeStorageValue`});
-      done();
+      const result = await ChromeStorage.remove(key);
+      expect(chrome.runtime.sendMessage.callCount).to.equal(1);
+      expect(result).to.be.undefined;
     });
 
-    it(`clear() calls chrome.runtime.sendMessage()`, async done => {
+    it(`clear() calls chrome.runtime.sendMessage()`, async () => {
       chrome.runtime.sendMessage.withArgs({type: `clearStorage`}).yields();
-      const promise = ChromeStorage.clear();
-      promise.then(callback);
-      await Promise.all([promise]);
-      expect(callback.callCount).toBe(1);
-      expect(callback.getCall(0).args).toEqual([undefined]);
-      expect(chrome.runtime.sendMessage.callCount).toBe(1);
-      expect(chrome.runtime.sendMessage.getCall(0).args[0]).toEqual({type: `clearStorage`});
-      done();
+      const result = await ChromeStorage.clear();
+      expect(chrome.runtime.sendMessage.callCount).to.equal(1);
+      expect(result).to.be.undefined;
     });
-  });
-
-  afterAll(() => {
-    chrome.flush();
-    delete global.chrome;
   });
 });

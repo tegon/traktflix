@@ -36,8 +36,8 @@ Rollbar.init();
 
 const defs = {};
 
-chrome.runtime.onInstalled.addListener(() => {
-  if (chrome.declarativeContent) {
+if (chrome.declarativeContent) {
+  chrome.runtime.onInstalled.addListener(() => {
     chrome.declarativeContent.onPageChanged.removeRules(undefined, () => {
       chrome.declarativeContent.onPageChanged.addRules([{
         conditions: [
@@ -48,19 +48,19 @@ chrome.runtime.onInstalled.addListener(() => {
         actions: [new chrome.declarativeContent.ShowPageAction()]
       }]);
     });
-  } else {
-    chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
-      if (typeof changeInfo.status === `undefined`) {
-        return;
-      }
-      if (changeInfo.status === `complete` && tab.url.match(/^https?:\/\/(www\.)?netflix\.com/)) {
-        chrome.pageAction.show(tabId);
-      } else {
-        chrome.pageAction.hide(tabId);
-      }
-    });
-  }
-});
+  });
+} else {
+  chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
+    if (typeof changeInfo.status === `undefined`) {
+      return;
+    }
+    if (changeInfo.status === `complete` && tab.url.match(/^https?:\/\/(www\.)?netflix\.com/)) {
+      chrome.pageAction.show(tabId);
+    } else {
+      chrome.pageAction.hide(tabId);
+    }
+  });
+}
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   switch (request.type) {
