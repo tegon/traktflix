@@ -78,16 +78,20 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       Oauth.authorize(null, request.url);
       break;
     case `setActiveIcon`:
-      chrome.pageAction.setIcon({
-        tabId: sender.tab.id,
-        path: chrome.extension.getURL(`img/traktflix-icon-selected-38.png`)
-      });
+      if (chrome.pageAction.setIcon) {
+        chrome.pageAction.setIcon({
+          tabId: sender.tab.id,
+          path: chrome.extension.getURL(`img/traktflix-icon-selected-38.png`)
+        });
+      }
       break;
     case `setInactiveIcon`:
-      chrome.pageAction.setIcon({
-        tabId: sender.tab.id,
-        path: chrome.extension.getURL(`img/traktflix-icon-38.png`)
-      });
+      if (chrome.pageAction.setIcon) {
+        chrome.pageAction.setIcon({
+          tabId: sender.tab.id,
+          path: chrome.extension.getURL(`img/traktflix-icon-38.png`)
+        });
+      }
       break;
     case `launchAuthorize`:
       // noinspection JSIgnoredPromiseFromCall

@@ -49,14 +49,15 @@ describe(`Oauth`, () => {
     expect(result).to.deep.equal({error: true, response: `{"error": "invalid_grant"}`, status: 401});
   });
 
-  it(`authorize() calls chrome.windows.create() when redirectUrl is not passed`, async () => {
-    const windowObj  = {id: `Foo`};
-    chrome.windows.create.withArgs({url: `${Settings.authorizeUri}?client_id=${Settings.clientId}&redirect_uri=${Settings.redirectUri}&response_type=code`}).yields(windowObj);
+  it(`authorize() calls chrome.tabs.create() when redirectUrl is not passed`, async () => {
+    const tabObj  = {id: `Foo`};
+    chrome.tabs.query.withArgs({active: true, currentWindow: true}).yields([{index: 5}]);
+    chrome.tabs.create.withArgs({index: 5, url: `${Settings.authorizeUri}?client_id=${Settings.clientId}&redirect_uri=${Settings.redirectUri}&response_type=code`}).yields(tabObj);
     const callback = sinon.spy();
     await Oauth.authorize(callback);
     expect(callback.callCount).to.equal(0);
     expect(Oauth.sendResponse).to.equal(callback);
-    expect(Oauth.authorizationWindow).to.equal(windowObj);
+    expect(Oauth.authorizationTabId).to.equal(tabObj.id);
   });
 
   it(`authorize() calls requestToken() when redirectUrl is passed`, async () => {
@@ -75,9 +76,9 @@ describe(`Oauth`, () => {
     expect(callback.callCount).to.equal(1);
     expect(callback.args[0]).to.deep.equal([`Test`]);
     expect(Oauth.sendResponse).to.be.null;
-    expect(chrome.windows.remove.callCount).to.equal(1);
-    expect(chrome.windows.remove.args[0]).to.deep.equal([`Foo`]);
-    expect(Oauth.authorizationWindow).to.be.null;
+    expect(chrome.tabs.remove.callCount).to.equal(1);
+    expect(chrome.tabs.remove.args[0]).to.deep.equal([`Foo`]);
+    expect(Oauth.authorizationTabId).to.be.null;
     Oauth.requestToken.restore();
   });
 

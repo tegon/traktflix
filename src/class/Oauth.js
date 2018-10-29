@@ -5,7 +5,7 @@ import Settings from '../settings';
 class Oauth {
   constructor() {
     this.sendResponse = null;
-    this.authorizationWindow = null;
+    this.authorizationTabId = null;
   }
 
   getCode(redirectUrl) {
@@ -52,14 +52,16 @@ class Oauth {
         this.sendResponse(options);
         this.sendResponse = null;
       }
-      if (this.authorizationWindow) {
-        chrome.windows.remove(this.authorizationWindow.id);
-        this.authorizationWindow = null;
+      if (this.authorizationTabId) {
+        chrome.tabs.remove(this.authorizationTabId);
+        this.authorizationTabId = null;
       }
     } else {
       this.sendResponse = sendResponse;
-      chrome.windows.create({url: this.getAuthorizeUrl()}, window => {
-        this.authorizationWindow = window;
+      chrome.tabs.query({active: true, currentWindow: true}, tabs => {
+        chrome.tabs.create({index: tabs[0].index, url: this.getAuthorizeUrl()}, tab => {
+          this.authorizationTabId = tab.id;
+        });
       });
     }
   }
