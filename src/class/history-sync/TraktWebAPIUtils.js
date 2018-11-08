@@ -167,7 +167,7 @@ export default class TraktWebAPIUtils {
           const type = activity.netflix.type;
 
           if (type === `show`) {
-            const slug = pathname.split(`/`)[2];
+            const slug = pathname.split(`/`)[1];
             // noinspection JSIgnoredPromiseFromCall
             Request.send({
               method: `GET`,
