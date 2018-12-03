@@ -78,12 +78,16 @@
       <p>
         Each user has an access token, used to comunicate with Trakt.tv servers. This token is saved locally in the user's browser, so it doesn't require to login every time.
       </p>
+      <p>The title of what you're watching is scraped from the Netflix's player HTML in order to send it to Trakt.tv.</p>
       <p>
         The Netflix history only stays in the browsers memory while the user requests it. The data cames from the <a target="_blank" href="https://www.netflix.com/viewingactivity">logged user in Netflix</a>.
       </p>
       <h3>How we use information we collect</h3>
       <p>The access token aquired from Trakt.tv account is used to add and find items in user's history.</p>
+      <p>All the communication between this extension and the Trakt.tv servers is made through HTTPS.</p>
+      <p>To login in Trakt.tv, this extension uses <a target="_blank" href="https://developer.chrome.com/apps/app_identity">Google Chrome's App identity</a>. You'll be redirected to Trakt.tv's secure login page. Your login and password are not stored or logged by this extension, they're directly sent to Chrome's app identity and later to Trakt.tv</p>
       <p>The Netflix viewing history is used to compare with the user's Trakt.tv history.</p>
+      <p>This extension doesn't grab any personal data from your Netflix account.</p>
     </div>
   </secion>
   <section id="contact">
