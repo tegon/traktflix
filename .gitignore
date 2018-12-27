@@ -12,6 +12,8 @@ build
 *.crx
 *.pem
 coverage
-app.zip
 config.json
 .idea/
+app.zip
+src.zip
+package-lock.json

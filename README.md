@@ -10,13 +10,16 @@
 </h1>
 
 
-<h4 align="center">Netflix and trakt.tv integration.</h4>
+<h4 align="center">A Trakt.tv scrobbler for Netflix.</h4>
 
 <p align="center">
-  <a href="https://github.com/tegon/traktflix/releases"><img src="https://img.shields.io/github/release/tegon/traktflix.svg" alt="github release"></a>
-  <a href="https://travis-ci.org/tegon/traktflix"><img src="https://img.shields.io/travis/feross/webtorrent/master.svg" alt="travis"></a>
-  <a href="https://coveralls.io/github/tegon/traktflix?branch=master"><img src="https://coveralls.io/repos/tegon/traktflix/badge.svg?branch=master&service=github" alt="coveralls"></a>
-  <a href="https://chrome.google.com/webstore/detail/traktflix-netflix-and-tra/bmoemkaigjgcgjjnpmdgkifndiidkeji"><img src="https://img.shields.io/chrome-web-store/d/bmoemkaigjgcgjjnpmdgkifndiidkeji.svg" alt="downloads"></a>
+  <a href="https://github.com/gsrafael01/traktflix/releases"><img src="https://img.shields.io/github/release/gsrafael01/traktflix.svg" alt="github release"></a>
+  <a href="https://travis-ci.com/gsrafael01/traktflix"><img src="https://travis-ci.com/gsrafael01/traktflix.svg?branch=master" alt="travis"></a>
+  <a href='https://coveralls.io/github/gsrafael01/traktflix?branch=master'><img src='https://coveralls.io/repos/github/gsrafael01/traktflix/badge.svg?branch=master' alt='Coverage Status' /></a>
+</p>
+
+<p align=left">
+  <a href="https://addons.mozilla.org/en-US/firefox/addon/traktflix"><img src="https://discourse-paas-production-content.s3.amazonaws.com/original/3X/c/0/c03e12b8fae82e431eabaf0f6e250bfc78504182.png" alt="Get the add-on"></a>
 </p>
 
 ### Table of Contents
@@ -32,8 +35,8 @@ Automatically scrobble TV show episodes and movies you are watching to Trakt.tv!
 
 ### Why do I need this extension?
 Trakt.tv has a [lot of plugins](http://trakt.tv/downloads) to automatically scrobble the movies and episodes you watch from your media center.
-But I found nothing to integrate with Netflix, so I created this extension.
-Every time you click to play something on Netflix, it will send the scrobble to Trakt.tv. Cool, isn't it?
+But there are none for Netflix.
+This extension allows you to scrobble from Netflix to Trakt.tv. Cool, isn't it?
 
 ### How does traktflix work?
 Unfortunately Netflix doesn't provide a public API, so the movie or episode info is extracted from the HTML of the player.
@@ -43,20 +46,20 @@ This extension only works with Netflix HTML player and new layout. If you are in
 See this link for more info: https://help.netflix.com/en/node/23742
 
 ### Problems
-If you find any problems or have suggestions or questions, feel free to [open an issue](https://github.com/tegon/traktflix/issues/new)
+If you find any problems or have suggestions or questions, feel free to [open an issue](https://github.com/gsrafael01/traktflix/issues/new)
 
 ### Development
 Create an application in [Trakt API](http://trakt.tv/oauth/applications/new).
 
 Don't forget to check `/scrobble` permission.
 
-In `Redirect uri:` put `https://{extensionId}.chromiumapp.org`
+In `Redirect uri:` put `https://www.netflix.com/Activate`
 
-In `Javascript (cors) origins:` put `https://{extensionId}.chromiumapp.org` and `chrome-extension://{extensionId}`
+In `Javascript (cors) origins:` put `http://www.netflix.com,  moz-extension:// and chrome-extension://`
 
 Copy the `config.json` example file and change Trakt.tv credentials:
 ```bash
-cp config.json.dev config.json
+cp config.dev.json config.json
 ```
 
 Use [nvm](https://github.com/creationix/nvm) to run in the correct version of node
@@ -75,7 +78,12 @@ To run in development mode
 npm start
 ```
 
-To get build version (generates app.zip, ready for chrome store)
+To get build version for development mode (unlike npm start this does not watch the files for changes)
+```bash
+npm run build-dev
+```
+
+To get build version for production mode (generates app.zip, ready for deployment)
 ```bash
 npm run build
 npm run zip
@@ -85,6 +93,8 @@ To run tests
 ```bash
 npm test
 ```
+
+The commands above have only been tested on Linux.
 
 ### Credits
 <h3 align="center">
@@ -98,5 +108,8 @@ npm test
 
 This product uses the TMDb API but is not endorsed or certified by TMDb. <br>
 This product uses the Trakt.tv API.
+
+[tegon](https://github.com/user/tegon) is the original developer of this extension.
+Since it was not having many updates in the past year and was also removed from the Chrome store, I took it upon myself to work on it and finally port it to Firefox.
 
 [LICENSE](LICENSE)

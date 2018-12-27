@@ -1,0 +1,16 @@
+.watching-card-thumb.mdl-card {
+  width: 380px;
+  height: 230px;
+  background: no-repeat center center;
+  background-size: cover
+}
+
+.watching-card-thumb > .mdl-card__actions {
+  height: 52px;
+  padding: 16px;
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.watching-card-thumb__title {
+  color: #fff;
+}

@@ -1,54 +1,56 @@
 {
-    "name": "__MSG_appName__",
-    "short_name": "__MSG_appShortName__",
-    "version": "1.0.8.3",
-    "manifest_version": 2,
-    "description": "__MSG_appDescription__",
-    "icons": {
-        "16": "images/traktflix-icon-16.png",
-        "128": "images/traktflix-icon-128.png"
-    },
-    "default_locale": "en",
-    "background": {
-        "scripts": [
-            "scripts/build/vendor.js",
-            "scripts/build/background.js"
-        ]
-    },
-    "content_scripts": [
-        {
-            "matches": [
-                "*://*.netflix.com/*"
-            ],
-            "js": [
-                "scripts/build/content.js"
-            ]
-        }
-    ],
-    "page_action": {
-        "default_icon": {
-            "19": "images/traktflix-icon-19.png",
-            "38": "images/traktflix-icon-38.png"
-        },
-        "selected_icon": {
-            "19": "images/traktflix-icon-selected-19.png",
-            "38": "images/traktflix-icon-selected-38.png"
-        },
-        "default_title": "traktflix",
-        "default_popup": "popup.html"
-    },
-    "permissions": [
-        "identity",
-        "declarativeContent",
-        "cookies",
-        "storage",
-        "unlimitedStorage",
-        "http://trakt.tv/*",
-        "https://www.google-analytics.com/",
-        "*://*.netflix.com/*",
-        "notifications"
-    ],
-    "web_accessible_resources": [
-        "images/svg/*.svg"
+  "background": {
+    "scripts": [
+      "js/vendor.js",
+      "js/background.js"
     ]
+  },
+  "content_scripts": [
+    {
+      "js": [
+        "js/content.js"
+      ],
+      "matches": [
+        "*://*.netflix.com/*"
+      ],
+      "run_at": "document_idle"
+    }
+  ],
+  "default_locale": "en",
+  "description": "__MSG_appDescription__",
+  "icons": {
+    "16": "img/traktflix-icon-16.png",
+    "128": "img/traktflix-icon-128.png"
+  },
+  "manifest_version": 2,
+  "name": "__MSG_appName__",
+  "page_action": {
+    "default_icon": {
+      "19": "img/traktflix-icon-19.png",
+      "38": "img/traktflix-icon-38.png"
+    },
+    "default_popup": "popup.html",
+    "default_title": "traktflix"
+  },
+  "permissions": [
+    "*://*.netflix.com/*",
+    "*://api.rollbar.com/*",
+    "*://api.trakt.tv/*",
+    "*://trakt.tv/*",
+    "https://www.google-analytics.com/",
+    "https://script.google.com/",
+    "https://script.googleusercontent.com/",
+    "cookies",
+    "identity",
+    "notifications",
+    "storage",
+    "tabs",
+    "unlimitedStorage"
+  ],
+  "version": "2.0.4",
+  "web_accessible_resources": [
+    "img/traktflix-icon-38.png",
+    "img/traktflix-icon-selected-38.png",
+    "img/svg/*.svg"
+  ]
 }
