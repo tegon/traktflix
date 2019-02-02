@@ -1,7 +1,9 @@
+import browser from 'sinon-chrome';
 import sinon from 'sinon';
-import chrome from 'sinon-chrome/extensions';
-import Search from '../src/class/Search';
 import Settings from '../src/settings.js';
+import Search from '../src/class/Search';
+
+window.browser = browser;
 
 const rocky = {
   title: `Rocky`,
@@ -35,10 +37,13 @@ const collectionSearch = new Search({item: comedians});
 
 let server = null;
 
+browser.flush();
+delete window.browser;
+
 describe(`Search`, () => {
   before(() => {
-    global.chrome = chrome;
-    chrome.storage.local.get.withArgs(`data`).yields({data: {access_token: `12345abcde`}});
+    window.browser = browser;
+    browser.storage.local.get.withArgs(`data`).resolves({data: {access_token: `12345abcde`}});
   });
 
   beforeEach(() => {
@@ -51,8 +56,8 @@ describe(`Search`, () => {
   });
 
   after(() => {
-    chrome.flush();
-    delete global.chrome;
+    browser.flush();
+    delete window.browser;
   });
 
   it(`constructor() sets properties`, () => {

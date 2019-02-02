@@ -12,9 +12,9 @@
 const
   fs = require(`fs`),
   path = require(`path`),
-  configJson = process.env.NODE_ENV === `test` ? require('./config.dev.json') : require(`./config.json`),
   packageJson = require(`./package.json`),
   webpack = require(`webpack`),
+  CopyWebpackPlugin = require('copy-webpack-plugin'),
   CleanWebpackPlugin = require(`clean-webpack-plugin`),
   pathsToClean = [
     `app/fonts`,
@@ -32,18 +32,17 @@ const
   loaders = {
     style: {
       loader: `style-loader`,
-      options: {
-        singleton: true
-      }
+      options: { singleton: true }
     },
     css: {
       loader: `css-loader`,
-      options: {minimize: true}
+      options: { minimize: true }
     }
   }
 ;
 
 module.exports = /** @param {Environment} env */env => {
+  const configJson = env.test ? require('./config.dev.json') : require(`./config.json`);
   const entry = {
     [BUILD_PATHS.BACKGROUND]: [`./src/modules/background/index.js`],
     [BUILD_PATHS.CONTENT]: [`./src/modules/content/index.js`],
@@ -120,7 +119,12 @@ module.exports = /** @param {Environment} env */env => {
       ]
     },
     plugins: [
-      new CleanWebpackPlugin(pathsToClean)
+      new CleanWebpackPlugin(pathsToClean),
+      new CopyWebpackPlugin([{
+        from: './node_modules/webextension-polyfill/dist/browser-polyfill.min.js',
+        to: './app/js/browser-polyfill.js',
+        flatten: true
+      }])
     ],
     watch: !!(env.development && env.watch),
     watchOptions: {

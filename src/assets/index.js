@@ -1,3 +1,4 @@
+import 'material-components-web/dist/material-components-web.min.css';
 import './images/background.jpg';
 import './images/traktflix-icon-16.png';
 import './images/traktflix-icon-19.png';

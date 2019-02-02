@@ -1,9 +1,10 @@
-import Analytics from '../../class/Analytics';
-import ChromeStorage from '../../class/ChromeStorage';
-import Oauth from '../../class/Oauth';
-import Rollbar from '../../class/Rollbar';
-import Settings from '../../settings';
 import '../vendor/google-analytics-bundle';
+import Settings from '../../settings';
+import Analytics from '../../class/Analytics';
+import BrowserStorage from '../../class/BrowserStorage';
+import Oauth from '../../class/Oauth';
+import Permissions from '../../class/Permissions';
+import Rollbar from '../../class/Rollbar';
 
 /* global analytics */
 /**
@@ -23,8 +24,8 @@ service.getConfig()
      * @property {Function} setTrackingPermitted
      */
     async config => {
-      const data = await ChromeStorage.get(`options`);
-      const permitted = !!(data.options && data.options.allowGoogleAnalytics);
+      const storage = await BrowserStorage.get(`options`);
+      const permitted = !!(storage.options && storage.options.allowGoogleAnalytics && (await Permissions.contains(undefined, [`*://google-analytics.com/*`])));
       config.setTrackingPermitted(permitted);
       if (permitted) {
         const tracker = service.getTracker(Settings.analyticsId);
@@ -36,7 +37,7 @@ Rollbar.init();
 
 const defs = {};
 
-if (chrome.declarativeContent) {
+if (chrome && chrome.declarativeContent) {
   chrome.runtime.onInstalled.addListener(() => {
     chrome.declarativeContent.onPageChanged.removeRules(undefined, () => {
       chrome.declarativeContent.onPageChanged.addRules([{
@@ -50,86 +51,96 @@ if (chrome.declarativeContent) {
     });
   });
 } else {
-  chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
+  browser.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
     if (typeof changeInfo.status === `undefined`) {
       return;
     }
     if (changeInfo.status === `complete` && tab.url.match(/^https?:\/\/(www\.)?netflix\.com/)) {
-      chrome.pageAction.show(tabId);
+      browser.pageAction.show(tabId);
     } else {
-      chrome.pageAction.hide(tabId);
+      browser.pageAction.hide(tabId);
     }
   });
 }
 
-chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-  switch (request.type) {
-    case `getApiDefs`:
-      // noinspection JSIgnoredPromiseFromCall
-      sendResponse(defs);
-      return true;
-    case `setApiDefs`:
-      // noinspection JSIgnoredPromiseFromCall
-      defs.authUrl = request.authUrl;
-      defs.buildIdentifier = request.buildIdentifier;
-      break;
-    case `authorize`:
-      // noinspection JSIgnoredPromiseFromCall
-      Oauth.authorize(null, request.url);
-      break;
-    case `setActiveIcon`:
-      if (chrome.pageAction.setIcon) {
-        chrome.pageAction.setIcon({
-          tabId: sender.tab.id,
-          path: chrome.extension.getURL(`img/traktflix-icon-selected-38.png`)
-        });
-      }
-      break;
-    case `setInactiveIcon`:
-      if (chrome.pageAction.setIcon) {
-        chrome.pageAction.setIcon({
-          tabId: sender.tab.id,
-          path: chrome.extension.getURL(`img/traktflix-icon-38.png`)
-        });
-      }
-      break;
-    case `launchAuthorize`:
-      // noinspection JSIgnoredPromiseFromCall
-      Oauth.authorize(sendResponse);
-      return true;
-    case `sendAppView`:
-      Analytics.sendAppView(request.view);
-      break;
-    case `sendEvent`:
-      Analytics.sendEvent(request.name, request.value);
-      break;
-    case `removeStorageValue`:
-      ChromeStorage.remove(request.key).then(sendResponse);
-      return true;
-    case `getStorageValue`:
-      ChromeStorage.get(request.key).then(sendResponse);
-      return true;
-    case `setStorageValue`:
-      ChromeStorage.set(request.value).then(sendResponse);
-      return true;
-    case `clearStorage`:
-      ChromeStorage.clear().then(sendResponse);
-      return true;
-    case `showNotification`:
-      chrome.notifications.create({
-        type: `basic`,
-        iconUrl: `images/traktflix-icon-128.png`,
-        title: request.title,
-        message: request.message
-      });
-      break;
-    case `showErrorNotification`:
-      chrome.notifications.create({
-        type: `basic`,
-        iconUrl: `images/traktflix-icon-128.png`,
-        title: chrome.i18n.getMessage(`errorNotification`),
-        message: request.message
-      });
-      break;
-  }
+browser.runtime.onMessage.addListener((request, sender) => {
+  return new Promise(async resolve => {
+    switch (request.type) {
+      case `getApiDefs`:
+        // noinspection JSIgnoredPromiseFromCall
+        resolve(defs);
+        return;
+      case `setApiDefs`:
+        // noinspection JSIgnoredPromiseFromCall
+        defs.authUrl = request.authUrl;
+        defs.buildIdentifier = request.buildIdentifier;
+        break;
+      case `authorize`:
+        // noinspection JSIgnoredPromiseFromCall
+        Oauth.authorize(null, request.url);
+        break;
+      case `setActiveIcon`:
+        if (browser.pageAction.setIcon) {
+          browser.pageAction.setIcon({
+            tabId: sender.tab.id,
+            path: browser.runtime.getURL(`img/traktflix-icon-selected-38.png`)
+          });
+        }
+        break;
+      case `setInactiveIcon`:
+        if (browser.pageAction.setIcon) {
+          browser.pageAction.setIcon({
+            tabId: sender.tab.id,
+            path: browser.runtime.getURL(`img/traktflix-icon-38.png`)
+          });
+        }
+        break;
+      case `launchAuthorize`:
+        // noinspection JSIgnoredPromiseFromCall
+        Oauth.authorize(resolve);
+        return;
+      case `sendAppView`:
+        Analytics.sendAppView(request.view);
+        break;
+      case `sendEvent`:
+        Analytics.sendEvent(request.name, request.value);
+        break;
+      case `syncStorage`:
+        BrowserStorage.sync().then(resolve);
+        return;
+      case `removeStorageValue`:
+        BrowserStorage.remove(request.key, request.sync).then(resolve);
+        return;
+      case `getStorageValue`:
+        BrowserStorage.get(request.key).then(resolve);
+        return;
+      case `setStorageValue`:
+        BrowserStorage.set(request.value, request.sync).then(resolve);
+        return;
+      case `clearStorage`:
+        BrowserStorage.clear(request.sync).then(resolve);
+        return;
+      case `showNotification`:
+        if (await Permissions.contains(['notifications'])) {
+          browser.notifications.create({
+            type: `basic`,
+            iconUrl: `images/traktflix-icon-128.png`,
+            title: request.title,
+            message: request.message
+          });
+        }
+        break;
+      case `showErrorNotification`:
+        if (await Permissions.contains(['notifications'])) {
+          browser.notifications.create({
+            type: `basic`,
+            iconUrl: `images/traktflix-icon-128.png`,
+            title: browser.i18n.getMessage(`errorNotification`),
+            message: request.message
+          });
+        }
+        break;
+    }
+    resolve();
+  });
 });

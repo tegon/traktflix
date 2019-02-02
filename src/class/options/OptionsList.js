@@ -1,7 +1,7 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import OptionsListItem from './OptionsListItem';
 import 'material-design-lite';
+import PropTypes from 'prop-types';
+import React from 'react';
+import OptionsListItem from './OptionsListItem';
 
 /* global componentHandler */
 

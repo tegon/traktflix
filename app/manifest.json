@@ -1,6 +1,7 @@
 {
   "background": {
     "scripts": [
+      "js/browser-polyfill.js",
       "js/vendor.js",
       "js/background.js"
     ]
@@ -8,6 +9,7 @@
   "content_scripts": [
     {
       "js": [
+        "js/browser-polyfill.js",
         "js/content.js"
       ],
       "matches": [
@@ -32,22 +34,23 @@
     "default_popup": "popup.html",
     "default_title": "traktflix"
   },
-  "permissions": [
-    "*://*.netflix.com/*",
-    "*://api.rollbar.com/*",
-    "*://api.trakt.tv/*",
-    "*://trakt.tv/*",
-    "https://www.google-analytics.com/",
-    "https://script.google.com/",
-    "https://script.googleusercontent.com/",
-    "cookies",
-    "identity",
+  "optional_permissions": [
     "notifications",
+    "*://api.rollbar.com/*",
+    "*://google-analytics.com/*",
+    "*://script.google.com/*",
+    "*://script.googleusercontent.com/*"
+  ],
+  "permissions": [
+    "declarativeContent",
+    "identity",
     "storage",
     "tabs",
-    "unlimitedStorage"
+    "unlimitedStorage",
+    "*://*.netflix.com/*",
+    "*://*.trakt.tv/*"
   ],
-  "version": "2.0.4",
+  "version": "2.0.7",
   "web_accessible_resources": [
     "img/traktflix-icon-38.png",
     "img/traktflix-icon-selected-38.png",

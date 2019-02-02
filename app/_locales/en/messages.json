@@ -68,6 +68,15 @@
   "nextPage": {
     "message": "Next page"
   },
+  "pagesToLoad": {
+    "message": "Pages to load"
+  },
+  "allPages": {
+    "message": "All"
+  },
+  "loadingPage": {
+    "message": "Loading page"
+  },
   "noMoreHistory": {
     "message": "There's no more items in your history. Refresh the page to go to the beginning."
   },
@@ -94,6 +103,12 @@
   },
   "showNotificationsDescription": {
     "message": "With this option enabled, you will receive browser notifications whenever you start/stop scrobbling something."
+  },
+  "sendReceiveSuggestionsName": {
+    "message": "Send / receive correction suggestions."
+  },
+  "sendReceiveSuggestionsDescription": {
+    "message": "With this option enabled, whenever you update a wrong item in the history sync, the correction will be sent to a Google Sheets database so that other users can receive correction suggestions. This option is also required to receive those correction suggestions."
   },
   "saveOptionsSuccess": {
     "message": "Options saved."

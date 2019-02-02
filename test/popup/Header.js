@@ -1,11 +1,11 @@
-import {mount} from '../../test-helpers/EnzymeHelper';
+import { BrowserRouter as Router } from 'react-router-dom';
+import { mount } from '../../test-helpers/EnzymeHelper';
+import browser from 'sinon-chrome';
 import sinon from 'sinon';
-import chrome from 'sinon-chrome/extensions';
 import React from 'react';
-import {BrowserRouter as Router} from 'react-router-dom';
 import Header from '../../src/class/popup/Header';
 
-global.chrome = chrome;
+window.browser = browser;
 
 const logoutClicked = sinon.stub();
 const component = mount(
@@ -15,12 +15,18 @@ const component = mount(
 );
 const nav = component.find(`nav`);
 
-chrome.flush();
-delete global.chrome;
+browser.flush();
+delete window.browser;
 
 describe(`Header`, () => {
+  before(() => {
+    window.browser = browser;
+  });
+
   after(() => {
     component.unmount();
+    browser.flush();
+    delete window.browser;
   });
 
   it(`has the correct html classes`, () => {

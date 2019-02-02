@@ -1,5 +1,5 @@
-import Request from './Request';
 import Settings from '../settings';
+import Request from './Request';
 
 export default class Search {
   constructor(options) {

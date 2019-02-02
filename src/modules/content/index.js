@@ -1,4 +1,4 @@
-import ChromeStorage from '../../class/ChromeStorage';
+import BrowserStorage from '../../class/BrowserStorage';
 import ContentController from '../../class/content/ContentController';
 import EventWatcher from '../../class/content/EventWatcher';
 import Rollbar from '../../class/Rollbar';
@@ -10,19 +10,21 @@ let controller = null;
 
 init();
 
-chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-  if (request.type === `getCurrentItem`) {
-    sendResponse(controller && controller.getCurrentItem());
-  }
+browser.runtime.onMessage.addListener((request) => {
+  return new Promise(resolve => {
+    if (request.type === `getCurrentItem`) {
+      resolve(controller && controller.getCurrentItem());
+    }
+  });
 });
 if (location.href.match(/\/Activate\?code=/)) {
-  chrome.runtime.sendMessage({type: `authorize`, url: location.href});
+  browser.runtime.sendMessage({type: `authorize`, url: location.href});
 }
 
 getApiDefs();
 
 async function init() {
-  const storage = await ChromeStorage.get(`options`);
+  const storage = await BrowserStorage.get(`options`);
   if (!storage.options || !storage.options.disableScrobbling) {
     controller = new ContentController();
     const eventWatcher = new EventWatcher({
@@ -39,7 +41,7 @@ function getApiDefs() {
   if (netflix) {
     const authUrl = netflix.reactContext.models.userInfo.data.authURL;
     const buildIdentifier = netflix.reactContext.models.serverDefs.data.BUILD_IDENTIFIER;
-    chrome.runtime.sendMessage({type: `setApiDefs`, authUrl, buildIdentifier});
+    browser.runtime.sendMessage({type: `setApiDefs`, authUrl, buildIdentifier});
     if (window.XPCNativeWrapper) {
       window.XPCNativeWrapper(window.wrappedJSObject.netflix);
     }

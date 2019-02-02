@@ -1,7 +1,7 @@
 import EventEmitter from 'events';
-import Rollbar from '../Rollbar';
-import ViewingOptionsAppDispatcher from '../../modules/options/viewing-options-app-dispatcher';
 import ActionTypes from '../../modules/options/options-constants';
+import ViewingOptionsAppDispatcher from '../../modules/options/viewing-options-app-dispatcher';
+import Rollbar from '../Rollbar';
 
 const CHANGE_EVENT = `CHANGE`;
 let _options = [];
@@ -53,30 +53,30 @@ optionsStore.dispatchToken = ViewingOptionsAppDispatcher.register((action) => {
       optionsStore.emitChange();
       break;
     case ActionTypes.SAVE_SUCCESS:
-      _message = chrome.i18n.getMessage(`saveOptionsSuccess`);
+      _message = browser.i18n.getMessage(`saveOptionsSuccess`);
       optionsStore.emitChange();
       break;
     case ActionTypes.SAVE_FAILED:
       Rollbar.init().then(() => Rollbar.error(action));
-      _message = chrome.i18n.getMessage(`saveOptionsFailed`);
+      _message = browser.i18n.getMessage(`saveOptionsFailed`);
       optionsStore.emitChange();
       break;
     case ActionTypes.CLEAR_SUCCESS:
-      _message = chrome.i18n.getMessage(`clearOptionsSuccess`);
+      _message = browser.i18n.getMessage(`clearOptionsSuccess`);
       optionsStore.emitChange();
       break;
     case ActionTypes.CLEAR_FAILED:
       Rollbar.init().then(() => Rollbar.error(action));
-      _message = chrome.i18n.getMessage(`clearOptionsFailed`);
+      _message = browser.i18n.getMessage(`clearOptionsFailed`);
       optionsStore.emitChange();
       break;
     case ActionTypes.CLEAR_TRAKT_CACHE_SUCCESS:
-      _message = chrome.i18n.getMessage(`clearTraktCacheSuccess`);
+      _message = browser.i18n.getMessage(`clearTraktCacheSuccess`);
       optionsStore.emitChange();
       break;
     case ActionTypes.CLEAR_TRAKT_CACHE_FAILED:
       Rollbar.init().then(() => Rollbar.error(action));
-      _message = chrome.i18n.getMessage(`clearTraktCacheFailed`);
+      _message = browser.i18n.getMessage(`clearTraktCacheFailed`);
       optionsStore.emitChange();
       break;
   }

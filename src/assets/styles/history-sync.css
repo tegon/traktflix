@@ -19,7 +19,7 @@
   width: 100px;
 }
 
-#viewing-activity-app .mdl-button--raised, #viewing-options-app .mdl-button--raised {
+#viewing-activity-app .mdl-actions-wrapper > *, #viewing-options-app .mdl-actions-wrapper > * {
   margin: 0 20px;
 }
 
@@ -29,10 +29,13 @@
 }
 
 .mdl-actions-wrapper {
+  align-items: center;
   background: white;
   border-top: 1px solid rgba(214, 206, 206, 0.71);
   bottom: 0;
+  display: flex;
   height: 40px;
+  justify-content: center;
   padding: 20px 0;
   position: fixed;
   text-align: center;
@@ -51,4 +54,24 @@
 .mdl-textfield__label {
   position: static;
   white-space:  normal;
+}
+
+.mdc-select--custom {
+  height: 36px !important;
+  width: 150px;
+}
+
+.mdc-select--custom .mdc-select__menu {
+  width: 150px;
+}
+
+.mdc-select--custom .mdc-select__dropdown-icon {
+  height: 16px;
+  width: 16px;  
+}
+
+.mdc-select--custom .mdc-select__selected-text {
+  height: 36px;
+  padding-bottom: 8px !important;
+  padding-top: 8px !important;
 }

@@ -1,27 +1,27 @@
-import {mount} from '../../test-helpers/EnzymeHelper';
-import chrome from 'sinon-chrome/extensions';
+import { mount } from '../../test-helpers/EnzymeHelper';
+import browser from 'sinon-chrome';
 import React from 'react';
 import Button from '../../src/class/popup/Button';
 
-global.chrome = chrome;
+window.browser = browser;
 
 const component = mount(
   <Button text={'Test'} url={'http://foo.bar'}/>
 );
 const button = component.find(`button`);
 
-chrome.flush();
-delete global.chrome;
+browser.flush();
+delete window.browser;
 
 describe(`Button`, () => {
   before(() => {
-    global.chrome = chrome;
+    window.browser = browser;
   });
 
   after(() => {
     component.unmount();
-    chrome.flush();
-    delete global.chrome;
+    browser.flush();
+    delete window.browser;
   });
 
   it(`has the correct html classes`, () => {
@@ -34,7 +34,7 @@ describe(`Button`, () => {
 
   it(`creates a tab with props.url when clicked`, () => {
     button.prop(`onClick`)();
-    expect(chrome.tabs.create.callCount).to.equal(1);
-    expect(chrome.tabs.create.args[0]).to.deep.equal([{url: `http://foo.bar`, active: true}]);
+    expect(browser.tabs.create.callCount).to.equal(1);
+    expect(browser.tabs.create.args[0]).to.deep.equal([{url: `http://foo.bar`, active: true}]);
   });
 });

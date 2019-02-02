@@ -68,6 +68,15 @@
   "nextPage": {
     "message": "Próxima página"
   },
+  "pagesToLoad": {
+    "message": "Páginas para carregar"
+  },
+  "allPages": {
+    "message": "Todas"
+  },
+  "loadingPage": {
+    "message": "Carregando página"
+  },
   "noMoreHistory": {
     "message": "Não existem mais itens no seu histórico. Atualize a página para voltar ao início."
   },
@@ -94,6 +103,12 @@
   },
   "showNotificationsDescription": {
     "message": "Com essa opção ativada, você receberá notificações no seu navegador sempre que um scrobble começar/parar ."
+  },
+  "sendReceiveSuggestionsName": {
+    "message": "Enviar / receber sugestões de correção."
+  },
+  "sendReceiveSuggestionsDescription": {
+    "message": "Com essa opção ativada, sempre que você atualizar um item errado no histórico, a correção será enviada para uma base de dados armazenada no Google Sheets para que outros usuários possam receber sugestões de correção. Essa opção também é necessária para receber essas sugestões de correção."
   },
   "saveOptionsSuccess": {
     "message": "Opções salvas."

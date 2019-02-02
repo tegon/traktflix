@@ -1,4 +1,4 @@
-import ChromeStorage from '../ChromeStorage';
+import BrowserStorage from '../BrowserStorage';
 import ItemParser from '../ItemParser';
 import Rollbar from '../Rollbar';
 import Search from '../Search';
@@ -12,21 +12,26 @@ export default class ContentController {
      */
     this.scrobble = undefined;
 
-    if (location.href.match(/watch/)) {
+    if (this.getLocation().match(/watch/)) {
       ItemParser.start().then(this.storeItem.bind(this));
     }
   }
 
+  // For testing purposes.
+  getLocation() {
+    return location.href;
+  }
+
   setActiveIcon() {
-    chrome.runtime.sendMessage({type: `setActiveIcon`});
+    browser.runtime.sendMessage({type: `setActiveIcon`});
   }
 
   setInactiveIcon() {
-    chrome.runtime.sendMessage({type: `setInactiveIcon`});
+    browser.runtime.sendMessage({type: `setInactiveIcon`});
   }
 
   sendAnalyticsEvent(options) {
-    chrome.runtime.sendMessage({
+    browser.runtime.sendMessage({
       type: `sendEvent`, name: options.name, value: options.value
     });
   }
@@ -57,19 +62,19 @@ export default class ContentController {
   }
 
   showErrorNotification(message) {
-    chrome.runtime.sendMessage({type: `showErrorNotification`, message: message});
+    browser.runtime.sendMessage({type: `showErrorNotification`, message: message});
   }
 
   async reportError(type, status, response, options) {
     const _this = this;
     if (status === 404) {
-      this.showErrorNotification(chrome.i18n.getMessage(`errorNotificationNotFound`));
+      this.showErrorNotification(browser.i18n.getMessage(`errorNotificationNotFound`));
     } else if (status === 0) {
       // status 0 usually means an response without CORS
       // It could be a 401, so we check if the user has an access_token saved
-      const data = await ChromeStorage.get(null);
-      if (data.data && data.data.access_token) {
-        _this.showErrorNotification(chrome.i18n.getMessage(`errorNotificationServers`));
+      const storage = await BrowserStorage.get(`data`);
+      if (storage.data && storage.data.access_token) {
+        _this.showErrorNotification(browser.i18n.getMessage(`errorNotificationServers`));
         await Rollbar.init();
         Rollbar.warning(`traktflix: ${type} error`, {
           status: status,
@@ -77,10 +82,10 @@ export default class ContentController {
           options: options
         });
       } else {
-        _this.showErrorNotification(chrome.i18n.getMessage(`errorNotificationLogin`));
+        _this.showErrorNotification(browser.i18n.getMessage(`errorNotificationLogin`));
       }
     } else {
-      this.showErrorNotification(chrome.i18n.getMessage(`errorNotificationServers`));
+      this.showErrorNotification(browser.i18n.getMessage(`errorNotificationServers`));
       await Rollbar.init();
       Rollbar.warning(`traktflix: ${type} error`, {
         status: status,
@@ -142,10 +147,12 @@ export default class ContentController {
 
   getCurrentItem() {
     let item = null;
-    if (this.item && this.scrobble && this.item.type === `show`) {
-      item = {item: this.scrobble.item.episode};
-    } else if (this.item && this.scrobble && this.item.type === `movie`) {
-      item ={item: this.scrobble.item.movie};
+    if (this.item && this.scrobble) {
+      if (this.item.type === `show`) {
+        item = {item: this.scrobble.item.episode};
+      } else {
+        item = {item: this.scrobble.item.movie};
+      }
     }
     return item;
   }

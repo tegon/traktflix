@@ -1,10 +1,12 @@
-import React from 'react';
 import PropTypes from 'prop-types';
+import React from 'react';
+import BrowserStorage from '../BrowserStorage';
+import Permissions from '../Permissions';
+import Request from "../Request";
+import TmdbImage from '../tmdb/TmdbImage';
 import ActivityActionCreators from './ActivityActionCreators';
 import TraktURLForm from './TraktURLForm';
 import TraktWebAPIUtils from './TraktWebAPIUtils';
-import TmdbImage from '../tmdb/TmdbImage';
-import Request from "../Request";
 
 class ActivityListItem extends React.Component {
   constructor(props) {
@@ -34,16 +36,19 @@ class ActivityListItem extends React.Component {
     try {
       await TraktWebAPIUtils.getActivityFromURL(activity, url);
       this.setState({showTraktURLForm: false});
-      Request.send({
-        method: `POST`,
-        params: {
-          id: TraktWebAPIUtils._getTraktCacheId(activity),
-          url
-        },
-        url: `https://script.google.com/macros/s/AKfycbxaD_VEcZVv9atICZm00TWvF3XqkwykWtlGE8Ne39EMcjW5m3w/exec`,
-        success: () => {},
-        error: () => {}
-      });
+      const storage = await BrowserStorage.get(`options`);
+      if (storage.options && storage.options.sendReceiveSuggestions && (await Permissions.contains(undefined, [`*://script.google.com/*`, `*://script.googleusercontent.com/*`]))) {
+        Request.send({
+          method: `POST`,
+          params: {
+            id: TraktWebAPIUtils._getTraktCacheId(activity),
+            url
+          },
+          url: `https://script.google.com/macros/s/AKfycbxaD_VEcZVv9atICZm00TWvF3XqkwykWtlGE8Ne39EMcjW5m3w/exec`,
+          success: () => {},
+          error: () => {}
+        });
+      }
     } catch (error) {
       this.setState({isUpdating: false, traktError: true});
     }
@@ -71,7 +76,7 @@ class ActivityListItem extends React.Component {
     if (activity.suggestions && activity.suggestions.length) {
       for (const [index, suggestion] of activity.suggestions.entries()) {
         suggestions.push(
-          <span key={index}><br/>{suggestion.count} {chrome.i18n.getMessage(`suggestionCount`)} <a href={`https://trakt.tv/${suggestion.url}`}>{suggestion.url}</a>. <a className='paste-trakt-url' onClick={() => this._onUseSuggestion(activity, suggestion.url)}>{chrome.i18n.getMessage(`useSuggestion`)}</a></span>
+          <span key={index}><br/>{suggestion.count} {browser.i18n.getMessage(`suggestionCount`)} <a href={`https://trakt.tv/${suggestion.url}`}>{suggestion.url}</a>. <a className='paste-trakt-url' onClick={() => this._onUseSuggestion(activity, suggestion.url)}>{browser.i18n.getMessage(`useSuggestion`)}</a></span>
         );
       }
     }
@@ -86,25 +91,25 @@ class ActivityListItem extends React.Component {
             imageWidth={this.props.imageWidth}
           />
           <span><a href={netflixUrl}
-                   target='noopener noreferrer _blank'>{chrome.i18n.getMessage(`netflixTitle`)}: {netflixTitle}</a></span>
+                   target='noopener noreferrer _blank'>{browser.i18n.getMessage(`netflixTitle`)}: {netflixTitle}</a></span>
           <span> / </span>
           <span><a href={traktUrl}
-                   target='noopener noreferrer _blank'>{chrome.i18n.getMessage(`traktTitle`)}: {traktTitle}</a></span>
+                   target='noopener noreferrer _blank'>{browser.i18n.getMessage(`traktTitle`)}: {traktTitle}</a></span>
           <span className='mdl-list__item-text-body'>
-            {chrome.i18n.getMessage(`netflixDate`)}: {netflix.date.format('MMMM Do YYYY, h:mm:ss a')} / {chrome.i18n.getMessage(`traktDate`)}: {traktDate}
+            {browser.i18n.getMessage(`netflixDate`)}: {netflix.date.format('MMMM Do YYYY, h:mm:ss a')} / {browser.i18n.getMessage(`traktDate`)}: {traktDate}
             {suggestions}
             <br/>
-            {chrome.i18n.getMessage(`isThisWrong`)} <a className='paste-trakt-url'
-                                                       onClick={this._onShowTraktURLForm.bind(this)}>{chrome.i18n.getMessage(`pasteTraktUrl`)}</a>
+            {browser.i18n.getMessage(`isThisWrong`)} <a className='paste-trakt-url'
+                                                       onClick={this._onShowTraktURLForm.bind(this)}>{browser.i18n.getMessage(`pasteTraktUrl`)}</a>
             <TraktURLForm activity={activity} show={this.state.showTraktURLForm} error={this.state.traktError} isUpdating={this.state.isUpdating}
                           click={this.state.traktClick} onSubmit={this._onSubmitTraktURL.bind(this)}/>
           </span>
         </span>
         <span className='mdl-list__item-secondary-action' style={{display: !trakt ? 'block' : 'none'}}>
-          {chrome.i18n.getMessage(`notFoundTrakt`)}
+          {browser.i18n.getMessage(`notFoundTrakt`)}
         </span>
         <span className='mdl-list__item-secondary-action' style={{display: activity.alreadyOnTrakt ? 'block' : 'none'}}>
-          {chrome.i18n.getMessage(`alreadySynced`)}
+          {browser.i18n.getMessage(`alreadySynced`)}
         </span>
         <span className='mdl-list__item-secondary-action' style={{display: !trakt || activity.alreadyOnTrakt ? 'none' : 'block'}}>
           <label className='mdl-switch mdl-js-switch mdl-js-ripple-effect' htmlFor={formId}>

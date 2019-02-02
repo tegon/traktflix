@@ -1,4 +1,5 @@
-import ChromeStorage from '../ChromeStorage';
+import React from 'react';
+import BrowserStorage from '../BrowserStorage';
 import OptionsActionsCreators from './OptionsActionCreators';
 
 class OptionsUtils {
@@ -12,28 +13,43 @@ class OptionsUtils {
       id: `allowGoogleAnalytics`,
       name: ``,
       description: ``,
-      value: false
+      value: false,
+      origins: [`*://google-analytics.com/*`]
     }, {
       id: `allowRollbar`,
       name: ``,
       description: ``,
-      value: false
+      value: false,
+      origins: [`*://api.rollbar.com/*`]
     }, {
       id: `showNotifications`,
       name: ``,
       description: ``,
-      value: false
+      value: false,
+      permissions: [`notifications`]
+    }, {
+      id: `sendReceiveSuggestions`,
+      name: ``,
+      description: ``,
+      value: false,
+      origins: [`*://script.google.com/*`, `*://script.googleusercontent.com/*`],
+      additionalElements: (
+        <React.Fragment>
+          <br></br>
+          <a href="https://docs.google.com/spreadsheets/d/1Yq9rnpszwh2XFVllLkNelaFeu8FY0lldd91ce7JVZPk/edit?usp=sharing" target="_blank">Database</a>
+        </React.Fragment>
+      )
     }];
   }
 
   async getOptions() {
     try {
-      const data = await ChromeStorage.get(`options`);
+      const storage = await BrowserStorage.get(`options`);
       for (const option of this.options) {
-        option.name = chrome.i18n.getMessage(`${option.id}Name`);
-        option.description = chrome.i18n.getMessage(`${option.id}Description`);
-        if (data.options) {
-          option.add = data.options[option.id];
+        option.name = browser.i18n.getMessage(`${option.id}Name`);
+        option.description = browser.i18n.getMessage(`${option.id}Description`);
+        if (storage.options) {
+          option.add = storage.options[option.id];
         }
       }
       OptionsActionsCreators.receiveOptions(this.options);

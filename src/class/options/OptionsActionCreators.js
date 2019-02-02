@@ -1,5 +1,5 @@
-import ViewingOptionsAppDispatcher from '../../modules/options/viewing-options-app-dispatcher';
 import ActionTypes from '../../modules/options/options-constants';
+import ViewingOptionsAppDispatcher from '../../modules/options/viewing-options-app-dispatcher';
 
 export default class OptionsActionCreators {
   static receiveOptions(options) {

@@ -1,5 +1,5 @@
-import React from 'react';
 import PropTypes from 'prop-types';
+import React from 'react';
 import ErrorBoundary from '../ErrorBoundary';
 import Loading from './Loading';
 
@@ -8,9 +8,10 @@ class LoginButton extends React.Component {
     super(props);
   }
 
-  handleClick(e) {
+  async handleClick(e) {
     this.props.onLoginClicked(e);
-    chrome.runtime.sendMessage({type: `launchAuthorize`}, this.oauthCallback.bind(this));
+    const options = await browser.runtime.sendMessage({type: `launchAuthorize`});
+    this.oauthCallback(options);
   }
 
   oauthCallback(options) {
@@ -30,7 +31,7 @@ class LoginButton extends React.Component {
   }
 
   render() {
-    chrome.runtime.sendMessage({type: `sendAppView`, view: `Login`});
+    browser.runtime.sendMessage({type: `sendAppView`, view: `Login`});
 
     return (
       <ErrorBoundary>
@@ -38,7 +39,7 @@ class LoginButton extends React.Component {
           <Loading show={this.props.loading}/>
           <button style={this.getButtonStyle()} onClick={this.handleClick.bind(this)}
                   className='mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect'>
-            {chrome.i18n.getMessage(`login`)}
+            {browser.i18n.getMessage(`login`)}
           </button>
         </div>
       </ErrorBoundary>

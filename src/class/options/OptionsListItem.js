@@ -1,5 +1,5 @@
-import React from 'react';
 import PropTypes from 'prop-types';
+import React from 'react';
 import OptionsActionCreators from './OptionsActionCreators';
 
 class OptionsListItem extends React.Component {
@@ -24,6 +24,7 @@ class OptionsListItem extends React.Component {
           <br/>
           <span className='mdl-list__item-text-body'>
             {option.description}
+            {option.additionalElements}
           </span>
         </span>
         <span className='mdl-list__item-secondary-action'>
