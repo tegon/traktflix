@@ -1,7 +1,7 @@
-import React from 'react';
 import PropTypes from 'prop-types';
-import TmdbImageContainer from '../tmdb/TmdbImageContainer';
+import React from 'react';
 import TmdbImage from '../tmdb/TmdbImage';
+import TmdbImageContainer from '../tmdb/TmdbImageContainer';
 
 class Watching extends React.Component {
   constructor(props) {
@@ -9,7 +9,7 @@ class Watching extends React.Component {
   }
 
   render() {
-    chrome.runtime.sendMessage({type: `sendAppView`, view: `Watching ${this.props.item.title }`});
+    browser.runtime.sendMessage({type: `sendAppView`, view: `Watching ${this.props.item.title }`});
 
     return (
       <TmdbImageContainer>

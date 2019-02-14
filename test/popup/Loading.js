@@ -1,4 +1,4 @@
-import {mount} from '../../test-helpers/EnzymeHelper';
+import { mount } from '../../test-helpers/EnzymeHelper';
 import React from 'react';
 import Loading from '../../src/class/popup/Loading';
 

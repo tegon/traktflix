@@ -1,10 +1,10 @@
 module.exports = config => {
   let webpackConfig = require(`./webpack.config.js`);
-  webpackConfig = webpackConfig({development: true});
+  webpackConfig = webpackConfig({ development: true, test: true });
   const configuration = {
     autoWatch: false,
     basePath: '',
-    browsers: [`Firefox`],
+    browsers: [`Chrome`, `Firefox`],
     client: {
       jasmine: {
         random: false

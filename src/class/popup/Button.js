@@ -1,5 +1,5 @@
-import React from 'react';
 import PropTypes from 'prop-types';
+import React from 'react';
 import ErrorBoundary from '../ErrorBoundary';
 
 class Button extends React.Component {
@@ -8,7 +8,7 @@ class Button extends React.Component {
   }
 
   handleClick() {
-    chrome.tabs.create({url: this.props.url, active: true});
+    browser.tabs.create({url: this.props.url, active: true});
   }
 
   render() {

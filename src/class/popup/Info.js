@@ -1,5 +1,5 @@
-import React from 'react';
 import PropTypes from 'prop-types';
+import React from 'react';
 import ErrorBoundary from '../ErrorBoundary';
 
 class Info extends React.Component {
@@ -13,7 +13,7 @@ class Info extends React.Component {
 
   render() {
     const message = this.getRandomMessage();
-    chrome.runtime.sendMessage({type: `sendAppView`, view: `Info`});
+    browser.runtime.sendMessage({type: `sendAppView`, view: `Info`});
 
     return (
       <ErrorBoundary>

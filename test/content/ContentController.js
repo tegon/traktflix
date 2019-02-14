@@ -1,10 +1,12 @@
+import browser from 'sinon-chrome';
 import sinon from 'sinon';
-import chrome from 'sinon-chrome/extensions';
-import ContentController from '../../src/class/content/ContentController';
 import ItemParser from '../../src/class/ItemParser';
 import Rollbar from '../../src/class/Rollbar';
-import Scrobble from '../../src/class/content/Scrobble';
 import Search from '../../src/class/Search';
+import ContentController from '../../src/class/content/ContentController';
+import Scrobble from '../../src/class/content/Scrobble';
+
+window.browser = browser;
 
 const controller = new ContentController();
 const response = {movie: {title: `Rocky`}};
@@ -13,9 +15,12 @@ const item = {type: `movie`, title: `Rocky`, getScrubber: sinon.stub()};
 const responseError = {errors: `Unauthorized`};
 controller.item = item;
 
+browser.flush();
+delete window.browser;
+
 describe(`ContentController`, () => {
   before(() => {
-    global.chrome = chrome;
+    window.browser = browser;
   });
 
   beforeEach(() => {
@@ -34,7 +39,7 @@ describe(`ContentController`, () => {
   });
 
   afterEach(() => {
-    chrome.flush();
+    browser.flush();
     controller.sendAnalyticsEvent.restore();
     controller.setActiveIcon.restore();
     controller.setInactiveIcon.restore();
@@ -50,26 +55,46 @@ describe(`ContentController`, () => {
   });
 
   after(() => {
-    chrome.flush();
-    delete global.chrome;
+    browser.flush();
+    delete window.browser;
   });
 
-  it(`setActiveIcon() calls chrome.runtime.sendMessage()`, () => {
+  it(`constructor() calls ItemParser.start() when user is watching something`, () => {
+    const url = `/watch/12345678`;
+    sinon.stub(ContentController.prototype, `getLocation`).returns(url);
+    new ContentController();
+    expect(ContentController.prototype.getLocation.callCount).to.equal(1);
+    expect(ContentController.prototype.getLocation.returnValues[0]).to.equal(url);
+    expect(ItemParser.start.callCount).to.equal(1);
+    ContentController.prototype.getLocation.restore();
+  });
+
+  it(`constructor() does nothing when user is not watching something`, () => {
+    const url = `/browse`;
+    sinon.stub(ContentController.prototype, `getLocation`).returns(url);
+    new ContentController();
+    expect(ContentController.prototype.getLocation.callCount).to.equal(1);
+    expect(ContentController.prototype.getLocation.returnValues[0]).to.equal(url);
+    expect(ItemParser.start.callCount).to.equal(0);
+    ContentController.prototype.getLocation.restore();
+  });
+
+  it(`setActiveIcon() calls browser.runtime.sendMessage()`, () => {
     controller.setActiveIcon();
-    expect(chrome.runtime.sendMessage.callCount).to.equal(1);
-    expect(chrome.runtime.sendMessage.args[0]).to.deep.equal([{type: `setActiveIcon`}]);
+    expect(browser.runtime.sendMessage.callCount).to.equal(1);
+    expect(browser.runtime.sendMessage.args[0]).to.deep.equal([{type: `setActiveIcon`}]);
   });
 
-  it(`setInactiveIcon() calls chrome.runtime.sendMessage()`, () => {
+  it(`setInactiveIcon() calls browser.runtime.sendMessage()`, () => {
     controller.setInactiveIcon();
-    expect(chrome.runtime.sendMessage.callCount).to.equal(1);
-    expect(chrome.runtime.sendMessage.args[0]).to.deep.equal([{type: `setInactiveIcon`}]);
+    expect(browser.runtime.sendMessage.callCount).to.equal(1);
+    expect(browser.runtime.sendMessage.args[0]).to.deep.equal([{type: `setInactiveIcon`}]);
   });
 
-  it(`sendAnalyticsEvent() calls chrome.runtime.sendMessage()`, () => {
+  it(`sendAnalyticsEvent() calls browser.runtime.sendMessage()`, () => {
     controller.sendAnalyticsEvent({name: `Foo`, value: `Bar`});
-    expect(chrome.runtime.sendMessage.callCount).to.equal(1);
-    expect(chrome.runtime.sendMessage.args[0]).to.deep.equal([{type: `sendEvent`, name: `Foo`, value: `Bar`}]);
+    expect(browser.runtime.sendMessage.callCount).to.equal(1);
+    expect(browser.runtime.sendMessage.args[0]).to.deep.equal([{type: `sendEvent`, name: `Foo`, value: `Bar`}]);
   });
 
   it(`onScrobbleSuccess() sends event to analytics`, () => {
@@ -95,22 +120,22 @@ describe(`ContentController`, () => {
     expect(Scrobble.prototype.start.callCount).to.equal(1);
   });
 
-  it(`showErrorNotification() calls chrome.runtime.sendMessage()`, () => {
+  it(`showErrorNotification() calls browser.runtime.sendMessage()`, () => {
     controller.showErrorNotification(`Foo`);
-    expect(chrome.runtime.sendMessage.callCount).to.equal(1);
-    expect(chrome.runtime.sendMessage.args[0]).to.deep.equal([{type: `showErrorNotification`, message: `Foo`}]);
+    expect(browser.runtime.sendMessage.callCount).to.equal(1);
+    expect(browser.runtime.sendMessage.args[0]).to.deep.equal([{type: `showErrorNotification`, message: `Foo`}]);
   });
 
   it(`reportError() calls showErrorNotification() when status is 404`, async () => {
-    chrome.i18n.getMessage.withArgs(`errorNotificationNotFound`).returns(`errorNotificationNotFound`);
+    browser.i18n.getMessage.withArgs(`errorNotificationNotFound`).returns(`errorNotificationNotFound`);
     await controller.reportError(`Foo`, 404, responseError, {});
     expect(controller.showErrorNotification.callCount).to.equal(1);
     expect(controller.showErrorNotification.args[0]).to.deep.equal([`errorNotificationNotFound`]);
   });
 
   it(`reportError() calls showErrorNotification() and Rollbar.warning() when status is 0 and access_token is defined`, async () => {
-    chrome.i18n.getMessage.withArgs(`errorNotificationServers`).returns(`errorNotificationServers`);
-    chrome.storage.local.get.withArgs(null).yields({data: {access_token: `12345abcde`}});
+    browser.i18n.getMessage.withArgs(`errorNotificationServers`).returns(`errorNotificationServers`);
+    browser.storage.local.get.withArgs(`data`).resolves({data: {access_token: `12345abcde`}});
     await controller.reportError(`Foo`, 0, responseError, {});
     expect(controller.showErrorNotification.callCount).to.equal(1);
     expect(controller.showErrorNotification.args[0]).to.deep.equal([`errorNotificationServers`]);
@@ -124,15 +149,15 @@ describe(`ContentController`, () => {
   });
 
   it(`reportError() calls showErrorNotification() when status is 0 and access_token is undefined`, async () => {
-    chrome.i18n.getMessage.withArgs(`errorNotificationLogin`).returns(`errorNotificationLogin`);
-    chrome.storage.local.get.withArgs(null).yields({});
+    browser.i18n.getMessage.withArgs(`errorNotificationLogin`).returns(`errorNotificationLogin`);
+    browser.storage.local.get.withArgs(`data`).resolves({});
     await controller.reportError(`Foo`, 0, responseError, {});
     expect(controller.showErrorNotification.callCount).to.equal(1);
     expect(controller.showErrorNotification.args[0]).to.deep.equal([`errorNotificationLogin`]);
   });
 
   it(`reportError() calls showErrorNotification() and Rollbar.warning()`, async () => {
-    chrome.i18n.getMessage.withArgs(`errorNotificationServers`).returns(`errorNotificationServers`);
+    browser.i18n.getMessage.withArgs(`errorNotificationServers`).returns(`errorNotificationServers`);
     await controller.reportError(`Foo`, 200, responseError, {});
     expect(controller.showErrorNotification.callCount).to.equal(1);
     expect(controller.showErrorNotification.args[0]).to.deep.equal([`errorNotificationServers`]);
@@ -182,6 +207,14 @@ describe(`ContentController`, () => {
     expect(controller.sendAnalyticsEvent.args[0]).to.deep.equal([{name: `Scrobble`, value: `start`}]);
   });
 
+  it(`onPause() does nothing when scrobble is undefined`, () => {
+    controller.scrobble = undefined;
+    controller.onPause();
+    expect(controller.setInactiveIcon.callCount).to.equal(0);
+    expect(Scrobble.prototype.pause.callCount).to.equal(0);
+    expect(controller.sendAnalyticsEvent.callCount).to.equal(0);
+  });
+
   it(`onPause() calls Scrobble.pause()`, () => {
     controller.scrobble = scrobble;
     controller.onPause();
@@ -189,6 +222,16 @@ describe(`ContentController`, () => {
     expect(Scrobble.prototype.pause.callCount).to.equal(1);
     expect(controller.sendAnalyticsEvent.callCount).to.equal(1);
     expect(controller.sendAnalyticsEvent.args[0]).to.deep.equal([{name: `Scrobble`, value: `pause`}]);
+  });
+
+  it(`onStop() only calls storeItem() when scrobble is undefined`, () => {
+    controller.scrobble = undefined;
+    controller.onStop();
+    expect(controller.setInactiveIcon.callCount).to.equal(0);
+    expect(Scrobble.prototype.stop.callCount).to.equal(0);
+    expect(controller.sendAnalyticsEvent.callCount).to.equal(0);
+    expect(controller.item).to.be.null;
+    expect(controller.scrobble).to.be.undefined;
   });
 
   it(`onStop() calls Scrobble.stop()`, () => {
@@ -200,6 +243,12 @@ describe(`ContentController`, () => {
     expect(controller.sendAnalyticsEvent.args[0]).to.deep.equal([{name: `Scrobble`, value: `stop`}]);
     expect(controller.item).to.be.null;
     expect(controller.scrobble).to.be.undefined;
+  });
+
+  it(`getCurrentItem() returns null when item and scrobble are undefined`, () => {
+    controller.scrobble = undefined;
+    controller.item = undefined;
+    expect(controller.getCurrentItem()).to.be.null;
   });
 
   it(`getCurrentItem() returns movie object`, () => {

@@ -1,7 +1,7 @@
 <h1 align="center">
   <br>
   <a href="https://tegon.github.io/traktflix/">
-    <img src="https://raw.githubusercontent.com/tegon/traktflix/master/app/img/traktflix-icon-128.png" alt="Traktflix" width="150">
+    <img src="https://github.com/tegon/traktflix/raw/master/app/img/traktflix-icon-128.png" alt="Traktflix" width="150">
   </a>
   <br>
   traktflix
@@ -13,13 +13,16 @@
 <h4 align="center">A Trakt.tv scrobbler for Netflix.</h4>
 
 <p align="center">
-  <a href="https://github.com/tegon/traktflix/releases"><img src="https://img.shields.io/github/release/gsrafael01/traktflix.svg" alt="github release"></a>
-  <a href="https://travis-ci.com/tegon/traktflix"><img src="https://travis-ci.com/gsrafael01/traktflix.svg?branch=master" alt="travis"></a>
-  <a href='https://coveralls.io/github/tegon/traktflix?branch=master'><img src='https://coveralls.io/repos/github/gsrafael01/traktflix/badge.svg?branch=master' alt='Coverage Status' /></a>
+  <a href="https://github.com/tegon/traktflix/releases"><img src="https://img.shields.io/github/release/tegon/traktflix.svg" alt="github release"></a>
+  <a href="https://travis-ci.com/tegon/traktflix"><img src="https://travis-ci.com/tegon/traktflix.svg?branch=master" alt="travis"></a>
+  <a href='https://coveralls.io/github/tegon/traktflix?branch=master'><img src='https://coveralls.io/repos/github/tegon/traktflix/badge.svg?branch=master' alt='Coverage Status' /></a>
 </p>
 
 <p align=left">
-  <a href="https://addons.mozilla.org/en-US/firefox/addon/traktflix"><img src="https://discourse-paas-production-content.s3.amazonaws.com/original/3X/c/0/c03e12b8fae82e431eabaf0f6e250bfc78504182.png" alt="Get the add-on"></a>
+  <a href="https://chrome.google.com/webstore/detail/traktflix/ehlckfimahifadnbecobagimllmbdmde"><img src="https://github.com/tegon/traktflix/raw/master/chrome-badge.png" alt="Get the extension on Chrome"></a>
+</p>
+<p align=left">
+  <a href="https://addons.mozilla.org/en-US/firefox/addon/traktflix"><img src="https://github.com/tegon/traktflix/raw/master/firefox-badge.png" alt="Get the extension on Firefox"></a>
 </p>
 
 ### Table of Contents
@@ -99,10 +102,10 @@ The commands above have only been tested on Linux.
 ### Credits
 <h3 align="center">
   <a href="https://tegon.github.io/traktflix/">
-    <img src="https://raw.githubusercontent.com/tegon/traktflix/master/tmdb-api-logo.png" alt="TMDB" width="150">
+    <img src="https://github.com/tegon/traktflix/raw/master/tmdb-api-logo.png" alt="TMDB" width="150">
   </a>
   <a href="https://tegon.github.io/traktflix/">
-      <img src="https://raw.githubusercontent.com/tegon/traktflix/master/trakt-api-logo.png" alt="TMDB" width="150">
+      <img src="https://github.com/tegon/traktflix/raw/master/trakt-api-logo.png" alt="TMDB" width="150">
   </a>
 </h3>
 

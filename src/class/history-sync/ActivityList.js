@@ -1,7 +1,7 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import ActivityListItem from './ActivityListItem';
 import 'material-design-lite';
+import PropTypes from 'prop-types';
+import React from 'react';
+import ActivityListItem from './ActivityListItem';
 
 /* global componentHandler */
 

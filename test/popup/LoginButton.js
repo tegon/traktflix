@@ -1,10 +1,10 @@
-import {mount} from '../../test-helpers/EnzymeHelper';
+import { mount } from '../../test-helpers/EnzymeHelper';
+import browser from 'sinon-chrome';
 import sinon from 'sinon';
-import chrome from 'sinon-chrome/extensions';
 import React from 'react';
 import LoginButton from '../../src/class/popup/LoginButton';
 
-global.chrome = chrome;
+window.browser = browser;
 
 const onLoginClicked = sinon.stub();
 const onTokenFailed = sinon.stub();
@@ -16,9 +16,11 @@ const componentFalse = mount(
   <LoginButton onLoginClicked={onLoginClicked} loading={false} onTokenSuccess={onTokenSuccess} onTokenFailed={onTokenFailed}/>
 );
 
+delete window.browser;
+
 describe(`LoginButton`, () => {
   before(() => {
-    global.chrome = chrome;
+    window.browser = browser;
   });
 
   beforeEach(() => {
@@ -30,16 +32,16 @@ describe(`LoginButton`, () => {
   after(() => {
     componentTrue.unmount();
     componentFalse.unmount();
-    chrome.flush();
-    delete global.chrome;
+    browser.flush();
+    delete window.browser;
   });
 
   it(`sends analytics appView`, () => {
-    expect(chrome.runtime.sendMessage.callCount).to.equal(2);
-    expect(chrome.runtime.sendMessage.args[0]).to.deep.equal([{
+    expect(browser.runtime.sendMessage.callCount).to.equal(2);
+    expect(browser.runtime.sendMessage.args[0]).to.deep.equal([{
       type: `sendAppView`, view: `Login`
     }]);
-    chrome.flush();
+    browser.flush();
   });
 
   it(`has the correct html classes`, () => {
@@ -59,12 +61,13 @@ describe(`LoginButton`, () => {
     expect(button.getDOMNode().style.display).to.equal(``);
   });
 
-  it(`calls launchAuthorize and onLoginClicked when button is clicked`, () => {
+  it(`calls launchAuthorize and onLoginClicked when button is clicked`, async () => {
+    browser.runtime.sendMessage.withArgs({type: `launchAuthorize`}).resolves(`Test`);
     const button = componentTrue.find(`.mdl-button.mdl-js-button.mdl-button--raised.mdl-button--colored.mdl-js-ripple-effect`);
-    button.prop(`onClick`)();
+    await button.prop(`onClick`)();
     expect(onLoginClicked.callCount).to.equal(1);
-    expect(chrome.runtime.sendMessage.callCount).to.equal(1);
-    expect(chrome.runtime.sendMessage.args[0][0]).to.deep.equal({type: `launchAuthorize`});
+    expect(browser.runtime.sendMessage.callCount).to.equal(1);
+    expect(browser.runtime.sendMessage.args[0][0]).to.deep.equal({type: `launchAuthorize`});
   });
 
   it(`Oauth callback calls onTokenFailed`, () => {

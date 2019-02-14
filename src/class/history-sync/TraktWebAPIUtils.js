@@ -1,6 +1,6 @@
 import moment from 'moment';
 import Settings from '../../settings';
-import ChromeStorage from '../ChromeStorage';
+import BrowserStorage from '../BrowserStorage';
 import Request from '../Request';
 import Search from '../Search';
 import ActivityActionCreators from './ActivityActionCreators';
@@ -68,18 +68,18 @@ export default class TraktWebAPIUtils {
 
   static async setTraktCache(options) {
     const id = TraktWebAPIUtils._getTraktCacheId(options);
-    const storage = await ChromeStorage.get(`traktCache`);
+    const storage = await BrowserStorage.get(`traktCache`);
     if (!storage.traktCache) {
       storage.traktCache = `{}`;
     }
     storage.traktCache = JSON.parse(storage.traktCache);
     storage.traktCache[id] = options.result.activity;
-    await ChromeStorage.set({traktCache: JSON.stringify(storage.traktCache)});
+    await BrowserStorage.set({traktCache: JSON.stringify(storage.traktCache)});
   }
 
   static async getTraktCache(options) {
     const id = TraktWebAPIUtils._getTraktCacheId(options);
-    const storage = await ChromeStorage.get(`traktCache`);
+    const storage = await BrowserStorage.get(`traktCache`);
     if (!storage.traktCache) {
       storage.traktCache = `{}`;
     }

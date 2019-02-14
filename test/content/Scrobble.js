@@ -1,8 +1,10 @@
+import browser from 'sinon-chrome';
 import sinon from 'sinon';
-import chrome from 'sinon-chrome/extensions';
-import NetflixTestUtils from '../../test-helpers/NetflixTestHelper';
-import Scrobble from '../../src/class/content/Scrobble';
 import Settings from '../../src/settings';
+import Scrobble from '../../src/class/content/Scrobble';
+import NetflixTestUtils from '../../test-helpers/NetflixTestHelper';
+
+window.browser = browser;
 
 const scrobbleMovie = new Scrobble({
   type: `movie`,
@@ -22,9 +24,12 @@ const scrobbleShow = new Scrobble({
 
 let server = null;
 
+browser.flush();
+delete window.browser;
+
 describe(`Scrobble`, () => {
   before(() => {
-    global.chrome = chrome;
+    window.browser = browser;
   });
 
   beforeEach(() => {
@@ -34,13 +39,13 @@ describe(`Scrobble`, () => {
   });
 
   afterEach(() => {
-    chrome.flush();
+    browser.flush();
     server.restore();
   });
 
   after(() => {
-    chrome.flush();
-    delete global.chrome;
+    browser.flush();
+    delete window.browser;
   });
 
   it(`constructor() sets properties for movie`, () => {
@@ -82,13 +87,13 @@ describe(`Scrobble`, () => {
   });
 
   it(`start() calls success`, done => {
-    chrome.storage.local.get.withArgs(`data`).yields({data: {access_token: `12345abcde`}});
-    chrome.storage.local.get.withArgs(`options`).yields({options: {showNotifications: true}});
-    chrome.i18n.getMessage.withArgs(`scrobbleStarted`).returns(`scrobbleStarted`);
+    browser.storage.local.get.withArgs(`data`).resolves({data: {access_token: `12345abcde`}});
+    browser.storage.local.get.withArgs(`options`).resolves({options: {showNotifications: true}});
+    browser.i18n.getMessage.withArgs(`scrobbleStarted`).returns(`scrobbleStarted`);
     server.respondWith(`POST`, `${Settings.apiUri}/scrobble/start`, [200, {[`Content-Type`]: `application/json`}, ``]);
     scrobbleShow.success = () => {
-      expect(chrome.runtime.sendMessage.callCount).to.equal(1);
-      expect(chrome.runtime.sendMessage.args[0]).to.deep.equal([{
+      expect(browser.runtime.sendMessage.callCount).to.equal(1);
+      expect(browser.runtime.sendMessage.args[0]).to.deep.equal([{
         type: `showNotification`,
         message: `scrobbleStarted`,
         title: `traktflix: Foo - Bar`
@@ -102,16 +107,16 @@ describe(`Scrobble`, () => {
   });
 
   it(`start() calls error`, done => {
-    chrome.storage.local.get.withArgs(`data`).yields({data: {access_token: `12345abcde`}});
-    chrome.storage.local.get.withArgs(`options`).yields({options: {showNotifications: true}});
-    chrome.i18n.getMessage.withArgs(`couldNotScrobble`).returns(`couldNotScrobble`);
+    browser.storage.local.get.withArgs(`data`).resolves({data: {access_token: `12345abcde`}});
+    browser.storage.local.get.withArgs(`options`).resolves({options: {showNotifications: true}});
+    browser.i18n.getMessage.withArgs(`couldNotScrobble`).returns(`couldNotScrobble`);
     server.respondWith(`POST`, `${Settings.apiUri}/scrobble/start`, [500, {[`Content-Type`]: `application/json`}, ``]);
     scrobbleShow.success = () => {
       done.fail();
     };
     scrobbleShow.error = () => {
-      expect(chrome.runtime.sendMessage.callCount).to.equal(1);
-      expect(chrome.runtime.sendMessage.args[0]).to.deep.equal([{
+      expect(browser.runtime.sendMessage.callCount).to.equal(1);
+      expect(browser.runtime.sendMessage.args[0]).to.deep.equal([{
         type: `showErrorNotification`,
         message: `couldNotScrobble Foo - Bar`
       }]);
@@ -121,13 +126,13 @@ describe(`Scrobble`, () => {
   });
 
   it(`pause() calls success`, done => {
-    chrome.storage.local.get.withArgs(`data`).yields({data: {access_token: `12345abcde`}});
-    chrome.storage.local.get.withArgs(`options`).yields({options: {showNotifications: true}});
-    chrome.i18n.getMessage.withArgs(`scrobblePaused`).returns(`scrobblePaused`);
+    browser.storage.local.get.withArgs(`data`).resolves({data: {access_token: `12345abcde`}});
+    browser.storage.local.get.withArgs(`options`).resolves({options: {showNotifications: true}});
+    browser.i18n.getMessage.withArgs(`scrobblePaused`).returns(`scrobblePaused`);
     server.respondWith(`POST`, `${Settings.apiUri}/scrobble/pause`, [200, {[`Content-Type`]: `application/json`}, ``]);
     scrobbleShow.success = () => {
-      expect(chrome.runtime.sendMessage.callCount).to.equal(1);
-      expect(chrome.runtime.sendMessage.args[0]).to.deep.equal([{
+      expect(browser.runtime.sendMessage.callCount).to.equal(1);
+      expect(browser.runtime.sendMessage.args[0]).to.deep.equal([{
         type: `showNotification`,
         message: `scrobblePaused`,
         title: `traktflix: Foo - Bar`
@@ -141,16 +146,16 @@ describe(`Scrobble`, () => {
   });
 
   it(`pause() calls error`, done => {
-    chrome.storage.local.get.withArgs(`data`).yields({data: {access_token: `12345abcde`}});
-    chrome.storage.local.get.withArgs(`options`).yields({options: {showNotifications: true}});
-    chrome.i18n.getMessage.withArgs(`couldNotScrobble`).returns(`couldNotScrobble`);
+    browser.storage.local.get.withArgs(`data`).resolves({data: {access_token: `12345abcde`}});
+    browser.storage.local.get.withArgs(`options`).resolves({options: {showNotifications: true}});
+    browser.i18n.getMessage.withArgs(`couldNotScrobble`).returns(`couldNotScrobble`);
     server.respondWith(`POST`, `${Settings.apiUri}/scrobble/pause`, [500, {[`Content-Type`]: `application/json`}, ``]);
     scrobbleShow.success = () => {
       done.fail();
     };
     scrobbleShow.error = () => {
-      expect(chrome.runtime.sendMessage.callCount).to.equal(1);
-      expect(chrome.runtime.sendMessage.args[0]).to.deep.equal([{
+      expect(browser.runtime.sendMessage.callCount).to.equal(1);
+      expect(browser.runtime.sendMessage.args[0]).to.deep.equal([{
         type: `showErrorNotification`,
         message: `couldNotScrobble Foo - Bar`
       }]);
@@ -160,13 +165,13 @@ describe(`Scrobble`, () => {
   });
 
   it(`stop() calls success`, done => {
-    chrome.storage.local.get.withArgs(`data`).yields({data: {access_token: `12345abcde`}});
-    chrome.storage.local.get.withArgs(`options`).yields({options: {showNotifications: true}});
-    chrome.i18n.getMessage.withArgs(`scrobbleStopped`).returns(`scrobbleStopped`);
+    browser.storage.local.get.withArgs(`data`).resolves({data: {access_token: `12345abcde`}});
+    browser.storage.local.get.withArgs(`options`).resolves({options: {showNotifications: true}});
+    browser.i18n.getMessage.withArgs(`scrobbleStopped`).returns(`scrobbleStopped`);
     server.respondWith(`POST`, `${Settings.apiUri}/scrobble/stop`, [200, {[`Content-Type`]: `application/json`}, ``]);
     scrobbleShow.success = () => {
-      expect(chrome.runtime.sendMessage.callCount).to.equal(1);
-      expect(chrome.runtime.sendMessage.args[0]).to.deep.equal([{
+      expect(browser.runtime.sendMessage.callCount).to.equal(1);
+      expect(browser.runtime.sendMessage.args[0]).to.deep.equal([{
         type: `showNotification`,
         message: `scrobbleStopped`,
         title: `traktflix: Foo - Bar`
@@ -180,16 +185,16 @@ describe(`Scrobble`, () => {
   });
 
   it(`stop() calls error`, done => {
-    chrome.storage.local.get.withArgs(`data`).yields({data: {access_token: `12345abcde`}});
-    chrome.storage.local.get.withArgs(`options`).yields({options: {showNotifications: true}});
-    chrome.i18n.getMessage.withArgs(`couldNotScrobble`).returns(`couldNotScrobble`);
+    browser.storage.local.get.withArgs(`data`).resolves({data: {access_token: `12345abcde`}});
+    browser.storage.local.get.withArgs(`options`).resolves({options: {showNotifications: true}});
+    browser.i18n.getMessage.withArgs(`couldNotScrobble`).returns(`couldNotScrobble`);
     server.respondWith(`POST`, `${Settings.apiUri}/scrobble/stop`, [500, {[`Content-Type`]: `application/json`}, ``]);
     scrobbleShow.success = () => {
       done.fail();
     };
     scrobbleShow.error = () => {
-      expect(chrome.runtime.sendMessage.callCount).to.equal(1);
-      expect(chrome.runtime.sendMessage.args[0]).to.deep.equal([{
+      expect(browser.runtime.sendMessage.callCount).to.equal(1);
+      expect(browser.runtime.sendMessage.args[0]).to.deep.equal([{
         type: `showErrorNotification`,
         message: `couldNotScrobble Foo - Bar`
       }]);

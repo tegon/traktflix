@@ -1,14 +1,14 @@
-import ChromeStorage from '../ChromeStorage';
+import 'material-design-lite';
+import { Route, Switch } from "react-router-dom";
+import PropTypes from 'prop-types';
+import React from 'react';
+import BrowserStorage from '../BrowserStorage';
+import ErrorBoundary from '../ErrorBoundary';
 import Oauth from '../Oauth';
 import Rollbar from '../Rollbar';
-import React from 'react';
-import PropTypes from 'prop-types';
-import Header from './Header';
-import 'material-design-lite';
-import {Route, Switch} from "react-router-dom";
-import ErrorBoundary from '../ErrorBoundary';
-import LoginButton from "./LoginButton";
 import About from "./About";
+import Header from './Header';
+import LoginButton from "./LoginButton";
 import NotWatching from "./NotWatching";
 import Watching from "./Watching";
 
@@ -25,8 +25,8 @@ class App extends React.Component {
   }
 
   async checkUserLogin() {
-    const data = await ChromeStorage.get(null);
-    if (!data.data || !data.data.access_token) {
+    const storage = await BrowserStorage.get(`data`);
+    if (!storage.data || !storage.data.access_token) {
       this.setState({
         loading: false,
         logged: false
@@ -38,10 +38,10 @@ class App extends React.Component {
   }
 
   async userIsLogged() {
-    const data = await ChromeStorage.get(null);
+    const storage = await BrowserStorage.get(`data`);
     this.setState({
-      logged: data.data && !!data.data.access_token,
-      autoSync: data.data && data.data.auto_sync
+      logged: storage.data && !!storage.data.access_token,
+      autoSync: storage.data && storage.data.auto_sync
     });
     this.getCurrentItem();
     this.context.router.history.push(`/not-watching`);
@@ -51,12 +51,11 @@ class App extends React.Component {
     this.onTokenFailed(status, response);
   }
 
-  sendToContentScript(type, callback) {
-    chrome.tabs.query({url: `*://*.netflix.com/*`, active: true}, function (tabs) {
-      if (tabs.length > 0) {
-        chrome.tabs.sendMessage(tabs[0].id, {type: type}, callback);
-      }
-    });
+  async sendToContentScript(type, callback) {
+    const tabs = await browser.tabs.query({url: `*://*.netflix.com/*`, active: true});
+    if (tabs.length > 0) {
+      browser.tabs.sendMessage(tabs[0].id, {type: type}).then(callback);
+    }
   }
 
   getCurrentItem() {
@@ -80,8 +79,8 @@ class App extends React.Component {
   }
 
   async logoutClicked() {
-    chrome.runtime.sendMessage({type: `sendEvent`, name: `Logout`, value: false});
-    await ChromeStorage.remove(`data`);
+    browser.runtime.sendMessage({type: `sendEvent`, name: `Logout`, value: false});
+    await BrowserStorage.remove(`data`, true);
     this.setState({logged: false});
     this.context.router.history.push(`/login`);
   }
@@ -94,12 +93,12 @@ class App extends React.Component {
     const options = JSON.parse(response);
     this.setState({loading: false, logged: !!options.access_token});
     this.context.router.history.push(`/not-watching`);
-    chrome.runtime.sendMessage({type: `sendEvent`, name: `TokenSuccess`, value: true});
+    browser.runtime.sendMessage({type: `sendEvent`, name: `TokenSuccess`, value: true});
   }
 
   onTokenFailed(status, response) {
     this.setState({loading: false});
-    chrome.runtime.sendMessage({type: `sendEvent`, name: `TokenFailed`, value: false});
+    browser.runtime.sendMessage({type: `sendEvent`, name: `TokenFailed`, value: false});
     console.log(`traktflix: Get Token failed`, status, response);
     Rollbar.init().then(() => Rollbar.warning(`traktflix: Get Token failed`, {status: status, response: response}));
   }

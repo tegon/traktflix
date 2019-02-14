@@ -1,4 +1,4 @@
-import {mount} from '../test-helpers/EnzymeHelper';
+import { mount } from '../test-helpers/EnzymeHelper';
 import sinon from 'sinon';
 import React from 'react';
 import ErrorBoundary from '../src/class/ErrorBoundary';

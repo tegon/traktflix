@@ -1,10 +1,11 @@
-import ChromeStorage from '../ChromeStorage';
-import React from 'react';
+import 'material-design-lite';
 import PropTypes from 'prop-types';
+import React from 'react';
+import BrowserStorage from '../BrowserStorage';
+import Permissions from '../Permissions';
 import OptionsActionCreators from './OptionsActionCreators';
 import OptionsList from './OptionsList';
 import OptionsStore from './OptionsStore';
-import 'material-design-lite';
 
 /* global componentHandler */
 
@@ -39,7 +40,7 @@ class ViewingOptionsApp extends React.Component {
   }
 
   async _getTraktCacheSize() {
-    const storage = await ChromeStorage.get(`traktCache`);
+    const storage = await BrowserStorage.get(`traktCache`);
     let size = (JSON.stringify(storage.traktCache) || ``).length;
     if (size < 1024) {
       return `${size.toFixed(2)} B`;
@@ -60,10 +61,22 @@ class ViewingOptionsApp extends React.Component {
   async _onSaveClick() {
     try {
       const options = {};
+      const permissionsToAdd = [];
+      const permissionsToRemove = [];
+      const originsToAdd = [];
+      const originsToRemove = [];
       for (const option of this.state.options) {
         options[option.id] = option.add;
+        if (option.permissions) {
+          (option.add ? permissionsToAdd : permissionsToRemove).push(...option.permissions);
+        }
+        if (option.origins) {
+          (option.add ? originsToAdd : originsToRemove).push(...option.origins);
+        }
       }
-      await ChromeStorage.set({options});
+      await Permissions.request(permissionsToAdd, originsToAdd);
+      await Permissions.remove(permissionsToRemove, originsToRemove);
+      await BrowserStorage.set({options}, true);
       OptionsActionCreators.saveSuccess();
     } catch (error) {
       OptionsActionCreators.saveFailed(error);
@@ -72,9 +85,9 @@ class ViewingOptionsApp extends React.Component {
 
   async _onClearClick() {
     try {
-      const confirmationMessage = chrome.i18n.getMessage(`confirmClear`);
+      const confirmationMessage = browser.i18n.getMessage(`confirmClear`);
       if (confirm(confirmationMessage)) {
-        await ChromeStorage.clear();
+        await BrowserStorage.clear(true);
       }
       OptionsActionCreators.clearSuccess();
     } catch (error) {
@@ -84,9 +97,9 @@ class ViewingOptionsApp extends React.Component {
 
   async _onClearTraktCacheClick() {
     try {
-      const confirmationMessage = chrome.i18n.getMessage(`confirmClearTraktCache`);
+      const confirmationMessage = browser.i18n.getMessage(`confirmClearTraktCache`);
       if (confirm(confirmationMessage)) {
-        await ChromeStorage.remove(`traktCache`);
+        await BrowserStorage.remove(`traktCache`);
       }
       OptionsActionCreators.clearTraktCacheSuccess();
     } catch (error) {
@@ -114,23 +127,23 @@ class ViewingOptionsApp extends React.Component {
           <div className='mdl-actions-wrapper'>
             <button onClick={this._onSaveClick.bind(this)}
                     className='mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect'>
-              {chrome.i18n.getMessage(`save`)}
+              {browser.i18n.getMessage(`save`)}
             </button>
 
             <button onClick={this._onClearClick.bind(this)}
                     className='mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect'>
-              {chrome.i18n.getMessage(`clearStorage`)}
+              {browser.i18n.getMessage(`clearStorage`)}
             </button>
 
             <button onClick={this._onClearTraktCacheClick.bind(this)}
                     className='mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect'>
-              {chrome.i18n.getMessage(`clearTraktCache`)} (<span id='traktCacheSize'/>)
+              {browser.i18n.getMessage(`clearTraktCache`)} (<span id='traktCacheSize'/>)
             </button>
           </div>
         </div>
       );
     } else {
-      content = (<div><h4>{chrome.i18n.getMessage(`failedOptions`)}</h4></div>);
+      content = (<div><h4>{browser.i18n.getMessage(`failedOptions`)}</h4></div>);
     }
 
     return (

@@ -1,24 +1,26 @@
-import {mount} from '../../test-helpers/EnzymeHelper';
-import chrome from 'sinon-chrome';
+import { mount } from '../../test-helpers/EnzymeHelper';
+import browser from 'sinon-chrome';
 import React from 'react';
 import Info from '../../src/class/popup/Info';
 
-global.chrome = chrome;
+window.browser = browser;
 
 const messages = [`Info Message`, `About Message`];
 const component = mount(
   <Info messages={messages}/>
 );
 
+delete window.browser;
+
 describe(`Info`, () => {
   before(() => {
-    global.chrome = chrome;
+    window.browser = browser;
   });
 
   after(() => {
     component.unmount();
-    chrome.flush();
-    delete global.chrome;
+    browser.flush();
+    delete window.browser;
   });
 
   it(`returns random message`, () => {
@@ -27,8 +29,8 @@ describe(`Info`, () => {
   });
 
   it(`sends analytics appView`, () => {
-    expect(chrome.runtime.sendMessage.callCount).to.equal(1);
-    expect(chrome.runtime.sendMessage.args[0]).to.deep.equal([{
+    expect(browser.runtime.sendMessage.callCount).to.equal(1);
+    expect(browser.runtime.sendMessage.args[0]).to.deep.equal([{
       type: `sendAppView`, view: `Info`
     }]);
   });

@@ -1,29 +1,31 @@
-import {mount} from '../../test-helpers/EnzymeHelper';
-import chrome from 'sinon-chrome/extensions';
+import { mount } from '../../test-helpers/EnzymeHelper';
+import browser from 'sinon-chrome';
 import React from 'react';
 import Watching from '../../src/class/popup/Watching';
 
-global.chrome = chrome;
+window.browser = browser;
 
 const item = {title: `Test`};
 const component = mount(
   <Watching item={item}/>
 );
 
+delete window.browser;
+
 describe(`Watching`, () => {
   before(() => {
-    global.chrome = chrome;
+    window.browser = browser;
   });
 
   after(() => {
     component.unmount();
-    chrome.flush();
-    delete global.chrome;
+    browser.flush();
+    delete window.browser;
   });
 
   it(`sends analytics appView`, () => {
-    expect(chrome.runtime.sendMessage.callCount).to.equal(1);
-    expect(chrome.runtime.sendMessage.args[0]).to.deep.equal([{
+    expect(browser.runtime.sendMessage.callCount).to.equal(1);
+    expect(browser.runtime.sendMessage.args[0]).to.deep.equal([{
       type: `sendAppView`, view: `Watching ${item.title}`
     }]);
   });

@@ -3,14 +3,12 @@ export default class EventWatcher {
     this.document = document;
     this.onPlay = options.onPlay;
     this.onStop = options.onStop;
-    this.url = location.href;
+    this.url = this.getLocation();
   }
 
-  addStopListener() {
-    window.onbeforeunload = window.onunload = () => {
-      this.onStop();
-      this.stopListeners();
-    };
+  // For testing purposes
+  getLocation() {
+    return location.href;
   }
 
   onUrlChange(oldUrl, newUrl) {
@@ -24,16 +22,24 @@ export default class EventWatcher {
     }
   }
 
+  onBeforeUnload() {
+    this.onStop();
+    this.stopListeners();
+  }
+
+  addStopListener() {
+    window.onbeforeunload = window.onunload = this.onBeforeUnload.bind(this);
+  }
+
   addUrlChangeListener() {
-    const _this = this;
-    this.urlChangeInterval = setTimeout(function () {
-      if (this.url !== location.href) {
-        _this.onUrlChange(this.url, location.href);
-        this.url = location.href;
+    this.urlChangeInterval = setTimeout(() => {
+      if (this.url !== this.getLocation()) {
+        this.onUrlChange(this.url, this.getLocation());
+        this.url = this.getLocation();
       }
       clearTimeout(this.urlChangeInterval);
-      _this.addUrlChangeListener();
-    }.bind(this), 500);
+      this.addUrlChangeListener();
+    }, 500);
   }
 
   startListeners() {

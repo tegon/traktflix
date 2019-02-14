@@ -1,7 +1,7 @@
 import EventEmitter from 'events';
-import Rollbar from '../Rollbar';
-import ViewingActivityAppDispatcher from '../../modules/history-sync/viewing-activity-app-dispatcher';
 import ActionTypes from '../../modules/history-sync/activity-constants';
+import ViewingActivityAppDispatcher from '../../modules/history-sync/viewing-activity-app-dispatcher';
+import Rollbar from '../Rollbar';
 
 const CHANGE_EVENT = `CHANGE`;
 let _page = 0;
@@ -67,10 +67,15 @@ activityStore.dispatchToken = ViewingActivityAppDispatcher.register((action) => 
       _isLoading = true;
       _message = undefined;
       break;
+    case ActionTypes.UPDATE_PAGE:
+      _isLoading = true;
+      _page = action.page;
+      activityStore.emitChange();
+      break;
     case ActionTypes.RECEIVE_ACTIVITIES:
       _activities = action.activities;
       _isLoading = false;
-      _page += 1;
+      _page = action.page;
       _message = undefined;
       activityStore.emitChange();
       break;
@@ -104,12 +109,12 @@ activityStore.dispatchToken = ViewingActivityAppDispatcher.register((action) => 
       break;
     case ActionTypes.SYNC_SUCCESS:
       _isLoading = false;
-      _message = `${chrome.i18n.getMessage(`episodesAdded`)}: ${action.episodesCount}, ${chrome.i18n.getMessage(`moviesAdded`)}: ${action.moviesCount}`;
+      _message = `${browser.i18n.getMessage(`episodesAdded`)}: ${action.episodesCount}, ${browser.i18n.getMessage(`moviesAdded`)}: ${action.moviesCount}`;
       activityStore.emitChange();
       break;
     case ActionTypes.SYNC_FAILED:
       _isLoading = false;
-      _message = chrome.i18n.getMessage(`syncFailed`);
+      _message = browser.i18n.getMessage(`syncFailed`);
       activityStore.emitChange();
       break;
   }

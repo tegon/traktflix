@@ -1,6 +1,6 @@
-import React from 'react';
-import {Link} from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
+import React from 'react';
 import ErrorBoundary from '../ErrorBoundary';
 
 class Header extends React.Component {
@@ -22,26 +22,26 @@ class Header extends React.Component {
             </span>
             <nav className='mdl-navigation'>
               <Link className='mdl-navigation__link item-about' to='/about'>
-                {chrome.i18n.getMessage(`about`)}
+                {browser.i18n.getMessage(`about`)}
               </Link>
               <a
                 className='mdl-navigation__link item-history'
                 target='noopener noreferrer _blank'
-                href={chrome.extension.getURL('options.html')}>
-                {chrome.i18n.getMessage(`options`)}
+                href={browser.runtime.getURL('options.html')}>
+                {browser.i18n.getMessage(`options`)}
               </a>
               <a
                 className='mdl-navigation__link item-history'
                 style={{display: display}}
                 target='noopener noreferrer _blank'
-                href={chrome.extension.getURL('history-sync.html')}>
-                {chrome.i18n.getMessage(`history`)}
+                href={browser.runtime.getURL('history-sync.html')}>
+                {browser.i18n.getMessage(`history`)}
               </a>
               <a
                 className='mdl-navigation__link item-history'
                 style={{display: display}}
                 onClick={this.props.logoutClicked}>
-                {chrome.i18n.getMessage(`logout`)}
+                {browser.i18n.getMessage(`logout`)}
               </a>
             </nav>
           </div>

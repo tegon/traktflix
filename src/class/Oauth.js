@@ -1,11 +1,16 @@
-import ChromeStorage from './ChromeStorage';
-import Request from './Request';
 import Settings from '../settings';
+import BrowserStorage from './BrowserStorage';
+import Request from './Request';
 
 class Oauth {
   constructor() {
     this.sendResponse = null;
     this.authorizationTabId = null;
+    this.authorizationError = null;
+  }
+
+  isIdentityAvailable() {
+    return browser.identity && !this.authorizationError;
   }
 
   getCode(redirectUrl) {
@@ -16,7 +21,7 @@ class Oauth {
   }
 
   getAuthorizeUrl() {
-    return `${Settings.authorizeUri}?client_id=${Settings.clientId}&redirect_uri=${Settings.redirectUri}&response_type=code`;
+    return `${Settings.authorizeUri}?client_id=${Settings.clientId}&redirect_uri=${this.isIdentityAvailable() ? browser.identity.getRedirectURL() : Settings.redirectUri}&response_type=code`;
   }
 
   requestToken(params) {
@@ -27,11 +32,11 @@ class Oauth {
         params,
         success: async response => {
           const options = JSON.parse(response);
-          await ChromeStorage.set({data: options});
+          await BrowserStorage.set({data: options}, true);
           resolve({error: false, response});
         },
         error: async (status, response) => {
-          await ChromeStorage.remove(`data`);
+          await BrowserStorage.remove(`data`, true);
           resolve({error: true, response, status});
         }
       });
@@ -39,30 +44,42 @@ class Oauth {
   }
 
   async authorize(sendResponse, redirectUrl) {
+    if (this.isIdentityAvailable()) {
+      try {
+        redirectUrl = await browser.identity.launchWebAuthFlow({
+          url: this.getAuthorizeUrl(),
+          interactive: true
+        });
+      } catch (error) {
+        this.authorizationError = error;
+        console.log(error);
+      }
+    }
+
     if (redirectUrl) {
       const params = {
         code: this.getCode(redirectUrl),
         client_id: Settings.clientId,
         client_secret: Settings.clientSecret,
-        redirect_uri: Settings.redirectUri,
+        redirect_uri: this.isIdentityAvailable() ? browser.identity.getRedirectURL() : Settings.redirectUri,
         grant_type: `authorization_code`
       };
       const options = await this.requestToken(params);
+      if (this.authorizationTabId) {
+        browser.tabs.remove(this.authorizationTabId);
+        this.authorizationTabId = null;
+      }
       if (this.sendResponse) {
         this.sendResponse(options);
         this.sendResponse = null;
-      }
-      if (this.authorizationTabId) {
-        chrome.tabs.remove(this.authorizationTabId);
-        this.authorizationTabId = null;
+      } else {
+        sendResponse(options);
       }
     } else {
       this.sendResponse = sendResponse;
-      chrome.tabs.query({active: true, currentWindow: true}, tabs => {
-        chrome.tabs.create({index: tabs[0].index, url: this.getAuthorizeUrl()}, tab => {
-          this.authorizationTabId = tab.id;
-        });
-      });
+      const tabs = await browser.tabs.query({active: true, currentWindow: true});
+      const tab = await browser.tabs.create({index: tabs[0].index, url: this.getAuthorizeUrl()});
+      this.authorizationTabId = tab.id;
     }
   }
 
@@ -71,7 +88,7 @@ class Oauth {
       refresh_token: refreshToken,
       client_id: Settings.clientId,
       client_secret: Settings.clientSecret,
-      redirect_uri: Settings.redirectUri,
+      redirect_uri: this.isIdentityAvailable() ? browser.identity.getRedirectURL() : Settings.redirectUri,
       grant_type: `refresh_token`
     };
     return this.requestToken(params);
@@ -87,9 +104,9 @@ class Oauth {
       },
       error: async function (status, response) {
         if (status === 401) {
-          const data = await ChromeStorage.get(`data`);
-          if (data.data && data.data.refresh_token) {
-            const options = await _this.requestRefreshToken(data.data.refresh_token);
+          const storage = await BrowserStorage.get(`data`);
+          if (storage.data && storage.data.refresh_token) {
+            const options = await _this.requestRefreshToken(storage.data.refresh_token);
             if (options.error) {
               error.call(this, options.status, options.response);
             } else {

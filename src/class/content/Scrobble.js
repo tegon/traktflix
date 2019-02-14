@@ -1,6 +1,6 @@
-import Request from '../Request';
 import Settings from '../../settings';
-import ChromeStorage from "../ChromeStorage";
+import BrowserStorage from "../BrowserStorage";
+import Request from '../Request';
 
 export default class Scrobble {
   constructor(options) {
@@ -60,35 +60,35 @@ export default class Scrobble {
   }
 
   showNotification(title, message) {
-    chrome.runtime.sendMessage({type: `showNotification`, message, title});
+    browser.runtime.sendMessage({type: `showNotification`, message, title});
   }
 
   showErrorNotification(message) {
-    chrome.runtime.sendMessage({type: `showErrorNotification`, message});
+    browser.runtime.sendMessage({type: `showErrorNotification`, message});
   }
 
   async getItemInfo(path, success) {
     if (this.item) {
       const title = (this.item.episode && `${this.item.episode.show.title} - ${this.item.episode.title}`) || (this.item.movie && this.item.movie.title);
       if (title) {
-        const data = await ChromeStorage.get(`options`);
-        if (data.options && data.options.showNotifications) {
+        const storage = await BrowserStorage.get(`options`);
+        if (storage.options && storage.options.showNotifications) {
           if (success) {
             let message = ``;
             switch (path) {
               case `/start`:
-                message = chrome.i18n.getMessage(`scrobbleStarted`);
+                message = browser.i18n.getMessage(`scrobbleStarted`);
                 break;
               case `/pause`:
-                message = chrome.i18n.getMessage(`scrobblePaused`);
+                message = browser.i18n.getMessage(`scrobblePaused`);
                 break;
               case `/stop`:
-                message = chrome.i18n.getMessage(`scrobbleStopped`);
+                message = browser.i18n.getMessage(`scrobbleStopped`);
                 break;
             }
             this.showNotification(`traktflix: ${title}`, message);
           } else {
-            this.showErrorNotification(`${chrome.i18n.getMessage(`couldNotScrobble`)} ${title}`);
+            this.showErrorNotification(`${browser.i18n.getMessage(`couldNotScrobble`)} ${title}`);
           }
         }
       }
