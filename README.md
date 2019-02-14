@@ -112,4 +112,6 @@ The commands above have only been tested on Linux.
 This product uses the TMDb API but is not endorsed or certified by TMDb. <br>
 This product uses the Trakt.tv API.
 
+[gsrafael01](https://github.com/user/gsrafael01) Ported this extension to Firefox and also added a lot of improvements. He is the most active maintainer now.
+
 [LICENSE](LICENSE)
