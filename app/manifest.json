@@ -6,6 +6,11 @@
       "js/background.js"
     ]
   },
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "{6ec204f7-4915-4b99-ac04-673a51b6aeec}"
+    }
+  },
   "content_scripts": [
     {
       "js": [

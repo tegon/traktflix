@@ -58,29 +58,26 @@ class ViewingOptionsApp extends React.Component {
     this.setState(Object.assign(state, {loading: false}));
   }
 
-  async _onSaveClick() {
-    try {
-      const options = {};
-      const permissionsToAdd = [];
-      const permissionsToRemove = [];
-      const originsToAdd = [];
-      const originsToRemove = [];
-      for (const option of this.state.options) {
-        options[option.id] = option.add;
-        if (option.permissions) {
-          (option.add ? permissionsToAdd : permissionsToRemove).push(...option.permissions);
-        }
-        if (option.origins) {
-          (option.add ? originsToAdd : originsToRemove).push(...option.origins);
-        }
+  _onSaveClick() {
+    const options = {};
+    const permissionsToAdd = [];
+    const permissionsToRemove = [];
+    const originsToAdd = [];
+    const originsToRemove = [];
+    for (const option of this.state.options) {
+      options[option.id] = option.add;
+      if (option.permissions) {
+        (option.add ? permissionsToAdd : permissionsToRemove).push(...option.permissions);
       }
-      await Permissions.request(permissionsToAdd, originsToAdd);
-      await Permissions.remove(permissionsToRemove, originsToRemove);
-      await BrowserStorage.set({options}, true);
-      OptionsActionCreators.saveSuccess();
-    } catch (error) {
-      OptionsActionCreators.saveFailed(error);
+      if (option.origins) {
+        (option.add ? originsToAdd : originsToRemove).push(...option.origins);
+      }
     }
+    Permissions.request(permissionsToAdd, originsToAdd);
+    Permissions.remove(permissionsToRemove, originsToRemove);
+    BrowserStorage.set({options}, true)
+      .then(() => OptionsActionCreators.saveSuccess())
+      .catch(error => OptionsActionCreators.saveFailed(error));
   }
 
   async _onClearClick() {
