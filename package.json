@@ -53,7 +53,7 @@
   "private": true,
   "repository": {
     "type": "git",
-    "url": "git://github.com/gsrafael01 /traktflix.git"
+    "url": "git://github.com/tegon/traktflix.git"
   },
   "scripts": {
     "build": "NODE_ENV=production ./node_modules/.bin/webpack --env.production",
