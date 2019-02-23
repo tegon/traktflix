@@ -1,0 +1,239 @@
+{
+  "appName": {
+    "message": "traktflix"
+  },
+  "appDescription": {
+    "message": "Um scrobbler do Trakt.tv para o Netflix."
+  },
+  "errorNotification": {
+    "message": "Ocorreu um erro :("
+  },
+  "errorNotificationNotFound": {
+    "message": "Eita! Não foi possível encontrar o que você está assistindo no Trakt.tv. Por favor, entre em contato conosco e informe o título do item."
+  },
+  "errorNotificationServers": {
+    "message": "Não foi possível conectar com os servidores do Trakt.tv. Estamos tentando consertar isso, por favor tente mais tarde."
+  },
+  "errorNotificationLogin": {
+    "message": "Parece que você não está logado. Por favor, abra a extensão e entre com a sua conta do Trakt.tv."
+  },
+  "netflixTitle": {
+    "message": "Título no Netflix"
+  },
+  "traktTitle": {
+    "message": "Título no Trakt.tv"
+  },
+  "netflixDate": {
+    "message": "Data no Netflix"
+  },
+  "traktDate": {
+    "message": "Data no Trakt.tv"
+  },
+  "isThisWrong": {
+    "message": "Isso está errado ou incompleto? "
+  },
+  "pasteTraktUrl": {
+    "message": "Colar endereço do Trakt.tv"
+  },
+  "episodesAdded": {
+    "message": "Episódios adicionados"
+  },
+  "moviesAdded": {
+    "message": "Filmes adicionados"
+  },
+  "syncFailed": {
+    "message": "Ocorreu um erro ao sincronizar :(. Estamos trabalhando em uma solução."
+  },
+  "pasteTraktUrl2": {
+    "message": "Cole o endereço do Trakt.tv para o item correto"
+  },
+  "pasteTraktUrlError": {
+    "message": "Um erro aconteceu, por favor verifique se você está digitando um endereço válido e tente novamente"
+  },
+  "updateItem": {
+    "message": "Atualizar item"
+  },
+  "updatingItem": {
+    "message": "Atualizando..."
+  },
+  "confirmSync": {
+    "message": "Tem certeza que deseja prosseguir? Alguns itens podem estar errados ou duplicados, é altamente recomendável revisá-los antes de confirmar."
+  },
+  "selectAll": {
+    "message": "Selecionar todos"
+  },
+  "syncNow": {
+    "message": "Sincronizar agora"
+  },
+  "nextPage": {
+    "message": "Próxima página"
+  },
+  "pagesToLoad": {
+    "message": "Páginas para carregar"
+  },
+  "allPages": {
+    "message": "Todas"
+  },
+  "loadingPage": {
+    "message": "Carregando página"
+  },
+  "noMoreHistory": {
+    "message": "Não existem mais itens no seu histórico. Atualize a página para voltar ao início."
+  },
+  "disableScrobblingName": {
+    "message": "Desativar scrobbling."
+  },
+  "disableScrobblingDescription": {
+    "message": "Com essa opção ativada, a extensão não realizará scrobble automático do que você está assistindo. Isso é útil se você prefere sincronizar o seu histórico mais tarde ao invés de fazer scrobble em tempo real."
+  },
+  "allowGoogleAnalyticsName": {
+    "message": "Permitir que o Google Analytics colete informações sobre o seu uso da extensão."
+  },
+  "allowGoogleAnalyticsDescription": {
+    "message": "Com essa opção ativada, informações sobre o seu uso da extensão serão coletadas e enviadas para nós, para que possamos obter dados e melhorar a extensão.Essas informações incluem: quando você começou / terminou uma sessão, quando uma pesquisa pelo item que você está assistindo foi bem / mal sucedida (junto com o título do item), quando um scrobble para o item que você está assistindo foi bem / mal sucedido, e o seu endereço IP para estatísticas geográficas. Esses dados não são compartilhados com nenhum outro serviço."
+  },
+  "allowRollbarName": {
+    "message": "Permitir que o Rollbar colete informações sobre erros."
+  },
+  "allowRollbarDescription": {
+    "message": "Com essa opção ativada, sempre que um erro acontecer, informações sobre ele serão coletadas e enviadas para nós, para que possamos consertá-lo mais rápido e melhorar a extensão. Essas informações incluem: quando o erro aconteceu, o traço do erro, o nome e a versão do neu navegador, e o nome do seu sistema operacional. Esses dados não são compartilhados com nenhum outro serviço."
+  },
+  "showNotificationsName": {
+    "message": "Mostrar notificações no navegador."
+  },
+  "showNotificationsDescription": {
+    "message": "Com essa opção ativada, você receberá notificações no seu navegador sempre que um scrobble começar/parar ."
+  },
+  "sendReceiveSuggestionsName": {
+    "message": "Enviar / receber sugestões de correção."
+  },
+  "sendReceiveSuggestionsDescription": {
+    "message": "Com essa opção ativada, sempre que você atualizar um item errado no histórico, a correção será enviada para uma base de dados armazenada no Google Sheets para que outros usuários possam receber sugestões de correção. Essa opção também é necessária para receber essas sugestões de correção."
+  },
+  "saveOptionsSuccess": {
+    "message": "Opções salvas."
+  },
+  "saveOptionsFailed": {
+    "message": "Ocorreu um erro ao salvar opções."
+  },
+  "confirmClear": {
+    "message": "Tem certeza que deseja limpar o armazenamento? Isso resetará todas as opções para seus valores padrões e limpará todos os seus dados (você precisará entrar com o Trakt.tv novamente)."
+  },
+  "confirmClearTraktCache": {
+    "message": "Tem certeza que deseja limpar seu cache do Trakt? Todos os itens que você corrigiu serão resetados."
+  },
+  "clearOptionsSuccess": {
+    "message": "Armazenamento limpado."
+  },
+  "clearOptionsFailed": {
+    "message": "Ocorreu um erro ao limpar armazenamento."
+  },
+  "clearTraktCacheSuccess": {
+    "message": "Cache do Trakt limpado."
+  },
+  "clearTraktCacheFailed": {
+    "message": "Ocorreu um erro ao limpar o cache do Trakt."
+  },
+  "save": {
+    "message": "Salvar"
+  },
+  "clearStorage": {
+    "message": "Limpar armazenamento"
+  },
+  "clearTraktCache": {
+    "message": "Limpar cache do Trakt"
+  },
+  "notWatchingMessage1": {
+    "message": "Você não está assistindo nada no momento :/"
+  },
+  "notWatchingMessage2": {
+    "message": "Cara, assista alguma coisa"
+  },
+  "notWatchingMessage3": {
+    "message": "Pegue um travesseiro, um cobertor e um filme no Netflix"
+  },
+  "notWatchingMessage4": {
+    "message": "Dois em cada cinco médicos recomendam que você assista algo no Netflix agora"
+  },
+  "notWatchingMessage5": {
+    "message": "Descanse um pouco, com um filme no Netflix"
+  },
+  "notWatchingMessage6": {
+    "message": "Agora é uma boa hora para assistir alguma coisa"
+  },
+  "notWatchingMessage7": {
+    "message": "Um filme no Netflix por dia, mantém o médico longe da sua vida"
+  },
+  "notWatchingMessage8": {
+    "message": "Você escutou isso? É o barulho que você ouve quando não assiste nada no Netflix"
+  },
+  "notWatchingMessage9": {
+    "message": "É hora de Netflix!"
+  },
+  "notWatchingMessage10": {
+    "message": "Você merece! Assista alguma coisa no Netflix"
+  },
+  "notWatchingMessage11": {
+    "message": "Ei psst... Netflix tem muitas coisas ótimas para você assistir. Confira!"
+  },
+  "notWatchingMessage12": {
+    "message": "Certa vez um homem sábio disse que você deveria assistir mais Netflix. Falando nisso, por que você não começa agora?!"
+  },
+  "aboutMessage1": {
+    "message": "Trazendo seu histórico do Netflix para o Trakt.tv"
+  },
+  "readMore": {
+    "message": "Leia mais"
+  },
+  "about": {
+    "message": "Sobre"
+  },
+  "options": {
+    "message": "Opções"
+  },
+  "history": {
+    "message": "Histórico"
+  },
+  "logout": {
+    "message": "Sair"
+  },
+  "login": {
+    "message": "Entrar com o Trakt.tv"
+  },
+  "scrobbleStarted": {
+    "message": "O scrobble começou"
+  },
+  "scrobblePaused": {
+    "message": "O scrobble foi pausado"
+  },
+  "scrobbleStopped": {
+    "message": "O scrobble parou"
+  },
+  "couldNotScrobble": {
+    "message": "Não foi possível realizar o scrobble"
+  },
+  "historyTitle": {
+    "message": "Sincronização do histórico do Netflix"
+  },
+  "failedOptions": {
+    "message": "Não foi possível carregar as opções"
+  },
+  "alreadySynced": {
+    "message": "Já foi sincronizado"
+  },
+  "suggestionCount": {
+    "message": "usuários corrigiram esse item para"
+  },
+  "useSuggestion": {
+    "message": "Usar essa sugestão."
+  },
+  "loadingTraktData": {
+    "message": "Carregando dados do Trakt..."
+  },
+  "loadingTraktDataFailed": {
+    "message": "Não foi possível carregar os dados do Trakt."
+  },
+  "notFoundTrakt": {
+    "message": "Não encontrado no Trakt"
+  }
+}
