@@ -4,7 +4,6 @@ const path = require(`path`);
 
 const ROOT_PATH = path.join(__dirname, `..`);
 
-const bextJson = require(`${ROOT_PATH}/bext.json`);
 const packageJson = require(`${ROOT_PATH}/package.json`);
 
 module.exports = function (browserName) {
@@ -74,6 +73,7 @@ module.exports = function (browserName) {
       manifest.permissions.push(`declarativeContent`);
       break;
     case `firefox`:
+      const bextJson = require(`${ROOT_PATH}/bext.json`);
       manifest.browser_specific_settings = {
         gecko: {
           id: bextJson.firefox.extensionId
