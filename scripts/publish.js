@@ -13,6 +13,7 @@ async function publish() {
   try {
     await chromePublisher.init(CONFIG_PATH);
     await chromePublisher.update(`${ROOT_PATH}/extension-chrome.zip`);
+    await chromePublisher.publish();
     await firefoxPublisher.init(CONFIG_PATH);
     await firefoxPublisher.update(`${ROOT_PATH}/extension-firefox.zip`, {
       path: {

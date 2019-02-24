@@ -135,7 +135,7 @@ module.exports = /** @param {Environment} env */env => {
       new WriteWebpackPlugin([
         {
           name: `./build/manifest.json`,
-          data: generateManifest(`firefox`)
+          data: generateManifest(env.development ? `firefox` : ``)
         }
       ])
     ],
