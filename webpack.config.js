@@ -10,24 +10,21 @@
  */
 
 const
-  fs = require(`fs`),
-  path = require(`path`),
-  packageJson = require(`./package.json`),
   webpack = require(`webpack`),
   CopyWebpackPlugin = require('copy-webpack-plugin'),
   CleanWebpackPlugin = require(`clean-webpack-plugin`),
+  WriteWebpackPlugin = require(`write-webpack-plugin`),
+  generateManifest = require(`./scripts/generateManifest.js`),
   pathsToClean = [
-    `app/fonts`,
-    `app/img`,
-    `app/js`
+    `build`
   ],
   BUILD_PATHS = {
-    BACKGROUND: `app/js/background`,
-    CONTENT: `app/js/content`,
-    HISTORY: `app/js/history-sync`,
-    OPTIONS: `app/js/options`,
-    POPUP: `app/js/popup`,
-    VENDOR: `app/js/vendor`
+    BACKGROUND: `build/js/background`,
+    CONTENT: `build/js/content`,
+    HISTORY: `build/js/history-sync`,
+    OPTIONS: `build/js/options`,
+    POPUP: `build/js/popup`,
+    VENDOR: `build/js/vendor`
   },
   loaders = {
     style: {
@@ -80,8 +77,8 @@ module.exports = /** @param {Environment} env */env => {
             loader: `file-loader`,
             options: {
               name: `[name].[ext]`,
-              outputPath: `app/fonts/`,
-              publicPath: `fonts/`
+              outputPath: `build/fonts/`,
+              publicPath: `../fonts/`
             }
           }]
         },
@@ -91,8 +88,8 @@ module.exports = /** @param {Environment} env */env => {
             loader: `file-loader`,
             options: {
               name: `[name].[ext]`,
-              outputPath: `app/img/`,
-              publicPath: `img/`
+              outputPath: `build/images/`,
+              publicPath: `../images/`
             }
           }]
         },
@@ -120,11 +117,27 @@ module.exports = /** @param {Environment} env */env => {
     },
     plugins: [
       new CleanWebpackPlugin(pathsToClean),
-      new CopyWebpackPlugin([{
-        from: './node_modules/webextension-polyfill/dist/browser-polyfill.min.js',
-        to: './app/js/browser-polyfill.js',
-        flatten: true
-      }])
+      new CopyWebpackPlugin([
+        {
+          from: './node_modules/webextension-polyfill/dist/browser-polyfill.min.js',
+          to: './build/js/lib/browser-polyfill.js',
+          flatten: true
+        },
+        {
+          from: `./src/html`,
+          to: `./build/html`
+        },
+        {
+          from: `./src/_locales`,
+          to: `./build/_locales`
+        }
+      ]),
+      new WriteWebpackPlugin([
+        {
+          name: `./build/manifest.json`,
+          data: generateManifest(`firefox`)
+        }
+      ])
     ],
     watch: !!(env.development && env.watch),
     watchOptions: {

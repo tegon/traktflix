@@ -20,7 +20,7 @@
 }
 
 .mdl-layout__content .overlay {
-  background-size: cover;
+  background-size: cover !important;
   background: url('../images/background.jpg') center center;
   position: absolute;
   height: 230px;

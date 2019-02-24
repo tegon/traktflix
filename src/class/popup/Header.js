@@ -27,14 +27,14 @@ class Header extends React.Component {
               <a
                 className='mdl-navigation__link item-history'
                 target='noopener noreferrer _blank'
-                href={browser.runtime.getURL('options.html')}>
+                href={browser.runtime.getURL('html/options.html')}>
                 {browser.i18n.getMessage(`options`)}
               </a>
               <a
                 className='mdl-navigation__link item-history'
                 style={{display: display}}
                 target='noopener noreferrer _blank'
-                href={browser.runtime.getURL('history-sync.html')}>
+                href={browser.runtime.getURL('html/history-sync.html')}>
                 {browser.i18n.getMessage(`history`)}
               </a>
               <a
