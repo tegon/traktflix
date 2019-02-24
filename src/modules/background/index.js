@@ -83,7 +83,7 @@ browser.runtime.onMessage.addListener((request, sender) => {
         if (browser.pageAction.setIcon) {
           browser.pageAction.setIcon({
             tabId: sender.tab.id,
-            path: browser.runtime.getURL(`img/traktflix-icon-selected-38.png`)
+            path: browser.runtime.getURL(`images/traktflix-icon-selected-38.png`)
           });
         }
         break;
@@ -91,7 +91,7 @@ browser.runtime.onMessage.addListener((request, sender) => {
         if (browser.pageAction.setIcon) {
           browser.pageAction.setIcon({
             tabId: sender.tab.id,
-            path: browser.runtime.getURL(`img/traktflix-icon-38.png`)
+            path: browser.runtime.getURL(`images/traktflix-icon-38.png`)
           });
         }
         break;

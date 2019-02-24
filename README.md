@@ -1,7 +1,7 @@
 <h1 align="center">
   <br>
   <a href="https://tegon.github.io/traktflix/">
-    <img src="https://github.com/tegon/traktflix/raw/master/app/img/traktflix-icon-128.png" alt="Traktflix" width="150">
+    <img src="https://github.com/tegon/traktflix/raw/master/src/images/traktflix-icon-128.png" alt="Traktflix" width="150">
   </a>
   <br>
   traktflix
