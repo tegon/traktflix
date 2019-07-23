@@ -5,6 +5,10 @@ import BrowserStorage from '../../class/BrowserStorage';
 import Oauth from '../../class/Oauth';
 import Permissions from '../../class/Permissions';
 import Rollbar from '../../class/Rollbar';
+import Request from '../../class/Request';
+import Shared from '../../class/Shared';
+
+Shared.setBackgroundPage(true);
 
 /* global analytics */
 /**
@@ -64,7 +68,7 @@ if (chrome && chrome.declarativeContent) {
 }
 
 browser.runtime.onMessage.addListener((request, sender) => {
-  return new Promise(async resolve => {
+  return new Promise(async (resolve, reject) => {
     switch (request.type) {
       case `getApiDefs`:
         // noinspection JSIgnoredPromiseFromCall
@@ -140,6 +144,16 @@ browser.runtime.onMessage.addListener((request, sender) => {
           });
         }
         break;
+      case `request`: {
+        const options = JSON.parse(request.options);
+        try {
+          const response = await Request.sendAndWait(options);
+          resolve(response);
+        } catch (error) {
+          reject(error);
+        }
+        return;
+      }       
     }
     resolve();
   });

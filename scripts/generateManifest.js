@@ -68,12 +68,14 @@ module.exports = function (browserName) {
     ]
   };
 
+  const bextJson = require(`${ROOT_PATH}/bext.json`);
+
   switch (browserName) {
     case `chrome`:
+      manifest.key = bextJson.chrome.extensionKey;
       manifest.permissions.push(`declarativeContent`);
       break;
     case `firefox`:
-      const bextJson = require(`${ROOT_PATH}/bext.json`);
       manifest.browser_specific_settings = {
         gecko: {
           id: bextJson.firefox.extensionId

@@ -34,10 +34,10 @@
 * [Development](#development)
 
 ### What is Trakt?
-Automatically scrobble TV show episodes and movies you are watching to Trakt.tv! Keep a history of everything you've watched! Sign up for a free account at [Trakt.tv](http://trakt.tv) and get a ton of features.
+Automatically scrobble TV show episodes and movies you are watching to Trakt.tv! Keep a history of everything you've watched! Sign up for a free account at [Trakt.tv](https://trakt.tv) and get a ton of features.
 
 ### Why do I need this extension?
-Trakt.tv has a [lot of plugins](http://trakt.tv/downloads) to automatically scrobble the movies and episodes you watch from your media center.
+Trakt.tv has a [lot of plugins](https://trakt.tv/downloads) to automatically scrobble the movies and episodes you watch from your media center.
 But there are none for Netflix.
 This extension allows you to scrobble from Netflix to Trakt.tv. Cool, isn't it?
 
@@ -45,20 +45,20 @@ This extension allows you to scrobble from Netflix to Trakt.tv. Cool, isn't it?
 Unfortunately Netflix doesn't provide a public API, so the movie or episode info is extracted from the HTML of the player.
 
 ### Limitations
-This extension only works with Netflix HTML player and new layout. If you are in the [old layout](http://www.netflix.com/WiHome), please open the [new one](http://www.netflix.com/browse).
+This extension only works with Netflix HTML player and new layout. If you are in the [old layout](https://www.netflix.com/WiHome), please open the [new one](https://www.netflix.com/browse).
 See this link for more info: https://help.netflix.com/en/node/23742
 
 ### Problems
 If you find any problems or have suggestions or questions, feel free to [open an issue](https://github.com/tegon/traktflix/issues/new)
 
 ### Development
-Create an application in [Trakt API](http://trakt.tv/oauth/applications/new).
+Create an application in [Trakt API](https://trakt.tv/oauth/applications/new).
 
 Don't forget to check `/scrobble` permission.
 
 In `Redirect uri:` put `https://www.netflix.com/Activate`
 
-In `Javascript (cors) origins:` put `http://www.netflix.com,  moz-extension:// and chrome-extension://`
+In `Javascript (cors) origins:` put `https://www.netflix.com,  moz-extension:// and chrome-extension://`
 
 Copy the `config.json` example file and change Trakt.tv credentials:
 ```bash
