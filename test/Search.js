@@ -2,6 +2,9 @@ import browser from 'sinon-chrome';
 import sinon from 'sinon';
 import Settings from '../src/settings.js';
 import Search from '../src/class/Search';
+import Shared from '../src/class/Shared';
+
+Shared.setBackgroundPage(true);
 
 window.browser = browser;
 

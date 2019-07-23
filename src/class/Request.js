@@ -1,8 +1,19 @@
 import Settings from '../settings';
 import BrowserStorage from './BrowserStorage';
+import Shared from './Shared';
 
 class Request {
   async _send(options) {
+    if (!Shared.isBackgroundPage() && !options.url.match(location.host)) {
+      try {
+        const response = await browser.runtime.sendMessage({ type: `request`, options: JSON.stringify(options) });
+        options.success(response);
+      } catch (error) {
+        options.error(error.status, error.responseText, error.options);
+      }
+      return;
+    }
+
     const storage = await BrowserStorage.get(`data`);
     const xhr = new XMLHttpRequest();
     xhr.open(options.method, options.url, true);
