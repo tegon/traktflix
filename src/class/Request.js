@@ -17,7 +17,7 @@ class Request {
     const storage = await BrowserStorage.get(`data`);
     const xhr = new XMLHttpRequest();
     xhr.open(options.method, options.url, true);
-    xhr.setRequestHeader(`Content-Type`, `application/json`);
+    xhr.setRequestHeader(`Content-Type`, typeof options.params === `string` ? `application/x-www-form-urlencoded` : `application/json`);
     xhr.setRequestHeader(`trakt-api-key`, Settings.clientId);
     xhr.setRequestHeader(`trakt-api-version`, Settings.apiVersion);
     if (storage.data && storage.data.access_token) {
@@ -42,7 +42,7 @@ class Request {
         params: options.params
       });
     };
-    xhr.send(JSON.stringify(options.params));
+    xhr.send(typeof options.params === `string` ? options.params : JSON.stringify(options.params));
   }
 
   send(options) {

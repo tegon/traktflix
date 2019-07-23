@@ -189,10 +189,7 @@ const netflixApiUtils = {
     return new Promise(resolve => {
       Request.send({
         method: `POST`,
-        params: {
-          authURL: this.authUrl,
-          paths: activities.map(activity => [`videos`, activity.movieID, [`releaseYear`, `summary`]])
-        },
+        params: `authURL=${this.authUrl}&${activities.map(activity => `path=["videos",${activity.movieID},["releaseYear","summary"]]`).join(`&`)}`,
         url: `${NETFLIX_API_HOST}/${this.buildIdentifier}/pathEvaluator?languages=en-US`,
         success: response => {
           const json = JSON.parse(response);
