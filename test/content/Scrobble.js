@@ -3,6 +3,9 @@ import sinon from 'sinon';
 import Settings from '../../src/settings';
 import Scrobble from '../../src/class/content/Scrobble';
 import NetflixTestUtils from '../../test-helpers/NetflixTestHelper';
+import Shared from '../../src/class/Shared';
+
+Shared.setBackgroundPage(true);
 
 window.browser = browser;
 

@@ -2,6 +2,9 @@ import browser from 'sinon-chrome';
 import sinon from 'sinon';
 import Settings from '../src/settings.js';
 import Oauth from '../src/class/Oauth';
+import Shared from '../src/class/Shared';
+
+Shared.setBackgroundPage(true);
 
 let server = null;
 
