@@ -16,12 +16,12 @@ export default class TraktWebAPIUtils {
     }
   }
 
-  static addActivities(activities) {
+  static addActivities(activities, addWithReleaseDate) {
     // noinspection JSIgnoredPromiseFromCall
     Request.send({
       method: `POST`,
       url: URL,
-      params: TraktWebAPIUtils.activitiesPayload(activities),
+      params: TraktWebAPIUtils.activitiesPayload(activities, addWithReleaseDate),
       success: function (response) {
         const json = JSON.parse(response);
         /** @property json.added */
@@ -33,21 +33,21 @@ export default class TraktWebAPIUtils {
     });
   }
 
-  static activitiesPayload(activities) {
+  static activitiesPayload(activities, addWithReleaseDate) {
     const activitiesToAdd = activities.filter(activity => activity.add);
     const movies = activitiesToAdd
       .filter(activity => activity.trakt && activity.trakt.type === `movie`)
-      .map(TraktWebAPIUtils.activityPayload.bind(TraktWebAPIUtils));
+      .map(activity => TraktWebAPIUtils.activityPayload(activity, addWithReleaseDate));
     const episodes = activitiesToAdd
       .filter(activity => activity.trakt && activity.trakt.type === `show`)
-      .map(TraktWebAPIUtils.activityPayload.bind(TraktWebAPIUtils));
+      .map(activity => TraktWebAPIUtils.activityPayload(activity, addWithReleaseDate));
 
     return {movies: movies, episodes: episodes};
   }
 
-  static activityPayload(activity) {
+  static activityPayload(activity, addWithReleaseDate) {
     return {
-      watched_at: activity.netflix.date,
+      watched_at: addWithReleaseDate ? `released` : activity.netflix.date,
       ids: {
         trakt: activity.trakt.ids.trakt
       }

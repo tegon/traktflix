@@ -62,6 +62,9 @@
   "selectAll": {
     "message": "Selecionar todos"
   },
+  "addWithReleaseDate": {
+    "message": "Adicionar com a data de lançamento"
+  },
   "syncNow": {
     "message": "Sincronizar agora"
   },
