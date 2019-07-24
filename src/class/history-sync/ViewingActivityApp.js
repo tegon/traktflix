@@ -12,7 +12,10 @@ import TraktWebAPIUtils from './TraktWebAPIUtils';
 
 export default class ViewingActivityApp extends React.Component {
   getInitialState() {
-    return Object.assign(this.getStateFromStores(), { pagesToLoad: this.props.pagesToLoad });
+    return Object.assign(this.getStateFromStores(), {
+      addWithReleaseDate: this.props.addWithReleaseDate,
+      pagesToLoad: this.props.pagesToLoad
+    });
   }
 
   getStateFromStores() {
@@ -53,7 +56,7 @@ export default class ViewingActivityApp extends React.Component {
     const confirmationMessage = browser.i18n.getMessage(`confirmSync`);
     if (confirm(confirmationMessage)) {
       this.setState({loading: true});
-      TraktWebAPIUtils.addActivities(this.state.activities);
+      TraktWebAPIUtils.addActivities(this.state.activities, this.state.addWithReleaseDate);
     }
   }
 
@@ -82,6 +85,18 @@ export default class ViewingActivityApp extends React.Component {
     inputs.map(input => input.checked === event.target.checked ? null : input.click());
   }
 
+  __onToggleReleaseDate(event) {
+    const addWithReleaseDate = event.target.checked;
+    BrowserStorage.get(`prefs`).then(storage => {
+      if (!storage.prefs) {
+        storage.prefs = {};
+      }
+      storage.prefs.addWithReleaseDate = addWithReleaseDate;
+      BrowserStorage.set({prefs: storage.prefs}, true);
+    });
+    this.setState({addWithReleaseDate});
+  }
+
   showSnackbar() {
     const snackbar = document.querySelector('.mdl-js-snackbar');
     snackbar.MaterialSnackbar.showSnackbar({message: this.state.message});
@@ -108,6 +123,11 @@ export default class ViewingActivityApp extends React.Component {
               <input type='checkbox' id='toggle-all' className='mdl-switch__input'
                      onChange={this._onToggleAll.bind(this)}/>
               <span className='mdl-switch__label'>{browser.i18n.getMessage(`selectAll`)}</span>
+            </label>
+            <label className='mdl-switch mdl-js-switch mdl-js-ripple-effect' htmlFor='add-with-release-date'>
+              <input type='checkbox' id='add-with-release-date' className='mdl-switch__input'
+                     onChange={this.__onToggleReleaseDate.bind(this)} checked={this.state.addWithReleaseDate}/>
+              <span className='mdl-switch__label'>{browser.i18n.getMessage(`addWithReleaseDate`)}</span>
             </label>
           </span>
           <TmdbImageContainer>
