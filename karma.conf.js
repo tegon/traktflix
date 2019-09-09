@@ -1,7 +1,11 @@
+const { getArguments } = require('./scripts/common');
+
+const args = getArguments(process);
+
 module.exports = config => {
-  let webpackConfig = require('./webpack.config.js');
-  webpackConfig = webpackConfig({ development: true, test: true });
-  const configuration = {
+  const webpackConfig = require('./webpack.config.js');
+
+  const karmaConfig = {
     autoWatch: false,
     basePath: '',
     browsers: ['Chrome', 'Firefox'],
@@ -19,12 +23,22 @@ module.exports = config => {
       ['test/**/*.js']: ['webpack']
     },
     singleRun: true,
-    webpack: webpackConfig
+    webpack: webpackConfig({
+      development: true,
+      test: true 
+    })
   };
-  configuration.reporters = ['progress', 'coverage'];
-  configuration.coverageReporter = {
-    dir: 'coverage/',
-    type: 'lcov'
-  };
-  config.set(configuration);
+
+  if (args.token) {
+    karmaConfig.coverallsReporter = {
+      repoToken: args.token
+    };
+    karmaConfig.coverageReporter = {
+      dir: 'coverage/',
+      type: 'lcov'
+    };
+    karmaConfig.reporters = ['progress', 'coverage', 'coveralls'];
+  }
+
+  config.set(karmaConfig);
 };

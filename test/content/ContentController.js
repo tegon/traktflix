@@ -23,35 +23,8 @@ describe(`ContentController`, () => {
     window.browser = browser;
   });
 
-  beforeEach(() => {
-    sinon.spy(controller, `sendAnalyticsEvent`);
-    sinon.spy(controller, `setActiveIcon`);
-    sinon.spy(controller, `setInactiveIcon`);
-    sinon.spy(controller, `showErrorNotification`);
-    sinon.spy(controller, `reportError`);
-    sinon.stub(ItemParser, `start`).resolves(null);
-    sinon.stub(Rollbar, `init`);
-    sinon.stub(Rollbar, `warning`);
-    sinon.stub(Scrobble.prototype, `start`);
-    sinon.stub(Scrobble.prototype, `pause`);
-    sinon.stub(Scrobble.prototype, `stop`);
-    sinon.stub(Search.prototype, `find`);
-  });
-
   afterEach(() => {
     browser.flush();
-    controller.sendAnalyticsEvent.restore();
-    controller.setActiveIcon.restore();
-    controller.setInactiveIcon.restore();
-    controller.showErrorNotification.restore();
-    controller.reportError.restore();
-    ItemParser.start.restore();
-    Rollbar.init.restore();
-    Rollbar.warning.restore();
-    Scrobble.prototype.start.restore();
-    Scrobble.prototype.pause.restore();
-    Scrobble.prototype.stop.restore();
-    Search.prototype.find.restore();
   });
 
   after(() => {
@@ -60,6 +33,7 @@ describe(`ContentController`, () => {
   });
 
   it(`constructor() calls ItemParser.start() when user is watching something`, () => {
+    sinon.stub(ItemParser, `start`).resolves(null);
     const url = `/watch/12345678`;
     sinon.stub(ContentController.prototype, `getLocation`).returns(url);
     new ContentController();
@@ -67,9 +41,11 @@ describe(`ContentController`, () => {
     expect(ContentController.prototype.getLocation.returnValues[0]).to.equal(url);
     expect(ItemParser.start.callCount).to.equal(1);
     ContentController.prototype.getLocation.restore();
+    ItemParser.start.restore();
   });
 
   it(`constructor() does nothing when user is not watching something`, () => {
+    sinon.stub(ItemParser, `start`).resolves(null);
     const url = `/browse`;
     sinon.stub(ContentController.prototype, `getLocation`).returns(url);
     new ContentController();
@@ -77,6 +53,7 @@ describe(`ContentController`, () => {
     expect(ContentController.prototype.getLocation.returnValues[0]).to.equal(url);
     expect(ItemParser.start.callCount).to.equal(0);
     ContentController.prototype.getLocation.restore();
+    ItemParser.start.restore();
   });
 
   it(`setActiveIcon() calls browser.runtime.sendMessage()`, () => {
@@ -98,26 +75,38 @@ describe(`ContentController`, () => {
   });
 
   it(`onScrobbleSuccess() sends event to analytics`, () => {
+    sinon.spy(controller, `sendAnalyticsEvent`);
     controller.onScrobbleSuccess();
     expect(controller.sendAnalyticsEvent.callCount).to.equal(1);
     expect(controller.sendAnalyticsEvent.args[0]).to.deep.equal([{name: `Scrobble`, value: `onSuccess`}]);
+    controller.sendAnalyticsEvent.restore();
   });
 
   it(`onScrobbleError() sends event to analytics`, () => {
+    sinon.spy(controller, `sendAnalyticsEvent`);
+    sinon.spy(controller, `reportError`);
     controller.onScrobbleError(401, responseError, {});
     expect(controller.sendAnalyticsEvent.callCount).to.equal(1);
     expect(controller.sendAnalyticsEvent.args[0]).to.deep.equal([{name: `Scrobble`, value: `onError`}]);
     expect(controller.reportError.callCount).to.equal(1);
     expect(controller.reportError.args[0]).to.deep.equal([`Scrobble`, 401, responseError, {}]);
+    controller.reportError.restore();
+    controller.sendAnalyticsEvent.restore();
   });
 
   it(`onSearchSuccess() creates scrobble from response`, () => {
+    sinon.spy(controller, `sendAnalyticsEvent`);
+    sinon.spy(controller, `setActiveIcon`);
+    sinon.stub(Scrobble.prototype, `start`);
     controller.onSearchSuccess(response);
     expect(controller.sendAnalyticsEvent.callCount).to.equal(2);
     expect(controller.sendAnalyticsEvent.args[0]).to.deep.equal([{name: `onSearchSuccess`, value: item.title}]);
     expect(controller.sendAnalyticsEvent.args[1]).to.deep.equal([{name: `Scrobble`, value: `start`}]);
     expect(controller.setActiveIcon.callCount).to.equal(1);
     expect(Scrobble.prototype.start.callCount).to.equal(1);
+    Scrobble.prototype.start.restore();
+    controller.setActiveIcon.restore();
+    controller.sendAnalyticsEvent.restore();
   });
 
   it(`showErrorNotification() calls browser.runtime.sendMessage()`, () => {
@@ -127,13 +116,18 @@ describe(`ContentController`, () => {
   });
 
   it(`reportError() calls showErrorNotification() when status is 404`, async () => {
+    sinon.spy(controller, `showErrorNotification`);
     browser.i18n.getMessage.withArgs(`errorNotificationNotFound`).returns(`errorNotificationNotFound`);
     await controller.reportError(`Foo`, 404, responseError, {});
     expect(controller.showErrorNotification.callCount).to.equal(1);
     expect(controller.showErrorNotification.args[0]).to.deep.equal([`errorNotificationNotFound`]);
+    controller.showErrorNotification.restore();
   });
 
   it(`reportError() calls showErrorNotification() and Rollbar.warning() when status is 0 and access_token is defined`, async () => {
+    sinon.stub(Rollbar, `init`);
+    sinon.stub(Rollbar, `warning`);
+    sinon.spy(controller, `showErrorNotification`);
     browser.i18n.getMessage.withArgs(`errorNotificationServers`).returns(`errorNotificationServers`);
     browser.storage.local.get.withArgs(`data`).resolves({data: {access_token: `12345abcde`}});
     await controller.reportError(`Foo`, 0, responseError, {});
@@ -146,17 +140,25 @@ describe(`ContentController`, () => {
       response: responseError,
       options: {}
     }]);
+    controller.showErrorNotification.restore();
+    Rollbar.warning.restore();
+    Rollbar.init.restore();
   });
 
   it(`reportError() calls showErrorNotification() when status is 0 and access_token is undefined`, async () => {
+    sinon.spy(controller, `showErrorNotification`);
     browser.i18n.getMessage.withArgs(`errorNotificationLogin`).returns(`errorNotificationLogin`);
     browser.storage.local.get.withArgs(`data`).resolves({});
     await controller.reportError(`Foo`, 0, responseError, {});
     expect(controller.showErrorNotification.callCount).to.equal(1);
     expect(controller.showErrorNotification.args[0]).to.deep.equal([`errorNotificationLogin`]);
+    controller.showErrorNotification.restore();
   });
 
   it(`reportError() calls showErrorNotification() and Rollbar.warning()`, async () => {
+    sinon.stub(Rollbar, `init`);
+    sinon.stub(Rollbar, `warning`);
+    sinon.spy(controller, `showErrorNotification`);
     browser.i18n.getMessage.withArgs(`errorNotificationServers`).returns(`errorNotificationServers`);
     await controller.reportError(`Foo`, 200, responseError, {});
     expect(controller.showErrorNotification.callCount).to.equal(1);
@@ -168,9 +170,14 @@ describe(`ContentController`, () => {
       response: responseError,
       options: {}
     }]);
+    controller.showErrorNotification.restore();
+    Rollbar.warning.restore();
+    Rollbar.init.restore();
   });
 
   it(`onSearchError() sends event to analytics`, () => {
+    sinon.spy(controller, `sendAnalyticsEvent`);
+    sinon.spy(controller, `reportError`);
     controller.onSearchError(401, responseError, {});
     expect(controller.sendAnalyticsEvent.callCount).to.equal(1);
     expect(controller.sendAnalyticsEvent.args[0]).to.deep.equal([{
@@ -179,6 +186,8 @@ describe(`ContentController`, () => {
     }]);
     expect(controller.reportError.callCount).to.equal(1);
     expect(controller.reportError.args[0]).to.deep.equal([`Search`, 401, responseError, {}]);
+    controller.reportError.restore();
+    controller.sendAnalyticsEvent.restore();
   });
 
   it(`storeItem() sets scrobble to undefined when item is null`, () => {
@@ -187,44 +196,69 @@ describe(`ContentController`, () => {
   });
 
   it(`storeItem() calls Search.find()`, () => {
+    sinon.stub(Search.prototype, `find`);
     controller.storeItem(item);
     expect(Search.prototype.find.callCount).to.equal(1);
+    Search.prototype.find.restore();
   });
 
   it(`onPlay() calls ItemParser.start() when item and scrobble are undefined`, () => {
+    sinon.stub(ItemParser, `start`).resolves(null);
     controller.item = null;
     controller.scrobble = undefined;
     controller.onPlay();
     expect(ItemParser.start.callCount).to.equal(1);
+    ItemParser.start.restore();
   });
 
   it(`onPlay() calls Scrobble.start()`, () => {
+    sinon.spy(controller, `sendAnalyticsEvent`);
+    sinon.spy(controller, `setActiveIcon`);
+    sinon.stub(Scrobble.prototype, `start`);
     controller.scrobble = scrobble;
     controller.onPlay();
     expect(controller.setActiveIcon.callCount).to.equal(1);
     expect(Scrobble.prototype.start.callCount).to.equal(1);
     expect(controller.sendAnalyticsEvent.callCount).to.equal(1);
     expect(controller.sendAnalyticsEvent.args[0]).to.deep.equal([{name: `Scrobble`, value: `start`}]);
+    Scrobble.prototype.start.restore();
+    controller.setActiveIcon.restore();
+    controller.sendAnalyticsEvent.restore();
   });
 
   it(`onPause() does nothing when scrobble is undefined`, () => {
+    sinon.spy(controller, `sendAnalyticsEvent`);
+    sinon.spy(controller, `setInactiveIcon`);
+    sinon.stub(Scrobble.prototype, `pause`);
     controller.scrobble = undefined;
     controller.onPause();
     expect(controller.setInactiveIcon.callCount).to.equal(0);
     expect(Scrobble.prototype.pause.callCount).to.equal(0);
     expect(controller.sendAnalyticsEvent.callCount).to.equal(0);
+    Scrobble.prototype.pause.restore();
+    controller.setInactiveIcon.restore();
+    controller.sendAnalyticsEvent.restore();
   });
 
   it(`onPause() calls Scrobble.pause()`, () => {
+    sinon.spy(controller, `sendAnalyticsEvent`);
+    sinon.spy(controller, `setInactiveIcon`);
+    sinon.stub(Scrobble.prototype, `pause`);
     controller.scrobble = scrobble;
     controller.onPause();
     expect(controller.setInactiveIcon.callCount).to.equal(1);
     expect(Scrobble.prototype.pause.callCount).to.equal(1);
     expect(controller.sendAnalyticsEvent.callCount).to.equal(1);
     expect(controller.sendAnalyticsEvent.args[0]).to.deep.equal([{name: `Scrobble`, value: `pause`}]);
+    Scrobble.prototype.pause.restore();
+    controller.setInactiveIcon.restore();
+    controller.sendAnalyticsEvent.restore();
   });
 
   it(`onStop() only calls storeItem() when scrobble is undefined`, () => {
+    sinon.spy(controller, `sendAnalyticsEvent`);
+    sinon.spy(controller, `setInactiveIcon`);
+    sinon.stub(Scrobble.prototype, `stop`);
     controller.scrobble = undefined;
     controller.onStop();
     expect(controller.setInactiveIcon.callCount).to.equal(0);
@@ -232,9 +266,15 @@ describe(`ContentController`, () => {
     expect(controller.sendAnalyticsEvent.callCount).to.equal(0);
     expect(controller.item).to.be.null;
     expect(controller.scrobble).to.be.undefined;
+    Scrobble.prototype.stop.restore();
+    controller.setInactiveIcon.restore();
+    controller.sendAnalyticsEvent.restore();
   });
 
   it(`onStop() calls Scrobble.stop()`, () => {
+    sinon.spy(controller, `sendAnalyticsEvent`);
+    sinon.spy(controller, `setInactiveIcon`);
+    sinon.stub(Scrobble.prototype, `stop`);
     controller.scrobble = scrobble;
     controller.onStop();
     expect(controller.setInactiveIcon.callCount).to.equal(1);
@@ -243,6 +283,9 @@ describe(`ContentController`, () => {
     expect(controller.sendAnalyticsEvent.args[0]).to.deep.equal([{name: `Scrobble`, value: `stop`}]);
     expect(controller.item).to.be.null;
     expect(controller.scrobble).to.be.undefined;
+    Scrobble.prototype.stop.restore();
+    controller.setInactiveIcon.restore();
+    controller.sendAnalyticsEvent.restore();
   });
 
   it(`getCurrentItem() returns null when item and scrobble are undefined`, () => {

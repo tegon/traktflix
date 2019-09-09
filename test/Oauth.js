@@ -185,11 +185,11 @@ describe(`Oauth`, () => {
   });
 
   describe(`when browser.identity is not defined`, () => {
-    before(() => {
+    beforeEach(() => {
       sinon.stub(Oauth, `isIdentityAvailable`).returns(false);
     });
 
-    after(() => {
+    afterEach(() => {
       Oauth.isIdentityAvailable.restore();
     });
 

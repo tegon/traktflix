@@ -258,6 +258,7 @@ function getWebpackConfig(env) {
           exclude: /(node_modules|bower_components)/,
           loader: 'babel-loader',
           options: {
+            envName: env.test ? 'test' : mode,
             presets: [
               '@babel/preset-env',
               '@babel/preset-react'

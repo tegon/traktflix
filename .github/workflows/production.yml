@@ -41,6 +41,4 @@ jobs:
         api-key: ${{ secrets.FIREFOX_CLIENT_ID }}
         api-secret: ${{ secrets.FIREFOX_CLIENT_SECRET }}
     - name: 'Run tests'
-      run: xvfb-run npm test
-    - name: 'Run coverage'
-      run: cat ./coverage/**/lcov.info | ./node_modules/coveralls/bin/coveralls.js
+      run: xvfb-run npm test token=${{ secrets.COVERALLS_TOKEN }}
