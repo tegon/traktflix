@@ -11,7 +11,6 @@ const webpack = require('webpack');
 
 const BASE_PATH = process.cwd();
 
-const configJson = require(path.resolve(BASE_PATH, 'config.json'));
 const packageJson = require(path.resolve(BASE_PATH, 'package.json'));
 
 const loaders = {
@@ -39,10 +38,11 @@ const plugins = {
 };
 
 /**
+ * @param {Object} configJson 
  * @param {string} browserName 
  * @return {string}
  */
-function getManifest(browserName) {
+function getManifest(configJson, browserName) {
   const manifest = {
     manifest_version: 2,
     name: '__MSG_appName__',
@@ -123,7 +123,10 @@ function getManifest(browserName) {
   return JSON.stringify(manifest, null, 2);
 }
 
-async function runFinalSteps() {
+/**
+ * @param {Object} configJson 
+ */
+async function runFinalSteps(configJson) {
   if (!fs.existsSync('./build/chrome/js/lib')) {
     fs.mkdirSync('./build/chrome/js/lib');
   }
@@ -166,11 +169,11 @@ async function runFinalSteps() {
 
   const filesToCreate = [
     {
-      data: getManifest('chrome'),
+      data: getManifest(configJson, 'chrome'),
       path: './build/chrome/manifest.json'
     },
     {
-      data: getManifest('firefox'),
+      data: getManifest(configJson, 'firefox'),
       path: './build/firefox/manifest.json'
     }
   ];
@@ -184,6 +187,8 @@ async function runFinalSteps() {
  * @param {Environment} env
  */
 function getWebpackConfig(env) {
+  const configJson = require(path.resolve(BASE_PATH, env.test ? 'config.dev.json' : 'config.json'));
+
   let mode;
 
   if (env.production) {
@@ -268,7 +273,7 @@ function getWebpackConfig(env) {
     plugins: [
       new plugins.clean(),
       new plugins.progressBar(),
-      new plugins.runAfterBuild(runFinalSteps)
+      new plugins.runAfterBuild(() => runFinalSteps(configJson))
     ],
     watch: !!(env.development && env.watch),
     watchOptions: {
