@@ -1,0 +1,20 @@
+name: 'Development'
+
+on:
+  push:
+    branches:
+      - dev
+
+jobs:
+  test:
+    name: 'Test'
+    runs-on: ubuntu-latest
+    steps:
+    - name: 'Checkout dev'
+      uses: actions/checkout@v1
+    - name: 'Install dependencies'
+      run: npm ci
+    - name: 'Run tests'
+      run: xvfb-run npm test
+    - name: 'Run coverage'
+      run: cat ./coverage/**/lcov.info | ./node_modules/coveralls/bin/coveralls.js

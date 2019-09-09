@@ -13,8 +13,4 @@ build
 *.pem
 coverage
 config.json
-bext.json
 .idea/
-extension-*.zip
-src.zip
-package-lock.json

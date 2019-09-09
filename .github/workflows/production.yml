@@ -1,0 +1,43 @@
+name: 'Production'
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build:
+    name: 'Build'
+    runs-on: ubuntu-latest
+    steps:
+    - name: 'Checkout master'
+      uses: actions/checkout@v1
+    - name: 'Install dependencies'
+      run: npm ci
+    - name: 'Run build'
+      run: npm run build
+    - if: github.repository == 'rafaelgssa/traktflix'
+      name: 'Generate release'
+      run: npm run generate-release token=${{ secrets.GITHUB_ACCESS_TOKEN }}
+    - if: github.repository == 'rafaelgssa/traktflix'
+      name: 'Upload to Chrome store'
+      uses: trmcnvn/chrome-addon@v1
+      with:
+        extension: ${{ secrets.CHROME_EXTENSION_ID }}
+        zip: ./dist/chrome.zip
+        client-id: ${{ secrets.CHROME_CLIENT_ID }}
+        client-secret: ${{ secrets.CHROME_CLIENT_SECRET }}
+        refresh-token: ${{ secrets.CHROME_REFRESH_TOKEN }}
+    - if: github.repository == 'rafaelgssa/traktflix'
+      name: 'Upload to Firefox store'
+      uses: trmcnvn/firefox-addon@v1
+      with:
+        uuid: ${{ secrets.FIREFOX_EXTENSION_ID }}
+        xpi: ./dist/firefox.zip
+        manifest: ./browser/build/firefox/manifest.json
+        api-key: ${{ secrets.FIREFOX_CLIENT_ID }}
+        api-secret: ${{ secrets.FIREFOX_CLIENT_SECRET }}
+    - name: 'Run tests'
+      run: xvfb-run npm test
+    - name: 'Run coverage'
+      run: cat ./coverage/**/lcov.info | ./node_modules/coveralls/bin/coveralls.js
