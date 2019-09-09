@@ -1,10 +1,10 @@
 module.exports = config => {
-  let webpackConfig = require(`./webpack.config.js`);
+  let webpackConfig = require('./webpack.config.js');
   webpackConfig = webpackConfig({ development: true, test: true });
   const configuration = {
     autoWatch: false,
     basePath: '',
-    browsers: [`Chrome`, `Firefox`],
+    browsers: ['Chrome', 'Firefox'],
     client: {
       jasmine: {
         random: false
@@ -12,21 +12,19 @@ module.exports = config => {
     },
     concurrency: 1,
     files: [
-      `test/**/*.js`
+      'test/**/*.js'
     ],
-    frameworks: [`mocha`, `chai`],
+    frameworks: ['mocha', 'chai'],
     preprocessors: {
-      [`test/**/*.js`]: [`webpack`]
+      ['test/**/*.js']: ['webpack']
     },
     singleRun: true,
     webpack: webpackConfig
   };
-  if (process.env.TRAVIS) {
-    configuration.reporters = [`progress`, `coverage`];
-    configuration.coverageReporter = {
-      dir: `coverage/`,
-      type: `lcov`
-    };
-  }
+  configuration.reporters = ['progress', 'coverage'];
+  configuration.coverageReporter = {
+    dir: 'coverage/',
+    type: 'lcov'
+  };
   config.set(configuration);
 };

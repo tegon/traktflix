@@ -12,5 +12,7 @@
     "analyticsId": "{GoogleAnalyticsId}",
     "rollbarToken": "{RollbarToken}",
     "tmdbApiKey": "{TheMovieDatabaseApiKey}"
-  }
+  },
+  "chrome": {},
+  "firefox": {}
 }

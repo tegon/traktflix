@@ -273,7 +273,9 @@ function getWebpackConfig(env) {
     plugins: [
       new plugins.clean(),
       new plugins.progressBar(),
-      new plugins.runAfterBuild(() => runFinalSteps(configJson))
+      ...(
+        env.test ? [] : [new plugins.runAfterBuild(() => runFinalSteps(configJson))]
+      )
     ],
     watch: !!(env.development && env.watch),
     watchOptions: {

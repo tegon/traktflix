@@ -17,6 +17,9 @@ jobs:
     - name: 'Run build'
       run: npm run build
     - if: github.repository == 'rafaelgssa/traktflix'
+      name: 'Zip dist'
+      run: npm run zip
+    - if: github.repository == 'rafaelgssa/traktflix'
       name: 'Generate release'
       run: npm run generate-release token=${{ secrets.GITHUB_ACCESS_TOKEN }}
     - if: github.repository == 'rafaelgssa/traktflix'
