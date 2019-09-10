@@ -16,8 +16,7 @@ jobs:
       run: npm ci
     - name: 'Run build'
       run: npm run build
-    - if: github.repository == 'rafaelgssa/traktflix'
-      name: 'Zip dist'
+    - name: 'Zip dist'
       run: npm run zip
     - if: github.repository == 'rafaelgssa/traktflix'
       name: 'Generate release'
