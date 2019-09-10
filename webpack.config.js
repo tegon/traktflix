@@ -11,13 +11,7 @@ const webpack = require('webpack');
 
 const BASE_PATH = process.cwd();
 
-const { getArguments } = require(path.resolve(BASE_PATH, './scripts/common'));
-
 const packageJson = require(path.resolve(BASE_PATH, './package.json'));
-
-const args = getArguments(process);
-
-delete args['--env.development'];
 
 const loaders = {
   css: {
@@ -208,7 +202,7 @@ function getWebpackConfig(env) {
     mode = 'none';
   }
 
-  const configJson = Object.keys(args).length ? args : require(path.resolve(BASE_PATH, 'config.json'))[mode];
+  const configJson = require(path.resolve(BASE_PATH, 'config.json'))[mode];
 
   return {
     devtool: env.production ? false : 'source-map',
