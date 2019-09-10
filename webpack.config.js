@@ -11,7 +11,13 @@ const webpack = require('webpack');
 
 const BASE_PATH = process.cwd();
 
-const packageJson = require(path.resolve(BASE_PATH, 'package.json'));
+const { getArguments } = require(path.resolve(BASE_PATH, './scripts/common'));
+
+const packageJson = require(path.resolve(BASE_PATH, './package.json'));
+
+const args = getArguments(process);
+
+delete args['--env.development'];
 
 const loaders = {
   css: {
@@ -104,16 +110,21 @@ function getManifest(configJson, browserName) {
 
   switch (browserName) {
     case 'chrome':
-      manifest.key = configJson.chrome.extensionKey;
+      if (configJson.chromeExtensionKey) {
+        manifest.key = configJson.chromeExtensionKey;
+      }
+
       manifest.permissions.push('declarativeContent');
 
       break;
     case 'firefox':
-      manifest.browser_specific_settings = {
-        gecko: {
-          id: configJson.firefox.extensionId
-        }
-      };
+      if (configJson.firefoxExtensionId) {
+        manifest.browser_specific_settings = {
+          gecko: {
+            id: configJson.firefoxExtensionId
+          }
+        };
+      }
 
       break;
     default:
@@ -187,8 +198,6 @@ async function runFinalSteps(configJson) {
  * @param {Environment} env
  */
 function getWebpackConfig(env) {
-  const configJson = require(path.resolve(BASE_PATH, env.test ? 'config.dev.json' : 'config.json'));
-
   let mode;
 
   if (env.production) {
@@ -198,6 +207,8 @@ function getWebpackConfig(env) {
   } else {
     mode = 'none';
   }
+
+  const configJson = Object.keys(args).length ? args : require(path.resolve(BASE_PATH, 'config.json'))[mode];
 
   return {
     devtool: env.production ? false : 'source-map',
@@ -223,11 +234,11 @@ function getWebpackConfig(env) {
           loader: 'string-replace-loader',
           options: {
             multiple: [
-              { search: '@@clientId', replace: configJson[mode].clientId },
-              { search: '@@clientSecret', replace: configJson[mode].clientSecret },
-              { search: '@@analyticsId', replace: configJson[mode].analyticsId },
-              { search: '@@rollbarToken', replace: configJson[mode].rollbarToken },
-              { search: '@@tmdbApiKey', replace: configJson[mode].tmdbApiKey }
+              { search: '@@clientId', replace: configJson.clientId },
+              { search: '@@clientSecret', replace: configJson.clientSecret },
+              { search: '@@analyticsId', replace: configJson.analyticsId },
+              { search: '@@rollbarToken', replace: configJson.rollbarToken },
+              { search: '@@tmdbApiKey', replace: configJson.tmdbApiKey }
             ]
           }
         },

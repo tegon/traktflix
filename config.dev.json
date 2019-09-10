@@ -11,8 +11,9 @@
     "clientSecret": "{TraktClientSecret}",
     "analyticsId": "{GoogleAnalyticsId}",
     "rollbarToken": "{RollbarToken}",
-    "tmdbApiKey": "{TheMovieDatabaseApiKey}"
-  },
-  "chrome": {},
-  "firefox": {}
+    "tmdbApiKey": "{TheMovieDatabaseApiKey}",
+    "chromeExtensionId": "",
+    "chromeExtensionKey": "",
+    "firefoxExtensionId": ""
+  }
 }
