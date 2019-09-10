@@ -6,8 +6,8 @@ on:
       - dev
 
 jobs:
-  test:
-    name: 'Test'
+  build:
+    name: 'Build'
     runs-on: ubuntu-latest
     steps:
     - name: 'Checkout dev'
@@ -16,12 +16,13 @@ jobs:
       run: npm ci
     - if: github.repository == 'rafaelgssa/traktflix'
       name: 'Generate config.json'
-      run: "echo \"{ \\\"development\\\": { \\\"clientId\\\": \\\"${{ secrets.TRAKT_CLIENT_ID }}\\\", \\\"clientSecret\\\": \\\"${{ secrets.TRAKT_CLIENT_SECRET }}\\\", \\\"analyticsId\\\": \\\"${{ secrets.GOOGLE_ANALYTICS_ID }}\\\", \\\"rollbarToken\\\": \\\"${{ secrets.ROLLBAR_TOKEN }}\\\", \\\"tmdbApiKey\\\": \\\"${{ secrets.TMDB_API_KEY }}\\\", \\\"chromeExtensionKey\\\": \\\"${{ secrets.CHROME_EXTENSION_KEY }}\\\", \\\"firefoxExtensionId\\\": \\\"${{ secrets.FIREFOX_EXTENSION_ID }}\\\" } }\" >> ./config.json"
-    - if: github.repository == 'rafaelgssa/traktflix'
-      name: 'Run build'
+      run: 'echo "{ \"development\": { \"clientId\": \"${{ secrets.TRAKT_CLIENT_ID }}\", \"clientSecret\": \"${{ secrets.TRAKT_CLIENT_SECRET }}\", \"analyticsId\": \"${{ secrets.GOOGLE_ANALYTICS_ID }}\", \"rollbarToken\": \"${{ secrets.ROLLBAR_TOKEN }}\", \"tmdbApiKey\": \"${{ secrets.TMDB_API_KEY }}\", \"chromeExtensionKey\": \"${{ secrets.CHROME_EXTENSION_KEY }}\", \"firefoxExtensionId\": \"${{ secrets.FIREFOX_EXTENSION_ID }}\" } }" >> ./config.json'
+    - if: github.repository != 'rafaelgssa/traktflix'
+      name: 'Generate empty config.json'
+      run: 'echo "{ \"development\": { \"clientId\": \"\", \"clientSecret\": \"\", \"analyticsId\": \"\", \"rollbarToken\": \"\", \"tmdbApiKey\": \"\", \"chromeExtensionKey\": \"\", \"firefoxExtensionId\": \"\" } }" >> ./config.json'
+    - name: 'Run dev build'
       run: npm run build-dev
-    - if: github.repository == 'rafaelgssa/traktflix'
-      name: 'Zip dist'
+    - name: 'Zip dist'
       run: npm run zip
     - name: 'Run tests'
       run: xvfb-run npm test
