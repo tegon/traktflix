@@ -109,11 +109,11 @@ describe(`BrowserStorage`, () => {
   });
 
   describe(`when browser.tabs is not defined`, () => {
-    before(() => {
+    beforeEach(() => {
       sinon.stub(BrowserStorage, `isAvailable`).returns(false);
     });
 
-    after(() => {
+    afterEach(() => {
       BrowserStorage.isAvailable.restore();
     });
 
