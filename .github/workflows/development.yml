@@ -16,7 +16,7 @@ jobs:
       run: npm ci
     - if: github.repository == 'rafaelgssa/traktflix'
       name: 'Generate config.json'
-      run: "{ \"development\": { \"clientId\": \"${{ secrets.TRAKT_CLIENT_ID }}\", \"clientSecret\": \"${{ secrets.TRAKT_CLIENT_SECRET }}\", \"analyticsId\": \"${{ secrets.GOOGLE_ANALYTICS_ID }}\", \"rollbarToken\": \"${{ secrets.ROLLBAR_TOKEN }}\", \"tmdbApiKey\": \"${{ secrets.TMDB_API_KEY }}\", \"chromeExtensionKey\": \"${{ secrets.CHROME_EXTENSION_KEY }}\", \"firefoxExtensionId\": \"${{ secrets.FIREFOX_EXTENSION_ID }}\" } }" >> ./config.json
+      run: "\"{ \\\"development\\\": { \\\"clientId\\\": \\\"${{ secrets.TRAKT_CLIENT_ID }}\\\", \\\"clientSecret\\\": \\\"${{ secrets.TRAKT_CLIENT_SECRET }}\\\", \\\"analyticsId\\\": \\\"${{ secrets.GOOGLE_ANALYTICS_ID }}\\\", \\\"rollbarToken\\\": \\\"${{ secrets.ROLLBAR_TOKEN }}\\\", \\\"tmdbApiKey\\\": \\\"${{ secrets.TMDB_API_KEY }}\\\", \\\"chromeExtensionKey\\\": \\\"${{ secrets.CHROME_EXTENSION_KEY }}\\\", \\\"firefoxExtensionId\\\": \\\"${{ secrets.FIREFOX_EXTENSION_ID }}\\\" } }\" >> ./config.json"
     - if: github.repository == 'rafaelgssa/traktflix'
       name: 'Run build'
       run: npm run build-dev
