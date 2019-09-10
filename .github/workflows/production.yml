@@ -14,9 +14,11 @@ jobs:
       uses: actions/checkout@v1
     - name: 'Install dependencies'
       run: npm ci
-    - name: 'Run build'
+    - if: github.repository == 'rafaelgssa/traktflix'
+      name: 'Run build'
       run: npm run build clientId=${{ secrets.TRAKT_CLIENT_ID }} clientSecret=${{ secrets.TRAKT_CLIENT_SECRET }} analyticsId=${{ secrets.GOOGLE_ANALYTICS_ID }} rollbarToken=${{ secrets.ROLLBAR_TOKEN }} tmdbApiKey=${{ secrets.TMDB_API_KEY }} chromeExtensionKey=${{ secrets.CHROME_EXTENSION_KEY }} firefoxExtensionId=${{ secrets.FIREFOX_EXTENSION_ID }}
-    - name: 'Zip dist'
+    - if: github.repository == 'rafaelgssa/traktflix'
+      name: 'Zip dist'
       run: npm run zip
     - if: github.repository == 'rafaelgssa/traktflix'
       name: 'Generate release'
