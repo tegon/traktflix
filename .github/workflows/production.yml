@@ -44,5 +44,9 @@ jobs:
         manifest: ./browser/build/firefox/manifest.json
         api-key: ${{ secrets.FIREFOX_CLIENT_ID }}
         api-secret: ${{ secrets.FIREFOX_CLIENT_SECRET }}
-    - name: 'Run tests'
+    - if: github.repository == 'rafaelgssa/traktflix'
+      name: 'Run tests and send coverage'
       run: xvfb-run npm test token=${{ secrets.COVERALLS_TOKEN }}
+    - if: github.repository != 'rafaelgssa/traktflix'
+      name: 'Run tests'
+      run: xvfb-run npm test
