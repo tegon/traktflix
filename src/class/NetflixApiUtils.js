@@ -192,15 +192,17 @@ const netflixApiUtils = {
         url: `${NETFLIX_API_HOST}/${this.buildIdentifier}/pathEvaluator?languages=en-US`,
         success: response => {
           const json = JSON.parse(response);
-          activities = activities.map(activity => {
-            const info = json.value.videos[activity.movieID];
-            if (info) {
-              activity.episode = info.summary.episode;
-              activity.season = info.summary.season;
-              activity.year = info.releaseYear;
-            }
-            return activity;
-          });
+          if (activities && json.value.videos) {
+            activities = activities.map(activity => {
+              const info = json.value.videos[activity.movieID];
+              if (info) {
+                activity.episode = info.summary.episode;
+                activity.season = info.summary.season;
+                activity.year = info.releaseYear;
+              }
+              return activity;
+            });
+          }
           resolve(activities);
         },
         error: (status, response) => {
