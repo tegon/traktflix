@@ -15,34 +15,54 @@ class Request {
     }
 
     const storage = await BrowserStorage.get(`data`);
-    const xhr = new XMLHttpRequest();
-    xhr.open(options.method, options.url, true);
-    xhr.setRequestHeader(`Content-Type`, typeof options.params === `string` ? `application/x-www-form-urlencoded` : `application/json`);
-    xhr.setRequestHeader(`trakt-api-key`, Settings.clientId);
-    xhr.setRequestHeader(`trakt-api-version`, Settings.apiVersion);
+
+    const headers = {};
+
+    headers[`Content-Type`] = typeof options.params === `string` ? `application/x-www-form-urlencoded` : `application/json`;
+    headers[`trakt-api-key`] = Settings.clientId;
+    headers[`trakt-api-version`] = Settings.apiVersion;
+
     if (storage.data && storage.data.access_token) {
-      xhr.setRequestHeader(`Authorization`, `Bearer ${storage.data.access_token}`);
+      headers[`Authorization`] = `Bearer ${storage.data.access_token}`;
     }
-    xhr.timeout = 10000; // increase the timeout for trakt.tv calls
-    xhr.onload = function () {
-      if (this.status >= 200 && this.status < 400) {
-        options.success.call(this, this.response);
+
+    let fetchObj = window.fetch;
+    let fetchOptions = {
+      body: typeof options.params === `string` ? options.params : JSON.stringify(options.params),
+      headers,
+      method: options.method,
+    };
+
+    if (typeof window.wrappedJSObject !== 'undefined') {
+      // Firefox wraps content script elements, so if we want to make the request from a container, we have to unwrap them
+      fetchObj = XPCNativeWrapper(window.wrappedJSObject.fetch);
+      window.wrappedJSObject.fetchOptions = cloneInto(fetchOptions, window);
+      fetchOptions = XPCNativeWrapper(window.wrappedJSObject.fetchOptions);
+    }
+
+    let response = {};
+    let responseText = '';
+
+    try {
+      response = await fetchObj(options.url, fetchOptions);
+      responseText = await response.text();
+
+      if (response.status >= 200 && response.status < 400) {
+        options.success.call(this, responseText);
       } else {
-        options.error.call(this, this.status, this.responseText, {
+        options.error.call(this, response.status, responseText, {
           url: options.url,
           method: options.method,
           params: options.params
         });
       }
-    };
-    xhr.onerror = function () {
-      options.error.call(this, this.status, this.responseText, {
+    } catch (error) {
+      options.error.call(this, response.status, responseText, {
         url: options.url,
         method: options.method,
         params: options.params
       });
-    };
-    xhr.send(typeof options.params === `string` ? options.params : JSON.stringify(options.params));
+    }
   }
 
   send(options) {
