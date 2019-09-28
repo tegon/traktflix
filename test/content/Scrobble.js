@@ -74,15 +74,15 @@ describe(`Scrobble`, () => {
     expect(scrobbleShow.url).to.equal(`${Settings.apiUri}/scrobble`);
   });
 
-  it(`webScrubber() sets the progress for movie`, () => {
+  it(`checkForChanges() sets the progress for movie`, () => {
     NetflixTestUtils.renderPlayer(`movie`);
-    scrobbleMovie.webScrubber();
+    scrobbleMovie.checkForChanges();
     expect(scrobbleMovie.progress.toFixed(2)).to.equal(`2.91`);
   });
 
-  it(`webScrubber() sets the progress for show`, () => {
+  it(`checkForChanges() sets the progress for show`, () => {
     NetflixTestUtils.renderPlayer(`show`);
-    scrobbleShow.webScrubber();
+    scrobbleShow.checkForChanges();
     expect(scrobbleShow.progress.toFixed(2)).to.equal(`1.57`);
   });
 
