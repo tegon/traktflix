@@ -255,25 +255,45 @@ const netflixApiUtils = {
     }
   },
 
+  _getSession(resolve, event) {
+    window.removeEventListener('traktflix-getSession-fromPage', this.sessionListener);
+
+    const session = JSON.parse(event.detail.session);
+
+    resolve(session);
+  },
+
   getSession() {
-    const netflix = window.netflix || (window.wrappedJSObject && window.wrappedJSObject.netflix);
-
-    if (netflix) {
-      const sessions = netflix.appContext.state.playerApp.getState().videoPlayer.playbackStateBySessionId;
-      const key = Object.keys(sessions).filter(key => key.match(/^watch/))[0];
-
-      let session = null;
-
-      if (key) {
-        session = Object.assign({}, sessions[key]);
-      }
-
+    return new Promise(resolve => {
       if (window.wrappedJSObject) {
-        XPCNativeWrapper(window.wrappedJSObject.netflix);
-      }
+        const netflix = window.wrappedJSObject.netflix;
 
-      return session;
-    }
+        if (netflix) {
+          const sessions = netflix.appContext.state.playerApp.getState().videoPlayer.playbackStateBySessionId;
+          const key = Object.keys(sessions).filter(key => key.match(/^watch/))[0];
+
+          let session = null;
+
+          if (key) {
+            session = Object.assign({}, sessions[key]);
+          }
+
+          XPCNativeWrapper(window.wrappedJSObject.netflix);
+
+          resolve(session);
+        } else {
+          resolve();
+        }
+      } else {
+        this.sessionListener = this._getSession.bind(this, resolve);
+
+        window.addEventListener('traktflix-getSession-fromPage', this.sessionListener, false);
+
+        const event = new CustomEvent('traktflix-getSession-toPage');
+
+        window.dispatchEvent(event);
+      }
+    });
   },
 };
 

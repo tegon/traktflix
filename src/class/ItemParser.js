@@ -10,10 +10,10 @@ class ItemParser {
     return location.href;
   }
 
-  isReady() {
+  async isReady() {
     let isReady = false;
 
-    const session = NetflixApiUtils.getSession();
+    const session = await NetflixApiUtils.getSession();
 
     if (session) {
       this.id = session.videoId.toString();
@@ -33,7 +33,7 @@ class ItemParser {
   }
 
   async checkIsReady(resolve) {
-    if (this.isReady()) {
+    if (await this.isReady()) {
       const data = await NetflixApiUtils.getMetadata(this.id);
       resolve(data);
     } else {

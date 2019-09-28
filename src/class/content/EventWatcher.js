@@ -30,7 +30,7 @@ export default class EventWatcher {
   }
 
   async checkForChanges() {
-    const session = NetflixApiUtils.getSession();
+    const session = await NetflixApiUtils.getSession();
 
     if (typeof session !== 'undefined') {
       if (session) {

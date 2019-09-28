@@ -12,11 +12,18 @@ class Header extends React.Component {
     const tabs = await browser.tabs.query({url: `*://*.netflix.com/*`, active: true});
 
     if (tabs.length > 0) {
-      browser.tabs.create({
-        cookieStoreId: tabs[0].cookieStoreId,
-        index: tabs[0].index + 1,
-        url: browser.runtime.getURL('html/history-sync.html'),
-      });
+      if (browser.cookies) {
+        browser.tabs.create({
+          cookieStoreId: tabs[0].cookieStoreId,
+          index: tabs[0].index + 1,
+          url: browser.runtime.getURL('html/history-sync.html'),
+        });
+      } else {
+        browser.tabs.create({
+          index: tabs[0].index + 1,
+          url: browser.runtime.getURL('html/history-sync.html'),
+        });
+      }
     }
   }
 

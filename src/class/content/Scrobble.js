@@ -81,8 +81,8 @@ export default class Scrobble {
     });
   }
 
-  checkForChanges() {
-    const session = NetflixApiUtils.getSession();
+  async checkForChanges() {
+    const session = await NetflixApiUtils.getSession();
 
     if (session) {
       this.progress = Math.round((session.currentTime / session.duration) * 10000) / 100;
