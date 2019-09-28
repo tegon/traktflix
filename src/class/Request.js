@@ -33,7 +33,7 @@ class Request {
       method: options.method,
     };
 
-    if (typeof window.wrappedJSObject !== 'undefined') {
+    if (window.wrappedJSObject) {
       // Firefox wraps content script elements, so if we want to make the request from a container, we have to unwrap them
       fetchObj = XPCNativeWrapper(window.wrappedJSObject.fetch);
       window.wrappedJSObject.fetchOptions = cloneInto(fetchOptions, window);

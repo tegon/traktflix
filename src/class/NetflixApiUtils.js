@@ -251,7 +251,28 @@ const netflixApiUtils = {
     } else {
       return new Item({title, type, year});
     }
-  }
+  },
+
+  getSession() {
+    const netflix = window.netflix || (window.wrappedJSObject && window.wrappedJSObject.netflix);
+
+    if (netflix) {
+      const sessions = netflix.appContext.state.playerApp.getState().videoPlayer.playbackStateBySessionId;
+      const key = Object.keys(sessions).filter(key => key.match(/^watch/))[0];
+
+      let session = null;
+
+      if (key) {
+        session = Object.assign({}, sessions[key]);
+      }
+
+      if (window.wrappedJSObject) {
+        XPCNativeWrapper(window.wrappedJSObject.netflix);
+      }
+
+      return session;
+    }
+  },
 };
 
 export default netflixApiUtils;

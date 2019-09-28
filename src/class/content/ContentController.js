@@ -11,10 +11,6 @@ export default class ContentController {
      * @type {Scrobble}
      */
     this.scrobble = undefined;
-
-    if (this.getLocation().match(/watch/)) {
-      ItemParser.start().then(this.storeItem.bind(this));
-    }
   }
 
   // For testing purposes.
@@ -36,18 +32,6 @@ export default class ContentController {
     console.log(`traktflix: Scrobble error`, status, response, options);
     // noinspection JSIgnoredPromiseFromCall
     this.reportError(`Scrobble`, status, response, options);
-  }
-
-  onSearchSuccess(response) {
-    this.scrobble = new Scrobble({
-      response,
-      type: this.item.type,
-      success: this.onScrobbleSuccess.bind(this),
-      error: this.onScrobbleError.bind(this)
-    });
-    this.setActiveIcon();
-    // noinspection JSIgnoredPromiseFromCall
-    this.scrobble.start();
   }
 
   showErrorNotification(message) {
@@ -84,6 +68,15 @@ export default class ContentController {
     }
   }
 
+  onSearchSuccess(response) {
+    this.scrobble = new Scrobble({
+      response,
+      type: this.item.type,
+      success: this.onScrobbleSuccess.bind(this),
+      error: this.onScrobbleError.bind(this)
+    });
+  }
+
   onSearchError(status, response, options) {
     console.log(`traktflix: Search error`, status, response, options, this.item.title);
     // noinspection JSIgnoredPromiseFromCall
@@ -91,43 +84,62 @@ export default class ContentController {
   }
 
   storeItem(item) {
-    this.item = item;
-    if (this.item !== null) {
-      const search = new Search({item: this.item});
-      search.find({
-        success: this.onSearchSuccess.bind(this),
-        error: this.onSearchError.bind(this)
-      });
-    } else {
-      this.scrobble = undefined;
-    }
+    return new Promise((resolve, reject) => {
+      this.item = item;
+
+      if (this.item !== null) {
+        const search = new Search({item: this.item});
+
+        search.find({
+          success: response => {
+            this.onSearchSuccess(response);
+
+            resolve();
+          },
+          error: (status, response, options) => {
+            this.onSearchError(status, response, options);
+
+            reject();
+          },
+        });
+      } else {
+        this.scrobble = undefined;
+
+        resolve();
+      }
+    });
   }
 
-  onPlay() {
-    if (this.item === null && this.scrobble === undefined) {
-      ItemParser.start().then(this.storeItem.bind(this));
-    } else {
+  async onPlay() {
+    try {
+      if (this.item === null && this.scrobble === undefined) {
+        const item = await ItemParser.start();
+
+        await this.storeItem(item);
+      }
+
       this.setActiveIcon();
       // noinspection JSIgnoredPromiseFromCall
-      this.scrobble.start();
-    }
+      await this.scrobble.start();
+    } catch (error) {}
   }
 
-  onPause() {
+  async onPause() {
     if (typeof this.scrobble !== `undefined`) {
       this.setInactiveIcon();
       // noinspection JSIgnoredPromiseFromCall
-      this.scrobble.pause();
+      await this.scrobble.pause();
     }
   }
 
-  onStop() {
+  async onStop() {
     if (typeof this.scrobble !== `undefined`) {
       this.setInactiveIcon();
       // noinspection JSIgnoredPromiseFromCall
-      this.scrobble.stop();
+      await this.scrobble.stop();
     }
-    this.storeItem(null);
+
+    await this.storeItem(null);
   }
 
   getCurrentItem() {

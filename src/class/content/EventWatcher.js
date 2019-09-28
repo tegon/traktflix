@@ -1,25 +1,79 @@
+import NetflixApiUtils from '../NetflixApiUtils';
+
 export default class EventWatcher {
   constructor(options) {
-    this.document = document;
     this.onPlay = options.onPlay;
+    this.onPause = options.onPause;
     this.onStop = options.onStop;
-    this.url = this.getLocation();
+
+    this.changeListener = null;
+    this.paused = false;
+    this.playing = false;
+    this.url = '';
+    this.videoId = 0;
   }
 
   // For testing purposes
   getLocation() {
-    return location.href;
+    return window.location.href;
   }
 
-  onUrlChange(oldUrl, newUrl) {
+  async onUrlChange(oldUrl, newUrl) {
     if (/watch/.test(oldUrl) && /watch/.test(newUrl)) {
-      this.onStop();
-      this.onPlay();
-    } else if (/watch/.test(oldUrl) && !/watch/.test(newUrl)) {
-      this.onStop();
+      await this.onStop();
+      await this.onPlay();
     } else if (!/watch/.test(oldUrl) && /watch/.test(newUrl)) {
-      this.onPlay();
+      await this.onPlay();
+    } else if (/watch/.test(oldUrl) && !/watch/.test(newUrl)) {
+      await this.onStop();
     }
+  }
+
+  async checkForChanges() {
+    const session = NetflixApiUtils.getSession();
+
+    if (typeof session !== 'undefined') {
+      if (session) {
+        if (session.videoId !== this.videoId) {
+          this.videoId = session.videoId;
+
+          await this.onStop();
+          await this.onPlay();
+
+          this.paused = false;
+          this.playing = true;
+        } else if ((session.paused !== this.paused) || (session.playing !== this.playing)) {
+          if (session.paused) {
+            await this.onPause();
+          } else if (session.playing) {
+            await this.onPlay();
+          } else {
+            await this.onStop();
+          }
+
+          this.paused = session.paused;
+          this.playing = session.playing;
+        }
+      } else {
+        await this.onStop();
+      }
+    } else if (this.url !== this.getLocation()) {
+      await this.onUrlChange(this.url, this.getLocation());
+
+      this.url = this.getLocation();
+    }
+
+    this.changeListener = window.setTimeout(this.checkForChanges.bind(this), 500);
+  }
+
+  addChangeListener() {
+    this.checkForChanges();
+  }
+
+  removeChangeListener() {
+    window.clearTimeout(this.changeListener);
+
+    this.changeListener = null;
   }
 
   onBeforeUnload() {
@@ -31,33 +85,17 @@ export default class EventWatcher {
     window.onbeforeunload = window.onunload = this.onBeforeUnload.bind(this);
   }
 
-  addUrlChangeListener() {
-    this.urlChangeInterval = setTimeout(() => {
-      if (this.url !== this.getLocation()) {
-        this.onUrlChange(this.url, this.getLocation());
-        this.url = this.getLocation();
-      }
-      clearTimeout(this.urlChangeInterval);
-      this.addUrlChangeListener();
-    }, 500);
+  removeStopListener() {
+    window.onbeforeunload = window.onunload = null;
   }
 
   startListeners() {
+    this.addChangeListener();
     this.addStopListener();
-    this.addUrlChangeListener();
-  }
-
-  removeStopListener() {
-    window.onpopstate = null;
-    window.onbeforeunload = null;
-  }
-
-  removeUrlChangeListener() {
-    clearInterval(this.urlChangeInterval);
   }
 
   stopListeners() {
+    this.removeChangeListener();
     this.removeStopListener();
-    this.removeUrlChangeListener();
   }
 }
