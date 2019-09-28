@@ -2,7 +2,6 @@ import 'material-design-lite';
 import PropTypes from 'prop-types';
 import React from 'react';
 import BrowserStorage from '../BrowserStorage';
-import Permissions from '../Permissions';
 import OptionsActionCreators from './OptionsActionCreators';
 import OptionsList from './OptionsList';
 import OptionsStore from './OptionsStore';
@@ -73,8 +72,8 @@ class ViewingOptionsApp extends React.Component {
         (option.add ? originsToAdd : originsToRemove).push(...option.origins);
       }
     }
-    Permissions.request(permissionsToAdd, originsToAdd);
-    Permissions.remove(permissionsToRemove, originsToRemove);
+    browser.permissions.request({ permissions: permissionsToAdd, origins: originsToAdd });
+    browser.permissions.remove({ permissions: permissionsToRemove, origins: originsToRemove });
     BrowserStorage.set({options}, true)
       .then(() => OptionsActionCreators.saveSuccess())
       .catch(error => OptionsActionCreators.saveFailed(error));

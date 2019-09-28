@@ -1,7 +1,6 @@
 import moment from 'moment';
 import BrowserStorage from './BrowserStorage';
 import Item from './Item';
-import Permissions from './Permissions';
 import Request from './Request';
 import ActivityActionCreators from './history-sync/ActivityActionCreators';
 import TraktWebAPIUtils from './history-sync/TraktWebAPIUtils';
@@ -91,7 +90,7 @@ const netflixApiUtils = {
     const promises = result.map(item => item.promise);
     ActivityActionCreators.receiveActivities(parsedActivities, page);
     const storage = await BrowserStorage.get(`options`);
-    if (storage.options && storage.options.sendReceiveSuggestions && (await Permissions.contains(undefined, [`*://script.google.com/*`, `*://script.googleusercontent.com/*`]))) {
+    if (storage.options && storage.options.sendReceiveSuggestions && (await browser.permissions.contains({ origins: [`*://script.google.com/*`, `*://script.googleusercontent.com/*`] }))) {
       Request.send({
         method: `GET`,
         url: `https://script.google.com/macros/s/AKfycbxaD_VEcZVv9atICZm00TWvF3XqkwykWtlGE8Ne39EMcjW5m3w/exec?ids=${encodeURIComponent(JSON.stringify(parsedActivities.map(activity => TraktWebAPIUtils._getTraktCacheId(activity))))}`,

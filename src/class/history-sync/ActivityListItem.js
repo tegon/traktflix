@@ -1,7 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import BrowserStorage from '../BrowserStorage';
-import Permissions from '../Permissions';
 import Request from "../Request";
 import TmdbImage from '../tmdb/TmdbImage';
 import ActivityActionCreators from './ActivityActionCreators';
@@ -37,7 +36,7 @@ class ActivityListItem extends React.Component {
       await TraktWebAPIUtils.getActivityFromURL(activity, url);
       this.setState({showTraktURLForm: false});
       const storage = await BrowserStorage.get(`options`);
-      if (storage.options && storage.options.sendReceiveSuggestions && (await Permissions.contains(undefined, [`*://script.google.com/*`, `*://script.googleusercontent.com/*`]))) {
+      if (storage.options && storage.options.sendReceiveSuggestions && (await browser.permissions.contains({ origins: [`*://script.google.com/*`, `*://script.googleusercontent.com/*`] }))) {
         Request.send({
           method: `POST`,
           params: {

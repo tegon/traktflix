@@ -38,8 +38,8 @@ const plugins = {
 };
 
 /**
- * @param {Object} configJson 
- * @param {string} browserName 
+ * @param {Object} configJson
+ * @param {string} browserName
  * @return {string}
  */
 function getManifest(configJson, browserName) {
@@ -112,6 +112,10 @@ function getManifest(configJson, browserName) {
 
       break;
     case 'firefox':
+      manifest.optional_permissions.push(
+        'cookies',
+      );
+
       if (configJson.firefoxExtensionId) {
         manifest.browser_specific_settings = {
           gecko: {
@@ -129,7 +133,7 @@ function getManifest(configJson, browserName) {
 }
 
 /**
- * @param {Object} configJson 
+ * @param {Object} configJson
  */
 async function runFinalSteps(configJson) {
   if (!fs.existsSync('./build/chrome/js/lib')) {
@@ -157,7 +161,7 @@ async function runFinalSteps(configJson) {
     fs.copyFileSync(fileToCopy.from, fileToCopy.to);
   }
 
-  const foldersToCopy = [    
+  const foldersToCopy = [
     { from: './src/html', to: './build/chrome/html' },
     { from: './src/_locales', to: './build/chrome/_locales' },
     { from: './build/fonts', to: './build/chrome/fonts' },

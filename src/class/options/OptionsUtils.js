@@ -1,6 +1,7 @@
 import React from 'react';
 import BrowserStorage from '../BrowserStorage';
 import OptionsActionsCreators from './OptionsActionCreators';
+import Settings from '../../settings';
 
 class OptionsUtils {
   constructor() {
@@ -40,6 +41,16 @@ class OptionsUtils {
         </React.Fragment>
       )
     }];
+
+    if (Settings.browser === 'firefox') {
+      this.options.push({
+        id: `grantCookies`,
+        name: ``,
+        description: ``,
+        value: false,
+        permissions: [`cookies`],
+      });
+    }
   }
 
   async getOptions() {

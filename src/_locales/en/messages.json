@@ -116,6 +116,12 @@
   "sendReceiveSuggestionsDescription": {
     "message": "With this option enabled, whenever you update a wrong item in the history sync, the correction will be sent to a Google Sheets database so that other users can receive correction suggestions. This option is also required to receive those correction suggestions."
   },
+  "grantCookiesName": {
+    "message": "Grant the \"cookies\" permission so that traktflix can work with Firefox Containers."
+  },
+  "grantCookiesDescription": {
+    "message": "With this option enabled, traktflix will open the history sync page in the container where you are using Netflix. Only enable it if you use Firefox Containers."
+  },
   "saveOptionsSuccess": {
     "message": "Options saved."
   },
