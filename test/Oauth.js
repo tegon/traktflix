@@ -1,4 +1,5 @@
 import browser from 'sinon-chrome';
+import fakeFetch from '../test-helpers/fake-fetch';
 import sinon from 'sinon';
 import Settings from '../src/settings.js';
 import Oauth from '../src/class/Oauth';
@@ -6,21 +7,18 @@ import Shared from '../src/class/Shared';
 
 Shared.setBackgroundPage(true);
 
-let server = null;
-
 describe(`Oauth`, () => {
   before(() => {
     window.browser = browser;
   });
 
   beforeEach(() => {
-    server = sinon.fakeServer.create();
-    server.autoRespond = true;
+    fakeFetch.install();
   });
 
   afterEach(() => {
     browser.flush();
-    server.restore();
+    fakeFetch.restore();
   });
 
   after(() => {
@@ -35,7 +33,7 @@ describe(`Oauth`, () => {
   it(`requestToken() resolves with success`, async () => {
     browser.storage.local.get.withArgs(`data`).resolves({data: {access_token: `12345abcde`}});
     browser.storage.local.set.withArgs({data: {access_token: `12345abcde`}}).resolves();
-    server.respondWith(`POST`, `${Settings.apiUri}/oauth/token`, [200, {[`Content-Type`]: `application/json`}, `{"access_token": "12345abcde"}`]);
+    fakeFetch.withArgs(`${Settings.apiUri}/oauth/token`).respondWith(`{"access_token": "12345abcde"}`, { status: 200 });
     const result = await Oauth.requestToken();
     expect(result).to.deep.equal({error: false, response: `{"access_token": "12345abcde"}`});
   });
@@ -43,7 +41,7 @@ describe(`Oauth`, () => {
   it(`requestToken() resolves with error`, async () => {
     browser.storage.local.get.withArgs(`data`).resolves({data: {access_token: `12345abcde`}});
     browser.storage.local.remove.withArgs(`data`).resolves();
-    server.respondWith(`POST`, `${Settings.apiUri}/oauth/token`, [401, {[`Content-Type`]: `application/json`}, `{"error": "invalid_grant"}`]);
+    fakeFetch.withArgs(`${Settings.apiUri}/oauth/token`).respondWith(`{"error": "invalid_grant"}`, { status: 401 });
     const result = await Oauth.requestToken({});
     expect(result).to.deep.equal({error: true, response: `{"error": "invalid_grant"}`, status: 401});
   });
@@ -67,7 +65,7 @@ describe(`Oauth`, () => {
 
   it(`getUserInfo() calls success callback`, done => {
     browser.storage.local.get.withArgs(`data`).resolves({data: {access_token: `12345abcde`}});
-    server.respondWith(`GET`, `${Settings.apiUri}/users/me`, [200, {[`Content-Type`]: `application/json`}, `{"username": "FooBar"}`]);
+    fakeFetch.withArgs(`${Settings.apiUri}/users/me`).respondWith(`{"username": "FooBar"}`, { status: 200 });
     const success = response => {
       expect(response).to.equal(`{"username": "FooBar"}`);
       done();
@@ -80,7 +78,7 @@ describe(`Oauth`, () => {
 
   it(`getUserInfo() calls error callback`, done => {
     browser.storage.local.get.withArgs(`data`).resolves({data: {access_token: `12345abcde`}});
-    server.respondWith(`GET`, `${Settings.apiUri}/users/me`, [400, {[`Content-Type`]: `application/json`}, `{"error": "Bad Request"}`]);
+    fakeFetch.withArgs(`${Settings.apiUri}/users/me`).respondWith(`{"error": "Bad Request"}`, { status: 400 });
     const success = () => {
       done.fail();
     };
@@ -94,7 +92,7 @@ describe(`Oauth`, () => {
 
   it(`getUserInfo() calls error callback if status is 401 and refresh_token is empty`, done => {
     browser.storage.local.get.withArgs(`data`).resolves({});
-    server.respondWith(`GET`, `${Settings.apiUri}/users/me`, [401, {[`Content-Type`]: `application/json`}, `{"error": "invalid_grant"}`]);
+    fakeFetch.withArgs(`${Settings.apiUri}/users/me`).respondWith(`{"error": "invalid_grant"}`, { status: 401 });
     const success = () => {
       done.fail();
     };
@@ -111,7 +109,7 @@ describe(`Oauth`, () => {
     sinon.stub(Oauth, `requestRefreshToken`).withArgs(`54321edcba`).resolves({
       response: `{ "access_token": "12345abcde", "refresh_token": "54321edcba" }`
     });
-    server.respondWith(`GET`, `${Settings.apiUri}/users/me`, [401, {[`Content-Type`]: `application/json`}, `{"error": "invalid_grant"}`]);
+    fakeFetch.withArgs(`${Settings.apiUri}/users/me`).respondWith(`{"error": "invalid_grant"}`, { status: 401 });
     const success = response => {
       expect(Oauth.requestRefreshToken.callCount).to.equal(1);
       expect(response).to.equal(`{ "access_token": "12345abcde", "refresh_token": "54321edcba" }`);
@@ -131,7 +129,7 @@ describe(`Oauth`, () => {
       response: `{ "error": "invalid_grant" }`,
       status: 401
     });
-    server.respondWith(`GET`, `${Settings.apiUri}/users/me`, [401, {[`Content-Type`]: `application/json`}, `{"error": "invalid_grant"}`]);
+    fakeFetch.withArgs(`${Settings.apiUri}/users/me`).respondWith(`{"error": "invalid_grant"}`, { status: 401 });
     const success = () => {
       done.fail();
     };
