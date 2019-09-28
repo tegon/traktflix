@@ -68,6 +68,9 @@
   "addWithReleaseDate": {
     "message": "Add with release date"
   },
+  "hideSynced": {
+    "message": "Hide synced"
+  },
   "syncNow": {
     "message": "Sync now"
   },
@@ -82,6 +85,9 @@
   },
   "loadingPage": {
     "message": "Loading page"
+  },
+  "noItemsToShow": {
+    "message": "There are no items to show here. Load the next page to show more items."
   },
   "noMoreHistory": {
     "message": "There's no more items in your history. Refresh the page to go to the beginning."

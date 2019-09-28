@@ -14,6 +14,7 @@ export default class ViewingActivityApp extends React.Component {
   getInitialState() {
     return Object.assign(this.getStateFromStores(), {
       addWithReleaseDate: this.props.addWithReleaseDate,
+      hideSynced: this.props.hideSynced,
       pagesToLoad: this.props.pagesToLoad
     });
   }
@@ -85,7 +86,7 @@ export default class ViewingActivityApp extends React.Component {
     inputs.map(input => input.checked === event.target.checked ? null : input.click());
   }
 
-  __onToggleReleaseDate(event) {
+  _onToggleReleaseDate(event) {
     const addWithReleaseDate = event.target.checked;
     BrowserStorage.get(`prefs`).then(storage => {
       if (!storage.prefs) {
@@ -95,6 +96,18 @@ export default class ViewingActivityApp extends React.Component {
       BrowserStorage.set({prefs: storage.prefs}, true);
     });
     this.setState({addWithReleaseDate});
+  }
+
+  _onToggleSynced(event) {
+    const hideSynced = event.target.checked;
+    BrowserStorage.get(`prefs`).then(storage => {
+      if (!storage.prefs) {
+        storage.prefs = {};
+      }
+      storage.prefs.hideSynced = hideSynced;
+      BrowserStorage.set({prefs: storage.prefs}, true);
+    });
+    this.setState({hideSynced});
   }
 
   showSnackbar() {
@@ -113,6 +126,8 @@ export default class ViewingActivityApp extends React.Component {
         </div>
       );
     } else if (this.state.activities.length) {
+      const activities = this.state.hideSynced ? this.state.activities.filter(activity => !activity.alreadyOnTrakt) : this.state.activities;
+
       content = (
         <div>
           <div className={'loading-trakt'} style={{display: this.state.isLoadingTraktData ? 'block' : 'none'}}>
@@ -126,13 +141,26 @@ export default class ViewingActivityApp extends React.Component {
             </label>
             <label className='mdl-switch mdl-js-switch mdl-js-ripple-effect' htmlFor='add-with-release-date'>
               <input type='checkbox' id='add-with-release-date' className='mdl-switch__input'
-                     onChange={this.__onToggleReleaseDate.bind(this)} checked={this.state.addWithReleaseDate}/>
+                     onChange={this._onToggleReleaseDate.bind(this)} checked={this.state.addWithReleaseDate}/>
               <span className='mdl-switch__label'>{browser.i18n.getMessage(`addWithReleaseDate`)}</span>
             </label>
+            <label className='mdl-switch mdl-js-switch mdl-js-ripple-effect' htmlFor='hide-synced'>
+              <input type='checkbox' id='hide-synced' className='mdl-switch__input'
+                     onChange={this._onToggleSynced.bind(this)} checked={this.state.hideSynced}/>
+              <span className='mdl-switch__label'>{browser.i18n.getMessage(`hideSynced`)}</span>
+            </label>
           </span>
-          <TmdbImageContainer>
-            <ActivityList activities={this.state.activities}/>
-          </TmdbImageContainer>
+          {
+            activities.length ? (
+              <TmdbImageContainer>
+                <ActivityList activities={activities} />
+              </TmdbImageContainer>
+            ) : (
+              <div>
+                <h4>{browser.i18n.getMessage(`noItemsToShow`)}</h4>
+              </div>
+            )
+          }
           <div className='mdl-actions-wrapper'>
             <button onClick={this._onSyncClick.bind(this)} disabled={this.state.isLoadingTraktData}
                     className='mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect'

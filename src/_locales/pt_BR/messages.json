@@ -68,6 +68,9 @@
   "addWithReleaseDate": {
     "message": "Adicionar com a data de lançamento"
   },
+  "hideSynced": {
+    "message": "Ocultar sincronizados"
+  },
   "syncNow": {
     "message": "Sincronizar agora"
   },
@@ -85,6 +88,9 @@
   },
   "noMoreHistory": {
     "message": "Não existem mais itens no seu histórico. Atualize a página para voltar ao início."
+  },
+  "noItemsToShow": {
+    "message": "Não há itens para mostrar aqui. Carregue a próxima página para mostrar mais itens."
   },
   "disableScrobblingName": {
     "message": "Desativar scrobbling."
