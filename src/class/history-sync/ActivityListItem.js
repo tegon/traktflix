@@ -10,7 +10,23 @@ import TraktWebAPIUtils from './TraktWebAPIUtils';
 class ActivityListItem extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {isUpdating: false, showTraktURLForm: false, traktClick: false, traktError: false};
+    this.state = {
+      dateFormat: this.props.dateFormat,
+      isUpdating: false,
+      showTraktURLForm: false,
+      traktClick: false,
+      traktError: false
+    };
+  }
+
+  static getDerivedStateFromProps(props, currentState) {
+    if (currentState.dateFormat !== props.dateFormat) {
+      return {
+        dateFormat: props.dateFormat,
+      };
+    }
+
+    return null
   }
 
   componentDidMount() {
@@ -64,7 +80,7 @@ class ActivityListItem extends React.Component {
     let traktTitle = ``;
 
     if (trakt) {
-      traktDate = trakt.date ? trakt.date.format(`MMMM Do YYYY, h:mm:ss a`) : `-`;
+      traktDate = trakt.date ? trakt.date.format(this.state.dateFormat) : `-`;
       traktUrl = trakt.season ? `https://trakt.tv/shows/${trakt.show.ids.slug}/seasons/${trakt.season}/episodes/${trakt.number}` : `https://trakt.tv/movies/${trakt.ids.slug}`;
       traktTitle = trakt.show ? `${trakt.show.title}: ${trakt.title}` : trakt.title;
     }
@@ -95,7 +111,7 @@ class ActivityListItem extends React.Component {
           <span><a href={traktUrl}
                    target='noopener noreferrer _blank'>{browser.i18n.getMessage(`traktTitle`)}: {traktTitle}</a></span>
           <span className='mdl-list__item-text-body'>
-            {browser.i18n.getMessage(`netflixDate`)}: {netflix.date.format('MMMM Do YYYY, h:mm:ss a')} / {browser.i18n.getMessage(`traktDate`)}: {traktDate}
+            {browser.i18n.getMessage(`netflixDate`)}: {netflix.date.format(this.state.dateFormat)} / {browser.i18n.getMessage(`traktDate`)}: {traktDate}
             {suggestions}
             <br/>
             {browser.i18n.getMessage(`isThisWrong`)} <a className='paste-trakt-url'
@@ -125,7 +141,8 @@ ActivityListItem.propTypes = {
   activity: PropTypes.object,
   componentHandler: PropTypes.object,
   imageHost: PropTypes.string,
-  imageWidth: PropTypes.object
+  imageWidth: PropTypes.object,
+  dateFormat: PropTypes.string,
 };
 
 export default ActivityListItem;

@@ -71,6 +71,9 @@
   "hideSynced": {
     "message": "Ocultar sincronizados"
   },
+  "use24Clock": {
+    "message": "Usar relógio de 24 horas"
+  },
   "syncNow": {
     "message": "Sincronizar agora"
   },

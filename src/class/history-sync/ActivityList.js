@@ -11,7 +11,7 @@ class ActivityList extends React.Component {
   }
 
   render() {
-    const {activities, imageHost, imageWidth} = this.props;
+    const {activities, imageHost, imageWidth, dateFormat} = this.props;
     const items = activities.map((activity, index) => {
       return (
         <ActivityListItem
@@ -20,6 +20,7 @@ class ActivityList extends React.Component {
           componentHandler={componentHandler}
           imageHost={imageHost}
           imageWidth={imageWidth}
+          dateFormat={dateFormat}
         />
       );
     });
@@ -35,7 +36,8 @@ class ActivityList extends React.Component {
 ActivityList.propTypes = {
   activities: PropTypes.array,
   imageHost: PropTypes.string,
-  imageWidth: PropTypes.object
+  imageWidth: PropTypes.object,
+  dateFormat: PropTypes.string,
 };
 
 export default ActivityList;

@@ -71,6 +71,9 @@
   "hideSynced": {
     "message": "Hide synced"
   },
+  "use24Clock": {
+    "message": "Use 24-hour clock"
+  },
   "syncNow": {
     "message": "Sync now"
   },

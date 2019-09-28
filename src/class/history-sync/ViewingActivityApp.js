@@ -15,6 +15,7 @@ export default class ViewingActivityApp extends React.Component {
     return Object.assign(this.getStateFromStores(), {
       addWithReleaseDate: this.props.addWithReleaseDate,
       hideSynced: this.props.hideSynced,
+      use24Clock: this.props.use24Clock,
       pagesToLoad: this.props.pagesToLoad
     });
   }
@@ -110,6 +111,18 @@ export default class ViewingActivityApp extends React.Component {
     this.setState({hideSynced});
   }
 
+  _onToggleClock(event) {
+    const use24Clock = event.target.checked;
+    BrowserStorage.get(`prefs`).then(storage => {
+      if (!storage.prefs) {
+        storage.prefs = {};
+      }
+      storage.prefs.use24Clock = use24Clock;
+      BrowserStorage.set({prefs: storage.prefs}, true);
+    });
+    this.setState({use24Clock});
+  }
+
   showSnackbar() {
     const snackbar = document.querySelector('.mdl-js-snackbar');
     snackbar.MaterialSnackbar.showSnackbar({message: this.state.message});
@@ -149,11 +162,16 @@ export default class ViewingActivityApp extends React.Component {
                      onChange={this._onToggleSynced.bind(this)} checked={this.state.hideSynced}/>
               <span className='mdl-switch__label'>{browser.i18n.getMessage(`hideSynced`)}</span>
             </label>
+            <label className='mdl-switch mdl-js-switch mdl-js-ripple-effect' htmlFor='use-24-clock'>
+              <input type='checkbox' id='use-24-clock' className='mdl-switch__input'
+                     onChange={this._onToggleClock.bind(this)} checked={this.state.use24Clock}/>
+              <span className='mdl-switch__label'>{browser.i18n.getMessage(`use24Clock`)}</span>
+            </label>
           </span>
           {
             activities.length ? (
               <TmdbImageContainer>
-                <ActivityList activities={activities} />
+                <ActivityList activities={activities} dateFormat={this.state.use24Clock ? 'MMMM Do YYYY, H:mm:ss' : 'MMMM Do YYYY, h:mm:ss a'} />
               </TmdbImageContainer>
             ) : (
               <div>

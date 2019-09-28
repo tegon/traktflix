@@ -17,6 +17,7 @@ BrowserStorage.get(`prefs`).then(storage => {
     <ViewingActivityApp
       addWithReleaseDate={(storage.prefs && storage.prefs.addWithReleaseDate) || false}
       hideSynced={(storage.prefs && storage.prefs.hideSynced) || false}
+      use24Clock={(storage.prefs && storage.prefs.use24Clock) || false}
       pagesToLoad={(storage.prefs && storage.prefs.pagesToLoad) || `0`}
     />,
     document.getElementById('viewing-activity-app')
