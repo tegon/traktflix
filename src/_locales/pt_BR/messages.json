@@ -92,12 +92,6 @@
   "disableScrobblingDescription": {
     "message": "Com essa opção ativada, a extensão não realizará scrobble automático do que você está assistindo. Isso é útil se você prefere sincronizar o seu histórico mais tarde ao invés de fazer scrobble em tempo real."
   },
-  "allowGoogleAnalyticsName": {
-    "message": "Permitir que o Google Analytics colete informações sobre o seu uso da extensão."
-  },
-  "allowGoogleAnalyticsDescription": {
-    "message": "Com essa opção ativada, informações sobre o seu uso da extensão serão coletadas e enviadas para nós, para que possamos obter dados e melhorar a extensão.Essas informações incluem: quando você começou / terminou uma sessão, quando uma pesquisa pelo item que você está assistindo foi bem / mal sucedida (junto com o título do item), quando um scrobble para o item que você está assistindo foi bem / mal sucedido, e o seu endereço IP para estatísticas geográficas. Esses dados não são compartilhados com nenhum outro serviço."
-  },
   "allowRollbarName": {
     "message": "Permitir que o Rollbar colete informações sobre erros."
   },

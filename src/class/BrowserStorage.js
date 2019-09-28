@@ -5,10 +5,10 @@
  * @property {Boolean} data.auto_sync
  * @property {Object} options
  * @property {Boolean} options.disableScrobbling
- * @property {Boolean} options.allowGoogleAnalytics
  * @property {Boolean} options.allowRollbar
  * @property {Boolean} options.showNotifications
  * @property {Boolean} options.sendReceiveCorrections
+ * @property {Boolean} options.grantCookies
  */
 
 class BrowserStorage {
@@ -26,7 +26,7 @@ class BrowserStorage {
     return !!browser.storage.sync;
   }
 
-  async sync() {   
+  async sync() {
     if (this.isAvailable()) {
       if (this.isSyncAvailable()) {
         const storage = await browser.storage.sync.get(null);

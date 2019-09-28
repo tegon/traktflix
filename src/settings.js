@@ -6,7 +6,6 @@ const settings = {
   clientId: `@@clientId`,
   clientSecret: `@@clientSecret`,
   apiVersion: `2`,
-  analyticsId: `@@analyticsId`,
   rollbarToken: `@@rollbarToken`,
   tmdbApiKey: `@@tmdbApiKey`
 };

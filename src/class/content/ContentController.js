@@ -30,25 +30,15 @@ export default class ContentController {
     browser.runtime.sendMessage({type: `setInactiveIcon`});
   }
 
-  sendAnalyticsEvent(options) {
-    browser.runtime.sendMessage({
-      type: `sendEvent`, name: options.name, value: options.value
-    });
-  }
-
-  onScrobbleSuccess() {
-    this.sendAnalyticsEvent({name: `Scrobble`, value: `onSuccess`});
-  }
+  onScrobbleSuccess() {}
 
   onScrobbleError(status, response, options) {
-    this.sendAnalyticsEvent({name: `Scrobble`, value: `onError`});
     console.log(`traktflix: Scrobble error`, status, response, options);
     // noinspection JSIgnoredPromiseFromCall
     this.reportError(`Scrobble`, status, response, options);
   }
 
   onSearchSuccess(response) {
-    this.sendAnalyticsEvent({name: `onSearchSuccess`, value: this.item.title});
     this.scrobble = new Scrobble({
       response,
       type: this.item.type,
@@ -58,7 +48,6 @@ export default class ContentController {
     this.setActiveIcon();
     // noinspection JSIgnoredPromiseFromCall
     this.scrobble.start();
-    this.sendAnalyticsEvent({name: `Scrobble`, value: `start`});
   }
 
   showErrorNotification(message) {
@@ -96,7 +85,6 @@ export default class ContentController {
   }
 
   onSearchError(status, response, options) {
-    this.sendAnalyticsEvent({name: `onSearchError`, value: `${status} - ${this.item.title}`});
     console.log(`traktflix: Search error`, status, response, options, this.item.title);
     // noinspection JSIgnoredPromiseFromCall
     this.reportError(`Search`, status, response, options);
@@ -122,7 +110,6 @@ export default class ContentController {
       this.setActiveIcon();
       // noinspection JSIgnoredPromiseFromCall
       this.scrobble.start();
-      this.sendAnalyticsEvent({name: `Scrobble`, value: `start`});
     }
   }
 
@@ -131,7 +118,6 @@ export default class ContentController {
       this.setInactiveIcon();
       // noinspection JSIgnoredPromiseFromCall
       this.scrobble.pause();
-      this.sendAnalyticsEvent({name: `Scrobble`, value: `pause`});
     }
   }
 
@@ -140,7 +126,6 @@ export default class ContentController {
       this.setInactiveIcon();
       // noinspection JSIgnoredPromiseFromCall
       this.scrobble.stop();
-      this.sendAnalyticsEvent({name: `Scrobble`, value: `stop`});
     }
     this.storeItem(null);
   }

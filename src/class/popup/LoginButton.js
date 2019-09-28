@@ -31,8 +31,6 @@ class LoginButton extends React.Component {
   }
 
   render() {
-    browser.runtime.sendMessage({type: `sendAppView`, view: `Login`});
-
     return (
       <ErrorBoundary>
         <div className='login-wrapper'>

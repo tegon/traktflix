@@ -23,13 +23,6 @@ describe(`Watching`, () => {
     delete window.browser;
   });
 
-  it(`sends analytics appView`, () => {
-    expect(browser.runtime.sendMessage.callCount).to.equal(1);
-    expect(browser.runtime.sendMessage.args[0]).to.deep.equal([{
-      type: `sendAppView`, view: `Watching ${item.title}`
-    }]);
-  });
-
   it(`has the correct html classes`, () => {
     const card = component.find(`.mdl-card.mdl-shadow--2dp.watching-card-thumb`).hostNodes();
     const cardTitle = component.find(`.mdl-card__title.mdl-card--expand`);

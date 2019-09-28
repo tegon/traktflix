@@ -92,12 +92,6 @@
   "disableScrobblingDescription": {
     "message": "With this option enabled, the extension will not automatically scrobble what you're watching. This is useful if you prefer to sync your history later instead of scrobbling in real time."
   },
-  "allowGoogleAnalyticsName": {
-    "message": "Allow Google Analytics to collect information about your usage of the extension."
-  },
-  "allowGoogleAnalyticsDescription": {
-    "message": "With this option enabled, information about your usage of the extension will be collected and sent to us, so that we can gather data and improve the extension. This information includes: when you logged in / logged out, when a search for the item you are watching was successful / unsuccessful (along with the title of the item), when a scrobble for the item you are watching was successful / unsuccessful, and your IP address for geographical statistics. This data is not shared with any other service."
-  },
   "allowRollbarName": {
     "message": "Allow Rollbar to collect information about bugs."
   },

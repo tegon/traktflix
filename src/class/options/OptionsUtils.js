@@ -11,12 +11,6 @@ class OptionsUtils {
       description: ``,
       value: false
     }, {
-      id: `allowGoogleAnalytics`,
-      name: ``,
-      description: ``,
-      value: false,
-      origins: [`*://google-analytics.com/*`]
-    }, {
       id: `allowRollbar`,
       name: ``,
       description: ``,

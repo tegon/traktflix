@@ -55,7 +55,6 @@ function getManifest(configJson, browserName) {
     background: {
       scripts: [
         'js/lib/browser-polyfill.js',
-        'js/vendor.js',
         'js/background.js'
       ]
     },
@@ -75,7 +74,6 @@ function getManifest(configJson, browserName) {
     optional_permissions: [
       'notifications',
       '*://api.rollbar.com/*',
-      '*://google-analytics.com/*',
       '*://script.google.com/*',
       '*://script.googleusercontent.com/*'
     ],
@@ -216,13 +214,11 @@ function getWebpackConfig(env) {
       './chrome/js/history-sync': ['./src/modules/history-sync/index.js'],
       './chrome/js/options': ['./src/modules/options/index.js'],
       './chrome/js/popup': ['./src/modules/popup/index.js'],
-      './chrome/js/vendor': ['./src/modules/vendor/index.js'],
       './firefox/js/background': ['./src/modules/background/index.js'],
       './firefox/js/content': ['./src/modules/content/index.js'],
       './firefox/js/history-sync': ['./src/modules/history-sync/index.js'],
       './firefox/js/options': ['./src/modules/options/index.js'],
       './firefox/js/popup': ['./src/modules/popup/index.js'],
-      './firefox/js/vendor': ['./src/modules/vendor/index.js']
     },
     mode,
     module: {
@@ -234,7 +230,6 @@ function getWebpackConfig(env) {
             multiple: [
               { search: '@@clientId', replace: configJson.clientId },
               { search: '@@clientSecret', replace: configJson.clientSecret },
-              { search: '@@analyticsId', replace: configJson.analyticsId },
               { search: '@@rollbarToken', replace: configJson.rollbarToken },
               { search: '@@tmdbApiKey', replace: configJson.tmdbApiKey }
             ]
