@@ -41,6 +41,9 @@
   "moviesAdded": {
     "message": "Movies added"
   },
+  "historyFailed": {
+    "message": "Failed to retrieve your history :(. We will work on a solution soon."
+  },
   "syncFailed": {
     "message": "Sync failed :(. We will work on a solution soon."
   },

@@ -82,7 +82,7 @@ activityStore.dispatchToken = ViewingActivityAppDispatcher.register((action) => 
     case ActionTypes.RECEIVE_ACTIVITIES_FAILED:
       Rollbar.init().then(() => Rollbar.error(action));
       _isLoading = false;
-      _message = action;
+      _message = browser.i18n.getMessage(`historyFailed`);
       activityStore.emitChange();
       break;
     case ActionTypes.START_LOADING_TRAKT_DATA:

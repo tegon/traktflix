@@ -41,6 +41,9 @@
   "moviesAdded": {
     "message": "Filmes adicionados"
   },
+  "historyFailed": {
+    "message": "Ocorreu um erro ao carregar seu histórico :(. Estamos trabalhando em uma solução."
+  },
   "syncFailed": {
     "message": "Ocorreu um erro ao sincronizar :(. Estamos trabalhando em uma solução."
   },
