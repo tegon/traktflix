@@ -79,7 +79,6 @@ class App extends React.Component {
   }
 
   async logoutClicked() {
-    browser.runtime.sendMessage({type: `sendEvent`, name: `Logout`, value: false});
     await BrowserStorage.remove(`data`, true);
     this.setState({logged: false});
     this.context.router.history.push(`/login`);
@@ -93,12 +92,10 @@ class App extends React.Component {
     const options = JSON.parse(response);
     this.setState({loading: false, logged: !!options.access_token});
     this.context.router.history.push(`/not-watching`);
-    browser.runtime.sendMessage({type: `sendEvent`, name: `TokenSuccess`, value: true});
   }
 
   onTokenFailed(status, response) {
     this.setState({loading: false});
-    browser.runtime.sendMessage({type: `sendEvent`, name: `TokenFailed`, value: false});
     console.log(`traktflix: Get Token failed`, status, response);
     Rollbar.init().then(() => Rollbar.warning(`traktflix: Get Token failed`, {status: status, response: response}));
   }

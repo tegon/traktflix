@@ -13,7 +13,6 @@ class Info extends React.Component {
 
   render() {
     const message = this.getRandomMessage();
-    browser.runtime.sendMessage({type: `sendAppView`, view: `Info`});
 
     return (
       <ErrorBoundary>

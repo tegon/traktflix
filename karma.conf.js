@@ -1,10 +1,14 @@
+const { getArguments } = require('./scripts/common');
+
+const args = getArguments(process);
+
 module.exports = config => {
-  let webpackConfig = require(`./webpack.config.js`);
-  webpackConfig = webpackConfig({ development: true, test: true });
-  const configuration = {
+  const webpackConfig = require('./webpack.config.js');
+
+  const karmaConfig = {
     autoWatch: false,
     basePath: '',
-    browsers: [`Chrome`, `Firefox`],
+    browsers: ['Chrome', 'Firefox'],
     client: {
       jasmine: {
         random: false
@@ -12,21 +16,29 @@ module.exports = config => {
     },
     concurrency: 1,
     files: [
-      `test/**/*.js`
+      'test/**/*.js'
     ],
-    frameworks: [`mocha`, `chai`],
+    frameworks: ['mocha', 'chai'],
     preprocessors: {
-      [`test/**/*.js`]: [`webpack`]
+      ['test/**/*.js']: ['webpack']
     },
     singleRun: true,
-    webpack: webpackConfig
+    webpack: webpackConfig({
+      development: true,
+      test: true
+    })
   };
-  if (process.env.TRAVIS) {
-    configuration.reporters = [`progress`, `coverage`];
-    configuration.coverageReporter = {
-      dir: `coverage/`,
-      type: `lcov`
+
+  if (args.token) {
+    karmaConfig.coverallsReporter = {
+      repoToken: args.token
     };
+    karmaConfig.coverageReporter = {
+      dir: 'coverage/',
+      type: 'lcov'
+    };
+    karmaConfig.reporters = ['progress', 'coverage', 'coveralls'];
   }
-  config.set(configuration);
+
+  config.set(karmaConfig);
 };

@@ -7,27 +7,32 @@ describe(`ItemParser`, () => {
     sinon.spy(ItemParser, `isReady`);
   });
 
+  beforeEach(() => {
+    sinon.stub(NetflixApiUtils, `getSession`).resolves();
+  });
+
   afterEach(() => {
     ItemParser.isReady.resetHistory();
+    NetflixApiUtils.getSession.restore();
   });
 
   after(() => {
     ItemParser.isReady.restore();
   });
 
-  it(`isReady() returns true when the URL indicates that the user is watching something`, () => {
+  it(`isReady() returns true when the URL indicates that the user is watching something`, async () => {
     const url = `/watch/12345678`;
     sinon.stub(ItemParser, `getLocation`).returns(url);
-    expect(ItemParser.isReady()).to.be.true;
+    expect(await ItemParser.isReady()).to.be.true;
     expect(ItemParser.getLocation.callCount).to.equal(1);
     expect(ItemParser.getLocation.returnValues[0]).to.equal(url);
     ItemParser.getLocation.restore();
   });
 
-  it(`isReady() returns false when the URL indicates that the user is not watching something`, () => {
+  it(`isReady() returns false when the URL indicates that the user is not watching something`, async () => {
     const url = `/browse`;
     sinon.stub(ItemParser, `getLocation`).returns(url);
-    expect(ItemParser.isReady()).to.be.false;
+    expect(await ItemParser.isReady()).to.be.false;
     expect(ItemParser.getLocation.callCount).to.equal(1);
     expect(ItemParser.getLocation.returnValues[0]).to.equal(url);
     ItemParser.getLocation.restore();
@@ -38,7 +43,6 @@ describe(`ItemParser`, () => {
     sinon.stub(NetflixApiUtils, `getMetadata`).withArgs(`12345678`).resolves(`Test`);
     const result = await ItemParser.start();
     expect(ItemParser.isReady.callCount).to.equal(1);
-    expect(ItemParser.isReady.returnValues[0]).to.be.true;
     expect(NetflixApiUtils.getMetadata.callCount).to.equal(1);
     expect(NetflixApiUtils.getMetadata.args[0]).to.deep.equal([`12345678`]);
     expect(result).to.equal(`Test`);
@@ -55,8 +59,6 @@ describe(`ItemParser`, () => {
     }, 500);
     const result = await ItemParser.start();
     expect(ItemParser.isReady.callCount).to.equal(2);
-    expect(ItemParser.isReady.returnValues[0]).to.be.false;
-    expect(ItemParser.isReady.returnValues[1]).to.be.true;
     expect(NetflixApiUtils.getMetadata.callCount).to.equal(1);
     expect(NetflixApiUtils.getMetadata.args[0]).to.deep.equal([`12345678`]);
     expect(result).to.equal(`Test`);
@@ -69,9 +71,6 @@ describe(`ItemParser`, () => {
     sinon.stub(NetflixApiUtils, `getMetadata`);
     ItemParser.start();
     setTimeout(() => {
-      expect(ItemParser.isReady.callCount).to.equal(2);
-      expect(ItemParser.isReady.returnValues[0]).to.be.false;
-      expect(ItemParser.isReady.returnValues[1]).to.be.false;
       expect(NetflixApiUtils.getMetadata.callCount).to.equal(0);
       NetflixApiUtils.getMetadata.restore();
       ItemParser.getLocation.restore();

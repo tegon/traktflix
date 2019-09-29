@@ -41,6 +41,9 @@
   "moviesAdded": {
     "message": "Movies added"
   },
+  "historyFailed": {
+    "message": "Failed to retrieve your history :(. We will work on a solution soon."
+  },
   "syncFailed": {
     "message": "Sync failed :(. We will work on a solution soon."
   },
@@ -65,6 +68,12 @@
   "addWithReleaseDate": {
     "message": "Add with release date"
   },
+  "hideSynced": {
+    "message": "Hide synced"
+  },
+  "use24Clock": {
+    "message": "Use 24-hour clock"
+  },
   "syncNow": {
     "message": "Sync now"
   },
@@ -80,6 +89,9 @@
   "loadingPage": {
     "message": "Loading page"
   },
+  "noItemsToShow": {
+    "message": "There are no items to show here. Load the next page to show more items."
+  },
   "noMoreHistory": {
     "message": "There's no more items in your history. Refresh the page to go to the beginning."
   },
@@ -88,12 +100,6 @@
   },
   "disableScrobblingDescription": {
     "message": "With this option enabled, the extension will not automatically scrobble what you're watching. This is useful if you prefer to sync your history later instead of scrobbling in real time."
-  },
-  "allowGoogleAnalyticsName": {
-    "message": "Allow Google Analytics to collect information about your usage of the extension."
-  },
-  "allowGoogleAnalyticsDescription": {
-    "message": "With this option enabled, information about your usage of the extension will be collected and sent to us, so that we can gather data and improve the extension. This information includes: when you logged in / logged out, when a search for the item you are watching was successful / unsuccessful (along with the title of the item), when a scrobble for the item you are watching was successful / unsuccessful, and your IP address for geographical statistics. This data is not shared with any other service."
   },
   "allowRollbarName": {
     "message": "Allow Rollbar to collect information about bugs."
@@ -112,6 +118,12 @@
   },
   "sendReceiveSuggestionsDescription": {
     "message": "With this option enabled, whenever you update a wrong item in the history sync, the correction will be sent to a Google Sheets database so that other users can receive correction suggestions. This option is also required to receive those correction suggestions."
+  },
+  "grantCookiesName": {
+    "message": "Grant the \"cookies\" permission so that traktflix can work with Firefox Containers."
+  },
+  "grantCookiesDescription": {
+    "message": "With this option enabled, traktflix will open the history sync page in the container where you are using Netflix. Only enable it if you use Firefox Containers."
   },
   "saveOptionsSuccess": {
     "message": "Options saved."

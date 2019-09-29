@@ -5,10 +5,10 @@
  * @property {Boolean} data.auto_sync
  * @property {Object} options
  * @property {Boolean} options.disableScrobbling
- * @property {Boolean} options.allowGoogleAnalytics
  * @property {Boolean} options.allowRollbar
  * @property {Boolean} options.showNotifications
  * @property {Boolean} options.sendReceiveCorrections
+ * @property {Boolean} options.grantCookies
  */
 
 class BrowserStorage {
@@ -26,7 +26,7 @@ class BrowserStorage {
     return !!browser.storage.sync;
   }
 
-  async sync() {   
+  async sync() {
     if (this.isAvailable()) {
       if (this.isSyncAvailable()) {
         const storage = await browser.storage.sync.get(null);
@@ -42,16 +42,14 @@ class BrowserStorage {
   }
 
   set(value, sync) {
-    return new Promise(resolve => {
-      if (this.isAvailable()) {
-        if (sync && this.isSyncAvailable()) {
-          browser.storage.sync.set(value);
-        }
-        browser.storage.local.set(value).then(resolve);
-      } else {
-        browser.runtime.sendMessage({type: `setStorageValue`, value, sync}).then(resolve);
+    if (this.isAvailable()) {
+      if (sync && this.isSyncAvailable()) {
+        browser.storage.sync.set(value);
       }
-    });
+      return browser.storage.local.set(value);
+    } else {
+      return browser.runtime.sendMessage({type: `setStorageValue`, value, sync});
+    }
   }
 
   /**
@@ -59,39 +57,33 @@ class BrowserStorage {
    * @returns {Promise<BrowserStorageGet>}
    */
   get(key) {
-    return new Promise(resolve => {
-      if (this.isAvailable()) {
-        browser.storage.local.get(key).then(resolve);
-      } else {
-        browser.runtime.sendMessage({type: `getStorageValue`, key}).then(resolve);
-      }
-    });
+    if (this.isAvailable()) {
+      return browser.storage.local.get(key);
+    } else {
+      return browser.runtime.sendMessage({type: `getStorageValue`, key});
+    }
   }
 
   remove(key, sync) {
-    return new Promise(resolve => {
-      if (this.isAvailable()) {
-        if (sync && this.isSyncAvailable()) {
-          browser.storage.sync.remove(key);
-        }
-        browser.storage.local.remove(key).then(resolve);
-      } else {
-        browser.runtime.sendMessage({type: `removeStorageValue`, key, sync}).then(resolve);
+    if (this.isAvailable()) {
+      if (sync && this.isSyncAvailable()) {
+        browser.storage.sync.remove(key);
       }
-    });
+      return browser.storage.local.remove(key);
+    } else {
+      return browser.runtime.sendMessage({type: `removeStorageValue`, key, sync});
+    }
   }
 
   clear(sync) {
-    return new Promise(resolve => {
-      if (this.isAvailable()) {
-        if (sync && this.isSyncAvailable()) {
-          browser.storage.sync.clear();
-        }
-        browser.storage.local.clear().then(resolve);
-      } else {
-        browser.runtime.sendMessage({type: `clearStorage`, sync}).then(resolve);
+    if (this.isAvailable()) {
+      if (sync && this.isSyncAvailable()) {
+        browser.storage.sync.clear();
       }
-    });
+      return browser.storage.local.clear();
+    } else {
+      return browser.runtime.sendMessage({type: `clearStorage`, sync});
+    }
   }
 }
 

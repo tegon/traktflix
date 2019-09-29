@@ -38,7 +38,7 @@ describe(`BrowserStorage`, () => {
       await BrowserStorage.sync();
       expect(browser.storage.sync.get.callCount).to.equal(1);
       expect(BrowserStorage.set.callCount).to.equal(2);
-      BrowserStorage.isSyncAvailable.restore();      
+      BrowserStorage.isSyncAvailable.restore();
       BrowserStorage.set.restore();
     });
 
@@ -48,7 +48,7 @@ describe(`BrowserStorage`, () => {
       await BrowserStorage.sync();
       expect(browser.storage.sync.get.callCount).to.equal(0);
       expect(BrowserStorage.set.callCount).to.equal(0);
-      BrowserStorage.isSyncAvailable.restore();      
+      BrowserStorage.isSyncAvailable.restore();
       BrowserStorage.set.restore();
     });
 
@@ -109,11 +109,11 @@ describe(`BrowserStorage`, () => {
   });
 
   describe(`when browser.tabs is not defined`, () => {
-    before(() => {
+    beforeEach(() => {
       sinon.stub(BrowserStorage, `isAvailable`).returns(false);
     });
 
-    after(() => {
+    afterEach(() => {
       BrowserStorage.isAvailable.restore();
     });
 

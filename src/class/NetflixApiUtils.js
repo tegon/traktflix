@@ -1,7 +1,6 @@
 import moment from 'moment';
 import BrowserStorage from './BrowserStorage';
 import Item from './Item';
-import Permissions from './Permissions';
 import Request from './Request';
 import ActivityActionCreators from './history-sync/ActivityActionCreators';
 import TraktWebAPIUtils from './history-sync/TraktWebAPIUtils';
@@ -91,7 +90,7 @@ const netflixApiUtils = {
     const promises = result.map(item => item.promise);
     ActivityActionCreators.receiveActivities(parsedActivities, page);
     const storage = await BrowserStorage.get(`options`);
-    if (storage.options && storage.options.sendReceiveSuggestions && (await Permissions.contains(undefined, [`*://script.google.com/*`, `*://script.googleusercontent.com/*`]))) {
+    if (storage.options && storage.options.sendReceiveSuggestions && (await browser.permissions.contains({ origins: [`*://script.google.com/*`, `*://script.googleusercontent.com/*`] }))) {
       Request.send({
         method: `GET`,
         url: `https://script.google.com/macros/s/AKfycbxaD_VEcZVv9atICZm00TWvF3XqkwykWtlGE8Ne39EMcjW5m3w/exec?ids=${encodeURIComponent(JSON.stringify(parsedActivities.map(activity => TraktWebAPIUtils._getTraktCacheId(activity))))}`,
@@ -193,15 +192,17 @@ const netflixApiUtils = {
         url: `${NETFLIX_API_HOST}/${this.buildIdentifier}/pathEvaluator?languages=en-US`,
         success: response => {
           const json = JSON.parse(response);
-          activities = activities.map(activity => {
-            const info = json.value.videos[activity.movieID];
-            if (info) {
-              activity.episode = info.summary.episode;
-              activity.season = info.summary.season;
-              activity.year = info.releaseYear;
-            }
-            return activity;
-          });
+          if (activities && json.value.videos) {
+            activities = activities.map(activity => {
+              const info = json.value.videos[activity.movieID];
+              if (info) {
+                activity.episode = info.summary.episode;
+                activity.season = info.summary.season;
+                activity.year = info.releaseYear;
+              }
+              return activity;
+            });
+          }
           resolve(activities);
         },
         error: (status, response) => {
@@ -252,7 +253,48 @@ const netflixApiUtils = {
     } else {
       return new Item({title, type, year});
     }
-  }
+  },
+
+  _getSession(resolve, event) {
+    window.removeEventListener('traktflix-getSession-fromPage', this.sessionListener);
+
+    const session = JSON.parse(event.detail.session);
+
+    resolve(session);
+  },
+
+  getSession() {
+    return new Promise(resolve => {
+      if (window.wrappedJSObject) {
+        const netflix = window.wrappedJSObject.netflix;
+
+        if (netflix) {
+          const sessions = netflix.appContext.state.playerApp.getState().videoPlayer.playbackStateBySessionId;
+          const key = Object.keys(sessions).filter(key => key.match(/^watch/))[0];
+
+          let session = null;
+
+          if (key) {
+            session = Object.assign({}, sessions[key]);
+          }
+
+          XPCNativeWrapper(window.wrappedJSObject.netflix);
+
+          resolve(session);
+        } else {
+          resolve();
+        }
+      } else {
+        this.sessionListener = this._getSession.bind(this, resolve);
+
+        window.addEventListener('traktflix-getSession-fromPage', this.sessionListener, false);
+
+        const event = new CustomEvent('traktflix-getSession-toPage');
+
+        window.dispatchEvent(event);
+      }
+    });
+  },
 };
 
 export default netflixApiUtils;

@@ -1,41 +1,11 @@
-import '../vendor/google-analytics-bundle';
-import Settings from '../../settings';
-import Analytics from '../../class/Analytics';
 import BrowserStorage from '../../class/BrowserStorage';
 import Oauth from '../../class/Oauth';
-import Permissions from '../../class/Permissions';
 import Rollbar from '../../class/Rollbar';
 import Request from '../../class/Request';
 import Shared from '../../class/Shared';
 
 Shared.setBackgroundPage(true);
 
-/* global analytics */
-/**
- * Google Analytics Object
- * @type {Object} analytics
- * @property {Function} getService
- * @property {Function} service.getTracker
- */
-const service = analytics.getService(`traktflix`);
-/**
- * @property {Function} addCallback
- */
-service.getConfig()
-  .addCallback(
-    /**
-     * @param {Object} config
-     * @property {Function} setTrackingPermitted
-     */
-    async config => {
-      const storage = await BrowserStorage.get(`options`);
-      const permitted = !!(storage.options && storage.options.allowGoogleAnalytics && (await Permissions.contains(undefined, [`*://google-analytics.com/*`])));
-      config.setTrackingPermitted(permitted);
-      if (permitted) {
-        const tracker = service.getTracker(Settings.analyticsId);
-        Analytics.setTracker(tracker);
-      }
-    });
 // noinspection JSIgnoredPromiseFromCall
 Rollbar.init();
 
@@ -103,12 +73,6 @@ browser.runtime.onMessage.addListener((request, sender) => {
         // noinspection JSIgnoredPromiseFromCall
         Oauth.authorize(resolve);
         return;
-      case `sendAppView`:
-        Analytics.sendAppView(request.view);
-        break;
-      case `sendEvent`:
-        Analytics.sendEvent(request.name, request.value);
-        break;
       case `syncStorage`:
         BrowserStorage.sync().then(resolve);
         return;
@@ -125,7 +89,7 @@ browser.runtime.onMessage.addListener((request, sender) => {
         BrowserStorage.clear(request.sync).then(resolve);
         return;
       case `showNotification`:
-        if (await Permissions.contains(['notifications'])) {
+        if (await browser.permissions.contains({ permissions: ['notifications'] })) {
           browser.notifications.create({
             type: `basic`,
             iconUrl: `images/traktflix-icon-128.png`,
@@ -135,7 +99,7 @@ browser.runtime.onMessage.addListener((request, sender) => {
         }
         break;
       case `showErrorNotification`:
-        if (await Permissions.contains(['notifications'])) {
+        if (await browser.permissions.contains({ permissions: ['notifications'] })) {
           browser.notifications.create({
             type: `basic`,
             iconUrl: `images/traktflix-icon-128.png`,
@@ -153,7 +117,7 @@ browser.runtime.onMessage.addListener((request, sender) => {
           reject(error);
         }
         return;
-      }       
+      }
     }
     resolve();
   });

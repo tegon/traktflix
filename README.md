@@ -19,10 +19,10 @@
 </p>
 
 <p align=left">
-  <a href="https://chrome.google.com/webstore/detail/traktflix/ehlckfimahifadnbecobagimllmbdmde"><img src="https://github.com/tegon/traktflix/raw/master/chrome-badge.png" alt="Get the extension on Chrome"></a>
+  <a href="https://chrome.google.com/webstore/detail/traktflix/ehlckfimahifadnbecobagimllmbdmde"><img src="https://github.com/tegon/traktflix/raw/master/assets/chrome-badge.png" alt="Get the extension on Chrome"></a>
 </p>
 <p align=left">
-  <a href="https://addons.mozilla.org/en-US/firefox/addon/traktflix"><img src="https://github.com/tegon/traktflix/raw/master/firefox-badge.png" alt="Get the extension on Firefox"></a>
+  <a href="https://addons.mozilla.org/en-US/firefox/addon/traktflix"><img src="https://github.com/tegon/traktflix/raw/master/assets/firefox-badge.png" alt="Get the extension on Firefox"></a>
 </p>
 
 ### Table of Contents
@@ -102,10 +102,10 @@ The commands above have only been tested on Linux.
 ### Credits
 <h3 align="center">
   <a href="https://tegon.github.io/traktflix/">
-    <img src="https://github.com/tegon/traktflix/raw/master/tmdb-api-logo.png" alt="TMDB" width="150">
+    <img src="https://github.com/tegon/traktflix/raw/master/assets/tmdb-api-logo.png" alt="TMDB" width="150">
   </a>
   <a href="https://tegon.github.io/traktflix/">
-      <img src="https://github.com/tegon/traktflix/raw/master/trakt-api-logo.png" alt="TMDB" width="150">
+      <img src="https://github.com/tegon/traktflix/raw/master/assets/trakt-api-logo.png" alt="TMDB" width="150">
   </a>
 </h3>
 

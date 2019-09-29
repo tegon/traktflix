@@ -1,6 +1,7 @@
 import Settings from '../../settings';
 import BrowserStorage from "../BrowserStorage";
 import Request from '../Request';
+import NetflixApiUtils from '../NetflixApiUtils';
 
 export default class Scrobble {
   constructor(options) {
@@ -12,51 +13,13 @@ export default class Scrobble {
       this.item = {movie};
     }
 
-    this.onProgressChange();
     this.url = `${Settings.apiUri}/scrobble`;
     this.success = options.success;
     this.error = options.error;
-    this.startProgressTimeout();
-  }
+    this.progress = 0;
+    this.progressListener = null;
 
-  getRemainingTime() {
-    const timeLabel = document.querySelector(`time`);
-    if (timeLabel) {
-      return parseInt(timeLabel.textContent.replace(`:`, ``).replace(`:`, ``));
-    }
-  }
-
-  webScrubber() {
-    const scrubber = document.querySelector(`.scrubber-bar .current-progress`);
-    if (!this.basePercentage || !this.baseTime) {
-      if (scrubber) {
-        this.basePercentage = 100 - parseFloat(scrubber.style.width);
-      }
-      this.baseTime = this.getRemainingTime();
-    }
-    if (scrubber) {
-      const currentPercentage = 100 - parseFloat(scrubber.style.width);
-      if (currentPercentage !== this.basePercentage) {
-        this.basePercentage = currentPercentage;
-        this.baseTime = this.getRemainingTime();
-      }
-      const newProgress = 100 - ((this.basePercentage * this.getRemainingTime()) / this.baseTime);
-      if (newProgress > 0) {
-        this.progress = newProgress;
-      }
-    }
-  }
-
-  onProgressChange() {
-    this.webScrubber();
-  }
-
-  startProgressTimeout() {
-    this.progressChangeInterval = setTimeout(() => {
-      this.onProgressChange();
-      clearTimeout(this.progressChangeInterval);
-      this.startProgressTimeout();
-    }, 1000);
+    this.startProgressListener();
   }
 
   showNotification(title, message) {
@@ -95,39 +58,65 @@ export default class Scrobble {
     }
   }
 
-  stopProgressTimeout() {
-    clearInterval(this.progressChangeInterval);
-  }
-
   _sendScrobble(options) {
-    const params = this.item;
-    params.progress = this.progress;
-    // noinspection JSIgnoredPromiseFromCall
-    Request.send({
-      method: `POST`,
-      url: `${this.url}${options.path}`,
-      params,
-      success: async () => {
-        await this.getItemInfo(options.path, true);
-        this.success();
-      },
-      error: async () => {
-        await this.getItemInfo(options.path);
-        this.error();
-      }
+    return new Promise(resolve => {
+      const params = this.item;
+      params.progress = this.progress;
+      // noinspection JSIgnoredPromiseFromCall
+      Request.send({
+        method: `POST`,
+        url: `${this.url}${options.path}`,
+        params,
+        success: async () => {
+          await this.getItemInfo(options.path, true);
+          this.success();
+          resolve();
+        },
+        error: async () => {
+          await this.getItemInfo(options.path);
+          this.error();
+          resolve();
+        }
+      });
     });
   }
 
-  start() {
-    this._sendScrobble({path: `/start`});
+  async checkForChanges() {
+    const session = await NetflixApiUtils.getSession();
+
+    if (session) {
+      this.progress = Math.round((session.currentTime / session.duration) * 10000) / 100;
+    } else {
+      const scrubber = document.querySelector(`.scrubber-bar .current-progress`);
+
+      if (scrubber) {
+        this.progress = parseFloat(scrubber.style.width);
+      }
+    }
+
+    this.progressListener = window.setTimeout(this.checkForChanges.bind(this), 1000);
   }
 
-  pause() {
-    this._sendScrobble({path: `/pause`});
+  startProgressListener() {
+    this.checkForChanges();
   }
 
-  stop() {
-    this._sendScrobble({path: `/stop`});
-    this.stopProgressTimeout();
+  stopProgressListener() {
+    window.clearTimeout(this.progressListener);
+
+    this.progressListener = null;
+  }
+
+  async start() {
+    await this._sendScrobble({path: `/start`});
+  }
+
+  async pause() {
+    await this._sendScrobble({path: `/pause`});
+  }
+
+  async stop() {
+    await this._sendScrobble({path: `/stop`});
+    this.stopProgressListener();
   }
 }

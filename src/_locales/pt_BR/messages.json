@@ -41,6 +41,9 @@
   "moviesAdded": {
     "message": "Filmes adicionados"
   },
+  "historyFailed": {
+    "message": "Ocorreu um erro ao carregar seu histórico :(. Estamos trabalhando em uma solução."
+  },
   "syncFailed": {
     "message": "Ocorreu um erro ao sincronizar :(. Estamos trabalhando em uma solução."
   },
@@ -65,6 +68,12 @@
   "addWithReleaseDate": {
     "message": "Adicionar com a data de lançamento"
   },
+  "hideSynced": {
+    "message": "Ocultar sincronizados"
+  },
+  "use24Clock": {
+    "message": "Usar relógio de 24 horas"
+  },
   "syncNow": {
     "message": "Sincronizar agora"
   },
@@ -83,17 +92,14 @@
   "noMoreHistory": {
     "message": "Não existem mais itens no seu histórico. Atualize a página para voltar ao início."
   },
+  "noItemsToShow": {
+    "message": "Não há itens para mostrar aqui. Carregue a próxima página para mostrar mais itens."
+  },
   "disableScrobblingName": {
     "message": "Desativar scrobbling."
   },
   "disableScrobblingDescription": {
     "message": "Com essa opção ativada, a extensão não realizará scrobble automático do que você está assistindo. Isso é útil se você prefere sincronizar o seu histórico mais tarde ao invés de fazer scrobble em tempo real."
-  },
-  "allowGoogleAnalyticsName": {
-    "message": "Permitir que o Google Analytics colete informações sobre o seu uso da extensão."
-  },
-  "allowGoogleAnalyticsDescription": {
-    "message": "Com essa opção ativada, informações sobre o seu uso da extensão serão coletadas e enviadas para nós, para que possamos obter dados e melhorar a extensão.Essas informações incluem: quando você começou / terminou uma sessão, quando uma pesquisa pelo item que você está assistindo foi bem / mal sucedida (junto com o título do item), quando um scrobble para o item que você está assistindo foi bem / mal sucedido, e o seu endereço IP para estatísticas geográficas. Esses dados não são compartilhados com nenhum outro serviço."
   },
   "allowRollbarName": {
     "message": "Permitir que o Rollbar colete informações sobre erros."
@@ -112,6 +118,12 @@
   },
   "sendReceiveSuggestionsDescription": {
     "message": "Com essa opção ativada, sempre que você atualizar um item errado no histórico, a correção será enviada para uma base de dados armazenada no Google Sheets para que outros usuários possam receber sugestões de correção. Essa opção também é necessária para receber essas sugestões de correção."
+  },
+  "grantCookiesName": {
+    "message": "Autorizar a permissão de \"cookies\" para que tratkflix funcione com Firefox Containers."
+  },
+  "grantCookiesDescription": {
+    "message": "Com essa opção ativada, traktflix abrirá a página de sincronização de histórico no container onde você está usando Netflix. Somente a ative se você usa Firefox Containers."
   },
   "saveOptionsSuccess": {
     "message": "Opções salvas."
