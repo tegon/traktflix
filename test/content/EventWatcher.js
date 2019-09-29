@@ -1,6 +1,7 @@
 import sinon from 'sinon';
 import EventWatcher from '../../src/class/content/EventWatcher';
 import NetflixTestUtils from '../../test-helpers/NetflixTestHelper';
+import NetflixApiUtils from '../../src/class/NetflixApiUtils';
 
 const onPlay = sinon.spy();
 const onStop = sinon.spy();
@@ -10,9 +11,14 @@ events.startListeners();
 
 describe(`EventWatcher`, () => {
   beforeEach(() => {
+    sinon.stub(NetflixApiUtils, `getSession`).resolves();
     document.body.innerHTML = ``;
     onPlay.resetHistory();
     onStop.resetHistory();
+  });
+
+  afterEach(() => {
+    NetflixApiUtils.getSession.restore();
   });
 
   it(`onStop() and onPlay() are called when the url changes from a show to another`, async () => {

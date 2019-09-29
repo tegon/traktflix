@@ -1,9 +1,11 @@
 import browser from 'sinon-chrome';
 import fakeFetch from '../../test-helpers/fake-fetch';
+import sinon from 'sinon';
 import Settings from '../../src/settings';
 import Scrobble from '../../src/class/content/Scrobble';
 import NetflixTestUtils from '../../test-helpers/NetflixTestHelper';
 import Shared from '../../src/class/Shared';
+import NetflixApiUtils from '../../src/class/NetflixApiUtils';
 
 Shared.setBackgroundPage(true);
 
@@ -74,16 +76,20 @@ describe(`Scrobble`, () => {
     expect(scrobbleShow.url).to.equal(`${Settings.apiUri}/scrobble`);
   });
 
-  it(`checkForChanges() sets the progress for movie`, () => {
+  it(`checkForChanges() sets the progress for movie`, async () => {
+    sinon.stub(NetflixApiUtils, `getSession`).resolves();
     NetflixTestUtils.renderPlayer(`movie`);
-    scrobbleMovie.checkForChanges();
+    await scrobbleMovie.checkForChanges();
     expect(scrobbleMovie.progress.toFixed(2)).to.equal(`2.91`);
+    NetflixApiUtils.getSession.restore();
   });
 
-  it(`checkForChanges() sets the progress for show`, () => {
+  it(`checkForChanges() sets the progress for show`, async () => {
+    sinon.stub(NetflixApiUtils, `getSession`).resolves();
     NetflixTestUtils.renderPlayer(`show`);
-    scrobbleShow.checkForChanges();
+    await scrobbleShow.checkForChanges();
     expect(scrobbleShow.progress.toFixed(2)).to.equal(`1.57`);
+    NetflixApiUtils.getSession.restore();
   });
 
   it(`start() calls success`, done => {
