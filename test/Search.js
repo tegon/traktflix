@@ -1,4 +1,5 @@
 import browser from 'sinon-chrome';
+import fakeFetch from '../test-helpers/fake-fetch';
 import sinon from 'sinon';
 import Settings from '../src/settings.js';
 import Search from '../src/class/Search';
@@ -38,8 +39,6 @@ const episodeSearch = new Search({item: madMen});
 const episodeSearchByTitle = new Search({item: narcos});
 const collectionSearch = new Search({item: comedians});
 
-let server = null;
-
 browser.flush();
 delete window.browser;
 
@@ -50,12 +49,11 @@ describe(`Search`, () => {
   });
 
   beforeEach(() => {
-    server = sinon.fakeServer.create();
-    server.autoRespond = true;
+    fakeFetch.install();
   });
 
   afterEach(() => {
-    server.restore();
+    fakeFetch.restore();
   });
 
   after(() => {
@@ -74,7 +72,7 @@ describe(`Search`, () => {
   });
 
   it(`findItem() returns first search result`, done => {
-    server.respondWith(`GET`, `${Settings.apiUri}/search/${madMen.type}?query=${encodeURIComponent(madMen.title)}`, [200, {[`Content-Type`]: `application/json`}, `[{ "show": { "title": "Mad Men" } }, { "show": { "title": "Mad Women" } }]`]);
+    fakeFetch.withArgs(`${Settings.apiUri}/search/${madMen.type}?query=${encodeURIComponent(madMen.title)}`).respondWith(`[{ "show": { "title": "Mad Men" } }, { "show": { "title": "Mad Women" } }]`, { status: 200 });
     const success = response => {
       expect(response).to.deep.equal({show: {title: `Mad Men`}});
       done();
@@ -86,7 +84,7 @@ describe(`Search`, () => {
   });
 
   it(`findItem() returns exact match for movies with same title from different years`, done => {
-    server.respondWith(`GET`, `${Settings.apiUri}/search/${rocky.type}?query=${encodeURIComponent(rocky.title)}`, [200, {[`Content-Type`]: `application/json`}, `[{ "movie": { "title": "Rocky", "year": 2000 } }, { "movie": { "title": "Rocky", "year": 2005 } }]`]);
+    fakeFetch.withArgs(`${Settings.apiUri}/search/${rocky.type}?query=${encodeURIComponent(rocky.title)}`).respondWith(`[{ "movie": { "title": "Rocky", "year": 2000 } }, { "movie": { "title": "Rocky", "year": 2005 } }]`, { status: 200 });
     const success = response => {
       expect(response).to.deep.equal({movie: {title: `Rocky`, year: 2005}});
       done();
@@ -98,7 +96,7 @@ describe(`Search`, () => {
   });
 
   it(`findItem() returns error callback when data is undefined`, done => {
-    server.respondWith(`GET`, `${Settings.apiUri}/search/${rocky.type}?query=${encodeURIComponent(rocky.title)}`, [200, {[`Content-Type`]: `application/json`}, `[]`]);
+    fakeFetch.withArgs(`${Settings.apiUri}/search/${rocky.type}?query=${encodeURIComponent(rocky.title)}`).respondWith(`[]`, { status: 200 });
     const success = () => {
       done.fail();
     };
@@ -110,7 +108,7 @@ describe(`Search`, () => {
   });
 
   it(`findItem() returns error callback`, done => {
-    server.respondWith(`GET`, `${Settings.apiUri}/search/${rocky.type}?query=${encodeURIComponent(rocky.title)}`, [400, {[`Content-Type`]: `application/json`}, `{ "errors": "Bad Request" }`]);
+    fakeFetch.withArgs(`${Settings.apiUri}/search/${rocky.type}?query=${encodeURIComponent(rocky.title)}`).respondWith(`{ "errors": "Bad Request" }`, { status: 400 });
     const success = () => {
       done.fail();
     };
@@ -140,8 +138,8 @@ describe(`Search`, () => {
   });
 
   it(`findEpisode() returns first search result`, done => {
-    server.respondWith(`GET`, `${Settings.apiUri}/search/${madMen.type}?query=${encodeURIComponent(madMen.title)}`, [200, {[`Content-Type`]: `application/json`}, `[{ "show": { "title": "Mad Men", "ids": { "slug": "mad-men" } } }]`]);
-    server.respondWith(`GET`, `${Settings.apiUri}/shows/mad-men/seasons/${madMen.season}/episodes/${madMen.episode}?extended=images`, [200, {[`Content-Type`]: `application/json`}, `{ "title": "Ladies Room", "season": 1, "number": 2 }`]);
+    fakeFetch.withArgs(`${Settings.apiUri}/search/${madMen.type}?query=${encodeURIComponent(madMen.title)}`).respondWith(`[{ "show": { "title": "Mad Men", "ids": { "slug": "mad-men" } } }]`, { status: 200 });
+    fakeFetch.withArgs(`${Settings.apiUri}/shows/mad-men/seasons/${madMen.season}/episodes/${madMen.episode}?extended=images`).respondWith(`{ "title": "Ladies Room", "season": 1, "number": 2 }`, { status: 200 });
     const success = response => {
       expect(response).to.deep.equal({
         title: `Ladies Room`, season: 1, number: 2,
@@ -158,8 +156,8 @@ describe(`Search`, () => {
   });
 
   it(`findEpisode() returns first search result with same title when item is a collection`, done => {
-    server.respondWith(`GET`, `${Settings.apiUri}/search/${comedians.type}?query=${encodeURIComponent(comedians.title)}`, [200, {[`Content-Type`]: `application/json`}, `[{ "show": { "title": "Comedians in Cars Getting Coffee", "ids": { "slug": "comedians-in-cars-getting-coffee" } } }]`]);
-    server.respondWith(`GET`, `${Settings.apiUri}/search/episode?query=${encodeURIComponent(comedians.epTitle)}`, [200, {[`Content-Type`]: `application/json`}, `[{ "type": "episode", "episode": { "season": 10, "number": 1, "title": "Zach Galifianakis: From The Third Reich To You" } }]`]);
+    fakeFetch.withArgs(`${Settings.apiUri}/search/${comedians.type}?query=${encodeURIComponent(comedians.title)}`).respondWith(`[{ "show": { "title": "Comedians in Cars Getting Coffee", "ids": { "slug": "comedians-in-cars-getting-coffee" } } }]`, { status: 200 });
+    fakeFetch.withArgs(`${Settings.apiUri}/search/episode?query=${encodeURIComponent(comedians.epTitle)}`).respondWith(`[{ "type": "episode", "episode": { "season": 10, "number": 1, "title": "Zach Galifianakis: From The Third Reich To You" } }]`, { status: 200 });
     const success = response => {
       expect(response).to.deep.equal({
         title: `Zach Galifianakis: From The Third Reich To You`, season: 10, number: 1,
@@ -176,8 +174,8 @@ describe(`Search`, () => {
   });
 
   it(`findEpisode() returns first search result with same title`, done => {
-    server.respondWith(`GET`, `${Settings.apiUri}/search/${narcos.type}?query=${encodeURIComponent(narcos.title)}`, [200, {[`Content-Type`]: `application/json`}, `[{ "show": { "title": "Narcos", "ids": { "slug": "narcos" } } }]`]);
-    server.respondWith(`GET`, `${Settings.apiUri}/shows/narcos/seasons/${narcos.season}?extended=images`, [200, {[`Content-Type`]: `application/json`}, `[{ "season": 1, "number": 1, "title": "Descenso" }, { "season": 1, "number": 2, "title": "The Sword of Simón Bolívar" }]`]);
+    fakeFetch.withArgs(`${Settings.apiUri}/search/${narcos.type}?query=${encodeURIComponent(narcos.title)}`).respondWith(`[{ "show": { "title": "Narcos", "ids": { "slug": "narcos" } } }]`, { status: 200 });
+    fakeFetch.withArgs(`${Settings.apiUri}/shows/narcos/seasons/${narcos.season}?extended=images`).respondWith(`[{ "season": 1, "number": 1, "title": "Descenso" }, { "season": 1, "number": 2, "title": "The Sword of Simón Bolívar" }]`, { status: 200 });
     const success = response => {
       expect(response).to.deep.equal({
         title: `The Sword of Simón Bolívar`, season: 1, number: 2,
@@ -194,8 +192,8 @@ describe(`Search`, () => {
   });
 
   it(`findEpisode() returns error callback when an episode with same title was not found`, done => {
-    server.respondWith(`GET`, `${Settings.apiUri}/search/${narcos.type}?query=${encodeURIComponent(narcos.title)}`, [200, {[`Content-Type`]: `application/json`}, `[{ "show": { "title": "Narcos", "ids": { "slug": "narcos" } } }]`]);
-    server.respondWith(`GET`, `${Settings.apiUri}/shows/narcos/seasons/${narcos.season}?extended=images`, [200, {[`Content-Type`]: `application/json`}, `[{ "season": 1, "number": 1, "title": "Descenso" }, { "season": 1, "number": 3, "title": "The Men of Always" }]`]);
+    fakeFetch.withArgs(`${Settings.apiUri}/search/${narcos.type}?query=${encodeURIComponent(narcos.title)}`).respondWith(`[{ "show": { "title": "Narcos", "ids": { "slug": "narcos" } } }]`, { status: 200 });
+    fakeFetch.withArgs(`${Settings.apiUri}/shows/narcos/seasons/${narcos.season}?extended=images`).respondWith(`[{ "season": 1, "number": 1, "title": "Descenso" }, { "season": 1, "number": 3, "title": "The Men of Always" }]`, { status: 200 });
     const success = () => {
       done.fail();
     };
@@ -212,7 +210,7 @@ describe(`Search`, () => {
   });
 
   it(`findEpisode() returns error callback on first request`, done => {
-    server.respondWith(`GET`, `${Settings.apiUri}/search/${madMen.type}?query=${encodeURIComponent(madMen.title)}`, [400, {[`Content-Type`]: `application/json`}, `{ "errors": "Bad Request" }`]);
+    fakeFetch.withArgs(`${Settings.apiUri}/search/${madMen.type}?query=${encodeURIComponent(madMen.title)}`).respondWith(`{ "errors": "Bad Request" }`, { status: 400 });
     const success = () => {
       done.fail();
     };
@@ -230,8 +228,8 @@ describe(`Search`, () => {
   });
 
   it(`findEpisode() returns error callback on second request`, done => {
-    server.respondWith(`GET`, `${Settings.apiUri}/search/${madMen.type}?query=${encodeURIComponent(madMen.title)}`, [200, {[`Content-Type`]: `application/json`}, `[{ "show": { "title": "Mad Men", "ids": { "slug": "mad-men" } } }]`]);
-    server.respondWith(`GET`, `${Settings.apiUri}/shows/mad-men/seasons/${madMen.season}/episodes/${madMen.episode}?extended=images`, [400, {[`Content-Type`]: `application/json`}, `{ "errors": "Bad Request" }`]);
+    fakeFetch.withArgs(`${Settings.apiUri}/search/${madMen.type}?query=${encodeURIComponent(madMen.title)}`).respondWith(`[{ "show": { "title": "Mad Men", "ids": { "slug": "mad-men" } } }]`, { status: 200 });
+    fakeFetch.withArgs(`${Settings.apiUri}/shows/mad-men/seasons/${madMen.season}/episodes/${madMen.episode}?extended=images`).respondWith(`{ "errors": "Bad Request" }`, { status: 400 });
     const success = () => {
       done.fail();
     };

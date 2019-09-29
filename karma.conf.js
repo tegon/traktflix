@@ -25,7 +25,7 @@ module.exports = config => {
     singleRun: true,
     webpack: webpackConfig({
       development: true,
-      test: true 
+      test: true
     })
   };
 

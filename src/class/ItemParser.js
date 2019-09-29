@@ -10,18 +10,30 @@ class ItemParser {
     return location.href;
   }
 
-  isReady() {
+  async isReady() {
     let isReady = false;
-    const matches = this.getLocation().match(/watch\/(\d+)/);
-    if (matches) {
-      this.id = matches[1];
+
+    const session = await NetflixApiUtils.getSession();
+
+    if (session) {
+      this.id = session.videoId.toString();
+
       isReady = true;
+    } else {
+      const matches = this.getLocation().match(/watch\/(\d+)/);
+
+      if (matches) {
+        this.id = matches[1];
+
+        isReady = true;
+      }
     }
+
     return isReady;
   }
 
   async checkIsReady(resolve) {
-    if (this.isReady()) {
+    if (await this.isReady()) {
       const data = await NetflixApiUtils.getMetadata(this.id);
       resolve(data);
     } else {

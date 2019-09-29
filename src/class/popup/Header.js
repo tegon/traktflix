@@ -8,6 +8,25 @@ class Header extends React.Component {
     super(props);
   }
 
+  async onHistoryClicked() {
+    const tabs = await browser.tabs.query({url: `*://*.netflix.com/*`, active: true});
+
+    if (tabs.length > 0) {
+      if (browser.cookies) {
+        browser.tabs.create({
+          cookieStoreId: tabs[0].cookieStoreId,
+          index: tabs[0].index + 1,
+          url: browser.runtime.getURL('html/history-sync.html'),
+        });
+      } else {
+        browser.tabs.create({
+          index: tabs[0].index + 1,
+          url: browser.runtime.getURL('html/history-sync.html'),
+        });
+      }
+    }
+  }
+
   render() {
     const display = this.props.logged ? `block` : `none`;
 
@@ -33,8 +52,7 @@ class Header extends React.Component {
               <a
                 className='mdl-navigation__link item-history'
                 style={{display: display}}
-                target='noopener noreferrer _blank'
-                href={browser.runtime.getURL('html/history-sync.html')}>
+                onClick={this.onHistoryClicked.bind(this)}>
                 {browser.i18n.getMessage(`history`)}
               </a>
               <a

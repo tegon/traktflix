@@ -36,14 +36,6 @@ describe(`LoginButton`, () => {
     delete window.browser;
   });
 
-  it(`sends analytics appView`, () => {
-    expect(browser.runtime.sendMessage.callCount).to.equal(2);
-    expect(browser.runtime.sendMessage.args[0]).to.deep.equal([{
-      type: `sendAppView`, view: `Login`
-    }]);
-    browser.flush();
-  });
-
   it(`has the correct html classes`, () => {
     const loginWrapper = componentTrue.find(`.login-wrapper`);
     const button = componentTrue.find(`.mdl-button.mdl-js-button.mdl-button--raised.mdl-button--colored.mdl-js-ripple-effect`);

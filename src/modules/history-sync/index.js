@@ -5,11 +5,22 @@ import BrowserStorage from '../../class/BrowserStorage';
 import NetflixApiUtils from '../../class/NetflixApiUtils';
 import Rollbar from '../../class/Rollbar';
 import ViewingActivityApp from '../../class/history-sync/ViewingActivityApp';
+import shared from '../../class/Shared';
+
+shared.setBackgroundPage(true);
 
 // noinspection JSIgnoredPromiseFromCall
 Rollbar.init();
 BrowserStorage.get(`prefs`).then(storage => {
   NetflixApiUtils.getActivities();
-  ReactDOM.render(<ViewingActivityApp addWithReleaseDate={(storage.prefs && storage.prefs.addWithReleaseDate) || false} pagesToLoad={(storage.prefs && storage.prefs.pagesToLoad) || `0`}/>, document.getElementById('viewing-activity-app'));
+  ReactDOM.render(
+    <ViewingActivityApp
+      addWithReleaseDate={(storage.prefs && storage.prefs.addWithReleaseDate) || false}
+      hideSynced={(storage.prefs && storage.prefs.hideSynced) || false}
+      use24Clock={(storage.prefs && storage.prefs.use24Clock) || false}
+      pagesToLoad={(storage.prefs && storage.prefs.pagesToLoad) || `0`}
+    />,
+    document.getElementById('viewing-activity-app')
+  );
   document.getElementById(`viewing-activity-app-title`).textContent = browser.i18n.getMessage(`historyTitle`);
 });

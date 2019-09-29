@@ -1,9 +1,11 @@
 import browser from 'sinon-chrome';
+import fakeFetch from '../../test-helpers/fake-fetch';
 import sinon from 'sinon';
 import Settings from '../../src/settings';
 import Scrobble from '../../src/class/content/Scrobble';
 import NetflixTestUtils from '../../test-helpers/NetflixTestHelper';
 import Shared from '../../src/class/Shared';
+import NetflixApiUtils from '../../src/class/NetflixApiUtils';
 
 Shared.setBackgroundPage(true);
 
@@ -25,8 +27,6 @@ const scrobbleShow = new Scrobble({
   }
 });
 
-let server = null;
-
 browser.flush();
 delete window.browser;
 
@@ -37,13 +37,12 @@ describe(`Scrobble`, () => {
 
   beforeEach(() => {
     document.body.innerHTML = ``;
-    server = sinon.fakeServer.create();
-    server.autoRespond = true;
+    fakeFetch.install();
   });
 
   afterEach(() => {
     browser.flush();
-    server.restore();
+    fakeFetch.restore();
   });
 
   after(() => {
@@ -77,23 +76,27 @@ describe(`Scrobble`, () => {
     expect(scrobbleShow.url).to.equal(`${Settings.apiUri}/scrobble`);
   });
 
-  it(`webScrubber() sets the progress for movie`, () => {
+  it(`checkForChanges() sets the progress for movie`, async () => {
+    sinon.stub(NetflixApiUtils, `getSession`).resolves();
     NetflixTestUtils.renderPlayer(`movie`);
-    scrobbleMovie.webScrubber();
+    await scrobbleMovie.checkForChanges();
     expect(scrobbleMovie.progress.toFixed(2)).to.equal(`2.91`);
+    NetflixApiUtils.getSession.restore();
   });
 
-  it(`webScrubber() sets the progress for show`, () => {
+  it(`checkForChanges() sets the progress for show`, async () => {
+    sinon.stub(NetflixApiUtils, `getSession`).resolves();
     NetflixTestUtils.renderPlayer(`show`);
-    scrobbleShow.webScrubber();
+    await scrobbleShow.checkForChanges();
     expect(scrobbleShow.progress.toFixed(2)).to.equal(`1.57`);
+    NetflixApiUtils.getSession.restore();
   });
 
   it(`start() calls success`, done => {
     browser.storage.local.get.withArgs(`data`).resolves({data: {access_token: `12345abcde`}});
     browser.storage.local.get.withArgs(`options`).resolves({options: {showNotifications: true}});
     browser.i18n.getMessage.withArgs(`scrobbleStarted`).returns(`scrobbleStarted`);
-    server.respondWith(`POST`, `${Settings.apiUri}/scrobble/start`, [200, {[`Content-Type`]: `application/json`}, ``]);
+    fakeFetch.withArgs(`${Settings.apiUri}/scrobble/start`).respondWith(``, { status: 200 });
     scrobbleShow.success = () => {
       expect(browser.runtime.sendMessage.callCount).to.equal(1);
       expect(browser.runtime.sendMessage.args[0]).to.deep.equal([{
@@ -113,7 +116,7 @@ describe(`Scrobble`, () => {
     browser.storage.local.get.withArgs(`data`).resolves({data: {access_token: `12345abcde`}});
     browser.storage.local.get.withArgs(`options`).resolves({options: {showNotifications: true}});
     browser.i18n.getMessage.withArgs(`couldNotScrobble`).returns(`couldNotScrobble`);
-    server.respondWith(`POST`, `${Settings.apiUri}/scrobble/start`, [500, {[`Content-Type`]: `application/json`}, ``]);
+    fakeFetch.withArgs(`${Settings.apiUri}/scrobble/start`).respondWith(``, { status: 500 });
     scrobbleShow.success = () => {
       done.fail();
     };
@@ -132,7 +135,7 @@ describe(`Scrobble`, () => {
     browser.storage.local.get.withArgs(`data`).resolves({data: {access_token: `12345abcde`}});
     browser.storage.local.get.withArgs(`options`).resolves({options: {showNotifications: true}});
     browser.i18n.getMessage.withArgs(`scrobblePaused`).returns(`scrobblePaused`);
-    server.respondWith(`POST`, `${Settings.apiUri}/scrobble/pause`, [200, {[`Content-Type`]: `application/json`}, ``]);
+    fakeFetch.withArgs(`${Settings.apiUri}/scrobble/pause`).respondWith(``, { status: 200 });
     scrobbleShow.success = () => {
       expect(browser.runtime.sendMessage.callCount).to.equal(1);
       expect(browser.runtime.sendMessage.args[0]).to.deep.equal([{
@@ -152,7 +155,7 @@ describe(`Scrobble`, () => {
     browser.storage.local.get.withArgs(`data`).resolves({data: {access_token: `12345abcde`}});
     browser.storage.local.get.withArgs(`options`).resolves({options: {showNotifications: true}});
     browser.i18n.getMessage.withArgs(`couldNotScrobble`).returns(`couldNotScrobble`);
-    server.respondWith(`POST`, `${Settings.apiUri}/scrobble/pause`, [500, {[`Content-Type`]: `application/json`}, ``]);
+    fakeFetch.withArgs(`${Settings.apiUri}/scrobble/pause`).respondWith(``, { status: 500 });
     scrobbleShow.success = () => {
       done.fail();
     };
@@ -171,7 +174,7 @@ describe(`Scrobble`, () => {
     browser.storage.local.get.withArgs(`data`).resolves({data: {access_token: `12345abcde`}});
     browser.storage.local.get.withArgs(`options`).resolves({options: {showNotifications: true}});
     browser.i18n.getMessage.withArgs(`scrobbleStopped`).returns(`scrobbleStopped`);
-    server.respondWith(`POST`, `${Settings.apiUri}/scrobble/stop`, [200, {[`Content-Type`]: `application/json`}, ``]);
+    fakeFetch.withArgs(`${Settings.apiUri}/scrobble/stop`).respondWith(``, { status: 200 });
     scrobbleShow.success = () => {
       expect(browser.runtime.sendMessage.callCount).to.equal(1);
       expect(browser.runtime.sendMessage.args[0]).to.deep.equal([{
@@ -191,7 +194,7 @@ describe(`Scrobble`, () => {
     browser.storage.local.get.withArgs(`data`).resolves({data: {access_token: `12345abcde`}});
     browser.storage.local.get.withArgs(`options`).resolves({options: {showNotifications: true}});
     browser.i18n.getMessage.withArgs(`couldNotScrobble`).returns(`couldNotScrobble`);
-    server.respondWith(`POST`, `${Settings.apiUri}/scrobble/stop`, [500, {[`Content-Type`]: `application/json`}, ``]);
+    fakeFetch.withArgs(`${Settings.apiUri}/scrobble/stop`).respondWith(``, { status: 500 });
     scrobbleShow.success = () => {
       done.fail();
     };
