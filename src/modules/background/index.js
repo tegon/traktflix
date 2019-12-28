@@ -38,7 +38,7 @@ if (chrome && chrome.declarativeContent) {
 }
 
 browser.runtime.onMessage.addListener((request, sender) => {
-  return new Promise(async (resolve, reject) => {
+  return new Promise(async resolve => {
     switch (request.type) {
       case `getApiDefs`:
         // noinspection JSIgnoredPromiseFromCall
@@ -113,8 +113,9 @@ browser.runtime.onMessage.addListener((request, sender) => {
         try {
           const response = await Request.sendAndWait(options);
           resolve(response);
-        } catch (error) {
-          reject(error);
+        } catch (response) {
+          response.error = true;
+          resolve(response);
         }
         return;
       }
