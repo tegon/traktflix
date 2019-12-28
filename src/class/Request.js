@@ -7,6 +7,9 @@ class Request {
     if (!Shared.isBackgroundPage() && !options.url.match(location.host)) {
       try {
         const response = await browser.runtime.sendMessage({ type: `request`, options: JSON.stringify(options) });
+        if (response.error) {
+          throw response;
+        }
         options.success(response);
       } catch (error) {
         options.error(error.status, error.responseText, error.options);
