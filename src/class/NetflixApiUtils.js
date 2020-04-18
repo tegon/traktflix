@@ -74,7 +74,7 @@ const netflixApiUtils = {
         });
         const _activities = JSON.parse(response).viewedItems;
         if (_activities.length) {
-          activities.push(..._activities);
+          _activities.forEach(a => {if((a.bookmark/a.duration)>0.8) {activities.push(a)}})
         } else {
           isLastPage = true;
         }
