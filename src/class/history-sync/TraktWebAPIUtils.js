@@ -110,15 +110,17 @@ export default class TraktWebAPIUtils {
         url: TraktWebAPIUtils.activityUrl(options.result.activity),
         success: function (response) {
           let alreadyOnTrakt = false;
-          const history = JSON.parse(response)[0];
           let date;
 
-          if (history && history.watched_at) {
-            date = moment(history.watched_at);
-            alreadyOnTrakt = date.diff(options.netflix.date, `days`) === 0;
-          }
-          options.trakt = Object.assign(options.result.activity, {date});
-          options.alreadyOnTrakt = alreadyOnTrakt;
+          const historyEntries = JSON.parse(response);
+          historyEntries.forEach(history => {
+            if (history && history.watched_at) {
+              date = moment(history.watched_at);
+              alreadyOnTrakt = date.diff(options.netflix.date, `days`) === 0;
+            }
+            options.trakt = Object.assign(options.result.activity, {date});
+            options.alreadyOnTrakt = alreadyOnTrakt;
+          })
           resolve();
         },
         error: reject
