@@ -113,14 +113,17 @@ export default class TraktWebAPIUtils {
           let date;
 
           const historyEntries = JSON.parse(response);
-          historyEntries.forEach(history => {
+          for (let history of historyEntries) {
             if (history && history.watched_at) {
               date = moment(history.watched_at);
-              alreadyOnTrakt = date.diff(options.netflix.date, `days`) === 0;
+              if (date.diff(options.netflix.date, `days`) === 0) {
+                alreadyOnTrakt = true;
+                break;
+              }
             }
-            options.trakt = Object.assign(options.result.activity, {date});
-            options.alreadyOnTrakt = alreadyOnTrakt;
-          })
+          }
+          options.trakt = Object.assign(options.result.activity, {date});
+          options.alreadyOnTrakt = alreadyOnTrakt;
           resolve();
         },
         error: reject
