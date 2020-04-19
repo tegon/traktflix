@@ -112,7 +112,7 @@ export default class TraktWebAPIUtils {
           let alreadyOnTrakt = false;
           let date;
 
-          const historyEntries = JSON.parse(response);
+          const historyEntries = JSON.parse(response).reverse();
           for (let history of historyEntries) {
             if (history && history.watched_at) {
               date = moment(history.watched_at);
