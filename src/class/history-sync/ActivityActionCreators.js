@@ -79,4 +79,11 @@ export default class ActivityActionCreators {
       response
     });
   }
+
+  static addWithReleaseDate(value) {
+    ViewingActivityAppDispatcher.dispatch({
+      type: ActionTypes.ADD_WITH_RELEASE_DATE,
+      value,
+    });
+  }
 }

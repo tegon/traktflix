@@ -4,6 +4,7 @@ import BrowserStorage from '../BrowserStorage';
 import Request from '../Request';
 import Search from '../Search';
 import ActivityActionCreators from './ActivityActionCreators';
+import ActivityStore from './ActivityStore';
 
 const URL = `${Settings.apiUri}/sync/history`;
 
@@ -16,8 +17,9 @@ export default class TraktWebAPIUtils {
     }
   }
 
-  static addActivities(activities, addWithReleaseDate) {
+  static addActivities(activities) {
     // noinspection JSIgnoredPromiseFromCall
+    const addWithReleaseDate = ActivityStore.addWithReleaseDate();
     Request.send({
       method: `POST`,
       url: URL,
@@ -112,10 +114,15 @@ export default class TraktWebAPIUtils {
           let alreadyOnTrakt = false;
           let date;
 
+          const addWithReleaseDate = ActivityStore.addWithReleaseDate();
           const historyEntries = JSON.parse(response).reverse();
           for (let history of historyEntries) {
             if (history && history.watched_at) {
               date = moment(history.watched_at);
+              if (addWithReleaseDate && history.watched_at.endsWith('00.000Z')) {
+                alreadyOnTrakt = true;
+                break;
+              }
               if (date.diff(options.netflix.date, `days`) === 0) {
                 alreadyOnTrakt = true;
                 break;

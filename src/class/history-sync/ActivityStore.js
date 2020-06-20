@@ -9,6 +9,7 @@ let _activities = [];
 let _isLoading = false;
 let _isLoadingTraktData = true;
 let _message = undefined;
+let _addWithReleaseDate = false;
 
 class ActivityStore extends EventEmitter {
   emitChange() {
@@ -52,6 +53,10 @@ class ActivityStore extends EventEmitter {
     let activityToUpdate = _activities.find((a) => a.netflix.id === activity.netflix.id);
     activityToUpdate.trakt = activity.trakt;
     activityToUpdate.add = activity.add;
+  }
+
+  addWithReleaseDate() {
+    return _addWithReleaseDate;
   }
 }
 
@@ -115,6 +120,10 @@ activityStore.dispatchToken = ViewingActivityAppDispatcher.register((action) => 
     case ActionTypes.SYNC_FAILED:
       _isLoading = false;
       _message = browser.i18n.getMessage(`syncFailed`);
+      activityStore.emitChange();
+      break;
+    case ActionTypes.ADD_WITH_RELEASE_DATE:
+      _addWithReleaseDate = action.value;
       activityStore.emitChange();
       break;
   }

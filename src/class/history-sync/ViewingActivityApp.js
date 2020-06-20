@@ -7,13 +7,13 @@ import TmdbImageContainer from '../tmdb/TmdbImageContainer';
 import ActivityList from './ActivityList';
 import ActivityStore from './ActivityStore';
 import TraktWebAPIUtils from './TraktWebAPIUtils';
+import ActivityActionCreators from './ActivityActionCreators';
 
 /* global componentHandler */
 
 export default class ViewingActivityApp extends React.Component {
   getInitialState() {
     return Object.assign(this.getStateFromStores(), {
-      addWithReleaseDate: this.props.addWithReleaseDate,
       hideSynced: this.props.hideSynced,
       use24Clock: this.props.use24Clock,
       pagesToLoad: this.props.pagesToLoad
@@ -26,7 +26,8 @@ export default class ViewingActivityApp extends React.Component {
       isLoadingTraktData: ActivityStore.isLoadingTraktData(),
       loading: ActivityStore.isLoading(),
       message: ActivityStore.getMessage(),
-      page: ActivityStore.getPage()
+      page: ActivityStore.getPage(),
+      addWithReleaseDate: ActivityStore.addWithReleaseDate(),
     };
   }
 
@@ -36,7 +37,9 @@ export default class ViewingActivityApp extends React.Component {
   }
 
   componentDidMount() {
+    ActivityActionCreators.addWithReleaseDate(this.props.addWithReleaseDate);
     ActivityStore.addChangeListener(this._onChange.bind(this));
+    NetflixApiUtils.getActivities();
   }
 
   componentWillUnmount() {
@@ -58,7 +61,7 @@ export default class ViewingActivityApp extends React.Component {
     const confirmationMessage = browser.i18n.getMessage(`confirmSync`);
     if (confirm(confirmationMessage)) {
       this.setState({loading: true});
-      TraktWebAPIUtils.addActivities(this.state.activities, this.state.addWithReleaseDate);
+      TraktWebAPIUtils.addActivities(this.state.activities);
     }
   }
 
@@ -96,7 +99,7 @@ export default class ViewingActivityApp extends React.Component {
       storage.prefs.addWithReleaseDate = addWithReleaseDate;
       BrowserStorage.set({prefs: storage.prefs}, true);
     });
-    this.setState({addWithReleaseDate});
+    ActivityActionCreators.addWithReleaseDate(addWithReleaseDate);
   }
 
   _onToggleSynced(event) {
