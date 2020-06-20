@@ -51,6 +51,9 @@ See this link for more info: https://help.netflix.com/en/node/23742
 ### Problems
 If you find any problems or have suggestions or questions, feel free to [open an issue](https://github.com/tegon/traktflix/issues/new)
 
+### Multi-Account Containers / Temporary Containers (Firefox)
+If you are using Multi-Account Containers on Firefox, make sure to enable the cookies permission in the options, otherwise the extension will not work properly. If you are using Temporary Containers in automatic mode, it might duplicate tabs when trying to login.
+
 ### Development
 Create an application in [Trakt API](https://trakt.tv/oauth/applications/new).
 

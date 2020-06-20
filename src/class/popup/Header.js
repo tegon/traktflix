@@ -2,29 +2,11 @@ import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import React from 'react';
 import ErrorBoundary from '../ErrorBoundary';
+import Shared from '../Shared';
 
 class Header extends React.Component {
   constructor(props) {
     super(props);
-  }
-
-  async onHistoryClicked() {
-    const tabs = await browser.tabs.query({url: `*://*.netflix.com/*`, active: true});
-
-    if (tabs.length > 0) {
-      if (browser.cookies) {
-        browser.tabs.create({
-          cookieStoreId: tabs[0].cookieStoreId,
-          index: tabs[0].index + 1,
-          url: browser.runtime.getURL('html/history-sync.html'),
-        });
-      } else {
-        browser.tabs.create({
-          index: tabs[0].index + 1,
-          url: browser.runtime.getURL('html/history-sync.html'),
-        });
-      }
-    }
   }
 
   render() {
@@ -45,14 +27,13 @@ class Header extends React.Component {
               </Link>
               <a
                 className='mdl-navigation__link item-history'
-                target='noopener noreferrer _blank'
-                href={browser.runtime.getURL('html/options.html')}>
+                onClick={() => Shared.openTab(browser.runtime.getURL('html/options.html'))}>
                 {browser.i18n.getMessage(`options`)}
               </a>
               <a
                 className='mdl-navigation__link item-history'
                 style={{display: display}}
-                onClick={this.onHistoryClicked.bind(this)}>
+                onClick={() => Shared.openTab(browser.runtime.getURL('html/history-sync.html'))}>
                 {browser.i18n.getMessage(`history`)}
               </a>
               <a

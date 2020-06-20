@@ -1,6 +1,7 @@
 import Settings from '../settings';
 import BrowserStorage from './BrowserStorage';
 import Request from './Request';
+import Shared from './Shared';
 
 class Oauth {
   constructor() {
@@ -77,9 +78,10 @@ class Oauth {
       }
     } else {
       this.sendResponse = sendResponse;
-      const tabs = await browser.tabs.query({active: true, currentWindow: true});
-      const tab = await browser.tabs.create({index: tabs[0].index, url: this.getAuthorizeUrl()});
-      this.authorizationTabId = tab.id;
+      const tab = await Shared.openTab(this.getAuthorizeUrl());
+      if (tab) {
+        this.authorizationTabId = tab.id;
+      }
     }
   }
 
