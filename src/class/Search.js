@@ -20,7 +20,7 @@ export default class Search {
       url: this.getUrl(),
       success: function (response) {
         let data = JSON.parse(response);
-        if (_this.item && _this.item.type === `movie`) {
+        if (data.length > 1 && _this.item && _this.item.type === `movie`) {
           // Get exact match if there are multiple movies with the same name by checking the year.
           data = data.filter(item => item.movie.title === _this.item.title && item.movie.year === _this.item.year)[0];
         } else {
