@@ -55,40 +55,47 @@ const netflixApiUtils = {
   },
 
   /**
-   * @param {number} page The first page to load.
-   * @param {number} [lastPage] The last page to load. Defaults to the first page. If -1, all pages are loaded.
+   * @param {number} currentPage The current page.
+   * @param {number} [desiredPage] The desired page to load. Defaults to the first page. If -1, all pages are loaded.
    */
-  async listActivities(page, lastPage) {
-    if (!lastPage) {
-      lastPage = page;
+  async listActivities(currentPage, desiredPage) {
+    if (!desiredPage) {
+      desiredPage = currentPage;
     }
-    let loadAll = lastPage === -1;
+    let loadAll = desiredPage === Number.MAX_VALUE;
     let isLastPage = false;
     const activities = [];
-    while (!isLastPage && (loadAll || page <= lastPage)) {
-      ActivityActionCreators.updatePage(page);
-      try {
-        const response = await Request.sendAndWait({
-          method: `GET`,
-          url: `${NETFLIX_API_HOST}/${this.buildIdentifier}/viewingactivity?languages=en-US&authURL=${this.authUrl}&pg=${page}`,
-        });
-        const _activities = JSON.parse(response).viewedItems;
+
+    if(currentPage < desiredPage){
+      while (!isLastPage && (loadAll || currentPage < desiredPage)) { 
+        ActivityActionCreators.updatePage(currentPage);
+        const _activities = await this.getPageInformation(currentPage);
+
         if (_activities.length) {
           activities.push(...(_activities.filter(a => (a.bookmark/a.duration)>0.8)));
         } else {
           isLastPage = true;
         }
-        page += 1;
-      } catch (error) {
-        ActivityActionCreators.receiveActivitiesFailed(error.status, error.response);
-        console.log(error.status, error.response);
-        return;
+        currentPage += 1;
+      }
+    } else if(currentPage > desiredPage) {
+      while (!isLastPage && (currentPage > desiredPage)) {
+        const possibleCurrentPage = currentPage - 2;
+        ActivityActionCreators.updatePage(currentPage);
+        const _activities = await this.getPageInformation(possibleCurrentPage);
+
+        if (_activities.length) {
+          activities.push(...(_activities.filter(a => (a.bookmark/a.duration)>0.8)));
+          currentPage -= 1;
+        } else {
+          isLastPage = true;
+        }
       }
     }
     const result = (await this.getActivitiesMetadata(activities)).map(this.parseActivity.bind(this));
     const parsedActivities = result.map(item => item.parsedItem);
     const promises = result.map(item => item.promise);
-    ActivityActionCreators.receiveActivities(parsedActivities, page);
+    ActivityActionCreators.receiveActivities(parsedActivities, currentPage);
     const storage = await BrowserStorage.get(`options`);
     if (storage.options && storage.options.sendReceiveSuggestions && (await browser.permissions.contains({ origins: [`*://script.google.com/*`, `*://script.googleusercontent.com/*`] }))) {
       Request.send({
@@ -124,11 +131,26 @@ const netflixApiUtils = {
       .then(ActivityActionCreators.finishLoadingTraktData.bind(ActivityActionCreators));
   },
 
-  getActivities(page = 0, lastPage = 0) {
+  async getPageInformation(currentPage){
+    try {
+      const response = await Request.sendAndWait({
+        method: `GET`,
+        url: `${NETFLIX_API_HOST}/${this.buildIdentifier}/viewingactivity?languages=en-US&authURL=${this.authUrl}&pg=${currentPage}`,
+      });
+      const _activities = JSON.parse(response).viewedItems;
+      return _activities;
+    } catch (error) {
+      ActivityActionCreators.receiveActivitiesFailed(error.status, error.response);
+      console.log(error.status, error.response);
+      return;
+    }
+  },
+
+  getActivities(currentPage = 0, desiredPage = 1) {
     ActivityActionCreators.resetActivities();
     ActivityActionCreators.startLoadingTraktData();
     this.activateAPI()
-      .then(() => this.listActivities(page, lastPage));
+      .then(() => this.listActivities(currentPage, desiredPage));
   },
 
   /**

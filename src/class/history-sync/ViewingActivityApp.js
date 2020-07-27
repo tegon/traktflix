@@ -16,7 +16,8 @@ export default class ViewingActivityApp extends React.Component {
     return Object.assign(this.getStateFromStores(), {
       hideSynced: this.props.hideSynced,
       use24Clock: this.props.use24Clock,
-      pagesToLoad: this.props.pagesToLoad
+      pagesToLoad: this.props.pagesToLoad,
+      loadedPages: this.props.loadedPages
     });
   }
 
@@ -76,13 +77,28 @@ export default class ViewingActivityApp extends React.Component {
     this.setState({pagesToLoad});
   }
 
-  _onNextPageClick() {
+  _loadedPagesChange(loadedPages){
+    this.setState({loadedPages});
+  }
+
+  async _onNextPageClick() {
     this.setState({loading: true});
     if (this.state.pagesToLoad === `All`) {
-      NetflixApiUtils.getActivities(this.state.page, -1);
+      await NetflixApiUtils.getActivities(this.state.page, Number.MAX_VALUE);
     } else {
-      NetflixApiUtils.getActivities(this.state.page, this.state.page + parseInt(this.state.pagesToLoad));
+      await NetflixApiUtils.getActivities(this.state.page, this.state.page + parseInt(this.state.pagesToLoad));
     }
+    this._loadedPagesChange(this.state.pagesToLoad);
+  }
+
+  async _onPreviousPageClick(){
+    this.setState({loading: true});
+
+    const currentPage = this.state.page - this.state.loadedPages - parseInt(this.state.pagesToLoad)
+    const desiredPage = this.state.page - this.state.loadedPages;
+    
+    await NetflixApiUtils.getActivities(currentPage, desiredPage);
+    this._loadedPagesChange(this.state.pagesToLoad);
   }
 
   _onToggleAll(event) {
@@ -133,6 +149,7 @@ export default class ViewingActivityApp extends React.Component {
 
   render() {
     let content;
+    
 
     if (this.state.loading) {
       content = (
@@ -194,15 +211,20 @@ export default class ViewingActivityApp extends React.Component {
               {browser.i18n.getMessage(`nextPage`)}
             </button>
 
+            <button onClick={this._onPreviousPageClick.bind(this)}
+                    className='mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect'>
+              {browser.i18n.getMessage(`previousPage`)}
+            </button>
+
             <Select
               label={browser.i18n.getMessage(`pagesToLoad`)}
               value={this.state.pagesToLoad}
               options={[
-                { value: `0`, label: `1` },
-                { value: `4`, label: `5` },
-                { value: `9`, label: `10` },
-                { value: `49`, label: `50` },
-                { value: `99`, label: `100` },
+                { value: `1`, label: `1` },
+                { value: `5`, label: `5` },
+                { value: `10`, label: `10` },
+                { value: `50`, label: `50` },
+                { value: `100`, label: `100` },
                 { value: `All`, label: browser.i18n.getMessage(`allPages`) }
               ]}
               onChange={this._onPagesToLoadChange.bind(this)}
