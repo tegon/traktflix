@@ -80,6 +80,9 @@
   "nextPage": {
     "message": "Próxima página"
   },
+  "previousPage": {
+    "message": "Página anterior"
+  },
   "pagesToLoad": {
     "message": "Páginas para carregar"
   },
