@@ -55,7 +55,7 @@
     "fs-extra": "^8.1.0",
     "gulp": "^4.0.2",
     "gulp-zip": "^5.0.0",
-    "karma": "^4.3.0",
+    "karma": "^6.3.14",
     "karma-chai": "^0.1.0",
     "karma-chrome-launcher": "^3.1.0",
     "karma-cli": "^2.0.0",
