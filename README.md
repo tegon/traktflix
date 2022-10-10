@@ -1,3 +1,7 @@
+<h1 align="center"><strong>traktflix</strong> was discontinued in favor of <a href="https://github.com/trakt-tools/universal-trakt-scrobbler">universal-trakt-scrobbler</a></h1>
+
+
+
 <h1 align="center">
   <br>
   <a href="https://tegon.github.io/traktflix/">
